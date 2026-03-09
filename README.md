@@ -21,8 +21,7 @@
 ## 仓库内容
 
 ```text
-.
-├─ F1车队配色设计指引V2.md
+。
 ├─ README.md
 ├─ f1-web-color-guidelines.skill
 └─ f1-web-color-guidelines/
@@ -53,10 +52,6 @@
 
 当前版本已按 2026-03-09 可核实到的官方 2026 发布资料校对。
 
-已写入 skill 的官方来源索引见：
-
-- [`f1-web-color-guidelines/references/official-2026-sources.md`](C:/Users/61364/Desktop/F1配色skills/f1-web-color-guidelines/references/official-2026-sources.md)
-
 重点更新包括：
 
 - Aston Martin：强调 `considered` / `deliberate` 的整体工程秩序
@@ -80,44 +75,7 @@
 - “做一个 McLaren 风格的数据可视化 landing page”
 - “看看这个页面更像 Aston Martin 还是普通科技绿”
 
-## 重新打包
 
-如果你修改了 skill 源码目录，可以重新打包：
-
-```powershell
-python C:\Users\61364\.agents\skills\skill-creator\scripts\package_skill.py `
-  C:\Users\61364\Desktop\F1配色skills\f1-web-color-guidelines `
-  C:\Users\61364\Desktop\F1配色skills
-```
-
-打包成功后会生成：
-
-```text
-f1-web-color-guidelines.skill
-```
-
-## 上传到 GitHub 的建议
-
-推荐把 `f1-web-color-guidelines/` 作为源码提交，把 `.skill` 文件放到 GitHub Release，而不是只上传打包产物。
-
-推荐结构：
-
-```text
-repo-root/
-├─ README.md
-├─ .gitignore
-└─ f1-web-color-guidelines/
-   ├─ SKILL.md
-   └─ references/
-```
-
-最小 `.gitignore`：
-
-```gitignore
-*.skill
-__pycache__/
-dist/
-```
 
 ## 后续扩展
 
