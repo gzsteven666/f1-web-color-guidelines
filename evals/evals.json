@@ -1,0 +1,71 @@
+{
+  "skill_name": "f1-web-color-guidelines",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我在做一个 F1 数据可视化首页，想走 2026 Mercedes-AMG PETRONAS 的方向。不要泛泛而谈，直接给我一版完整的网页设计指引，保留正式 guideline 的章节结构，最好能让我直接发给设计师。",
+      "expected_output": "输出一份长文版梅赛德斯网页设计指引，包含完整章节层级，而不是简短摘要。",
+      "files": [],
+      "expectations": [
+        "明确使用 Mercedes-AMG PETRONAS 而不是其他车队的视觉语言",
+        "输出保留长文 guideline 结构而不是 6 点摘要",
+        "包含颜色、占比、组件映射、渐变、常见误区和 AI 提示词"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "把我现在这个赛车 dashboard 改成法拉利 2026 风格。我要的不是文案，是一套可以直接放进前端项目的 CSS variables 和简短说明，重点体现红白结构关系，不要做成促销红白风。",
+      "expected_output": "输出 Ferrari 2026 的执行摘要与 CSS variables，强调红白结构和避免促销风。",
+      "files": [],
+      "expectations": [
+        "选择执行摘要/实现路径而不是长文档路径",
+        "给出 Ferrari 2026 的 Rosso Scuderia 加结构白逻辑",
+        "输出可直接实现的 CSS variables"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我老板只说要一个‘有 F1 味道的官网首页’，没指定车队。你先别乱选，帮我比较 Aston Martin、McLaren 和 Cadillac 三种方向各自会给人什么第一印象，然后再建议我怎么选。",
+      "expected_output": "先读取跨车队方法论，做差异比较，再给选择建议，而不是直接假设某支车队。",
+      "files": [],
+      "expectations": [
+        "不会擅自选定单一车队",
+        "会比较至少三支车队的气质差异",
+        "会给出基于需求的选队建议"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "给我一套 McLaren 风格 landing page 的 Tailwind 颜色扩展和 hero 渐变方案，要求保持 papaya + anthracite，不要整页铺橙，也不要做成电竞风。",
+      "expected_output": "输出 McLaren 的 Tailwind colors 和 hero 渐变建议，并明确避免橙黑电竞风。",
+      "files": [],
+      "expectations": [
+        "输出 Tailwind theme.extend.colors 或等价结构",
+        "使用 McLaren 而不是 Ferrari 或 Aston Martin 的色彩逻辑",
+        "明确限制大面积铺橙和电竞化风格"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "这是一个已经上线的深色后台，我总觉得它更像普通 SaaS，不像车队视觉。请按 Cadillac 2026 的思路帮我做一次风格审查，指出它最容易跑偏的点，并给出替代方向。",
+      "expected_output": "以 Cadillac 2026 的黑白分面和 chevron 几何逻辑为基准做审查与纠偏。",
+      "files": [],
+      "expectations": [
+        "以审查/纠偏模式输出而不是只给色号",
+        "围绕 Cadillac 的 black-white split identity 展开",
+        "指出至少三个常见跑偏点并给替代方向"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "我想做 Red Bull Racing 风格的官网配色，给我一份完整指南。",
+      "expected_output": "明确说明当前 skill 不覆盖 Red Bull，避免强行套用现有五队模板。",
+      "files": [],
+      "expectations": [
+        "不会把未覆盖车队强行映射到现有五队之一",
+        "会明确说明超出当前 skill 覆盖范围",
+        "会避免输出看似完整但实际错误的 Red Bull 指引"
+      ]
+    }
+  ]
+}
