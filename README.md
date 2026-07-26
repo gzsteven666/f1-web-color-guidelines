@@ -23,30 +23,34 @@
 ```text
 。
 ├─ README.md
-├─ f1-web-color-guidelines.skill
-└─ f1-web-color-guidelines/
-   ├─ SKILL.md
-   └─ references/
+├─ SKILL.md
+├─ references/
+│  ├─ aston-martin.md / mercedes.md / mclaren.md / ferrari.md / cadillac.md
+│  ├─ web-craft.md              ← 字体/形状/材质/动效/构图的跨车队配方
+│  ├─ cross-team-methodology.md
+│  └─ official-2026-sources.md
+├─ assets/
+│  └─ templates/                ← 可直接双击打开的单文件 HTML 基准模板
+│     ├─ <team>-editorial.html  ← 每队一个浅色杂志模式（默认主参考）
+│     └─ aston-martin.html      ← 深色 Mission Control（dashboard 场景）
+└─ evals/
+   └─ evals.json
 ```
-
-说明：
-
-- `f1-web-color-guidelines/` 是 skill 源码目录
-- `f1-web-color-guidelines.skill` 是已打包好的可分发文件
-- `F1车队配色设计指引V2.md` 是整理 skill 时参考的原始总稿
 
 ## Skill 能做什么
 
 这个 skill 不只是提供几个色号，而是把每支车队拆成一套网页设计规则：
 
-- 核心颜色 token
+- 核心颜色 token（深色工程模式 + 浅色编辑模式）
 - 页面配色占比
 - 组件级映射
-- 材质与渐变逻辑
+- 材质与渐变逻辑（车漆受光、碳纤维、chevron 暗纹等 CSS 配方）
+- 字体、形状、动效与页面构图方法（`web-craft.md`）
+- 可运行的基准模板（`assets/templates/`）
 - Prompt 模板
 - 反模式与常见误区
 
-它还会强调不同车队之间的根本差异，避免把所有页面都做成同一套“深色 F1 科技风”模板换色。
+它还会强调不同车队之间的根本差异，避免把所有页面都做成同一套“深色 F1 科技风”模板换色。所有模板的定位是"把车队配色迁移到普通网页"——内容与赛车无关，视觉身份依然成立。
 
 ## 2026 资料校对
 

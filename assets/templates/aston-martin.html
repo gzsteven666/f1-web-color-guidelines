@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aston Martin F1 配色 — Mission Control 基准模板</title>
+<!--
+  ============================================================
+  Aston Martin F1 配色 · "Mission Control" 基准模板
+  ============================================================
+  设计概念：
+  - 页面内容是"通用数据产品"（营收、流量、渠道），与赛车无关——
+    证明这套配色和材质体系可以迁移到任何网页
+  - hero 即场景：右侧集成仪表组（LED 灯组 + 双读数 + 读数框 + 弧形刻度表）
+    直接浮在 hero 车漆渐变上，复刻 F1 转播 halo 仪表的构图逻辑
+  - 正文是 12 栏不对称仪表盘（8+4 / 7+5），像真产品，不像样式文档
+  - 色卡与材质压缩成一条 Design DNA 带，保留参考功能
+  - 颜色 token 与 references/aston-martin.md 完全对齐
+  - 材质与动效配方与 references/web-craft.md 完全对齐
+  ============================================================
+-->
+<!-- 字体：Archivo 负责标题与正文，IBM Plex Mono 负责数据数字（断网时回退系统字体） -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 全部取自 references/aston-martin.md
+     ========================================================== */
+  :root {
+    --bg:            #071110;  /* 页面大背景：黑绿混合的深色烤漆底 */
+    --bg-deep:       #08100F;
+    --surface:       #0D1716;  /* 模块 / 卡片背景 */
+    --border:        #1B2E2A;
+
+    --brand:         #002420;  /* Racing Green：金属车漆底色 */
+    --accent:        #037A68;  /* 高光绿：识别、激活态、主图表 */
+    --accent-2:      #0A7968;
+    --accent-edge:   #29A892;  /* 边缘反射绿：只用于受光带边缘 */
+    --lime:          #A9D23E;  /* 信号色：总面积 < 3% */
+
+    --text-strong:   #F5F7F6;
+    --text-heading:  #D7E1DE;
+    --text-body:     #AEBAB6;
+    --text-muted:    #7E908B;
+
+    --btn-hover:     #0A8B76;
+    --btn-active:    #026554;
+    --btn-2-border:  #295C54;
+
+    --font-sans: "Archivo", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", "Consolas", monospace;
+
+    --radius: 5px;   /* AM 的克制工程圆角 */
+    --skew: -8deg;   /* 全页统一斜切角度 */
+  }
+
+  /* ==========================================================
+     2. 基础与收尾细节
+     ========================================================== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  /* 深色滚动条：Windows 默认亮色滚动条会破坏深色整体感 */
+  html { scrollbar-color: #1B2E2A #071110; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: #071110; }
+  ::-webkit-scrollbar-thumb { background: #1B2E2A; border-radius: 5px; border: 2px solid #071110; }
+  ::-webkit-scrollbar-thumb:hover { background: #295C54; }
+
+  /* 选中文本与键盘焦点：细节处也保持车队身份 */
+  ::selection { background: #037A68; color: #FFFFFF; }
+  :focus-visible { outline: 2px solid #29A892; outline-offset: 2px; border-radius: 2px; }
+
+  body {
+    background: var(--bg);
+    color: var(--text-body);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.6;
+    position: relative;
+  }
+  /* 全局哑光噪点：消除深色底的数字塑料感，opacity 必须极轻 */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 999;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ==========================================================
+     3. 排版角色 —— 标签放宽字距，标题收紧字距，数字等宽
+     ========================================================== */
+  .label {
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+  h1, h2 { color: var(--text-strong); letter-spacing: -0.01em; }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 32px; }
+  section { padding: 56px 0; }
+  section + section { border-top: 1px solid var(--border); }
+  .section-alt { background: linear-gradient(180deg, #0B1514 0%, #071110 100%); }
+
+  /* 章节标题：斜切小色块 + 尾部渐隐工程线，图纸标注感 */
+  .section-head { margin-bottom: 28px; }
+  .section-head .label::before {
+    content: ""; display: inline-block;
+    width: 14px; height: 8px; margin-right: 10px;
+    background: var(--accent-edge);
+    transform: skewX(var(--skew));
+  }
+  .section-head h2 {
+    margin-top: 8px;
+    display: flex; align-items: center; gap: 18px;
+    font-size: 26px; font-weight: 700; color: var(--text-heading);
+  }
+  .section-head h2::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, #1B2E2A 0%, rgba(27, 46, 42, 0) 100%);
+  }
+
+  /* 滚动进场：section 进入视口后由 JS 添加 .in */
+  .reveal {
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 600ms cubic-bezier(0.2, 0, 0, 1),
+                transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ==========================================================
+     4. 导航 + Racing Stripe
+     ========================================================== */
+  nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(7, 17, 16, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+  /* 车身拉花的网页化：顶部一条绿 → lime 渐隐条纹 */
+  nav::before {
+    content: ""; display: block; height: 2px;
+    background: linear-gradient(90deg,
+      var(--accent) 0%, var(--accent-edge) 42%, var(--lime) 72%, transparent 100%);
+  }
+  .nav-inner {
+    max-width: 1120px; margin: 0 auto; padding: 0 32px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-logo {
+    font-weight: 800; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.16em;
+    color: var(--text-strong);
+  }
+  .nav-logo b { color: var(--accent-edge); font-weight: 800; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a {
+    font-size: 13px; text-decoration: none; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.08em;
+    padding: 4px 0; border-bottom: 2px solid transparent;
+    transition: color 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .nav-links a:hover { color: var(--text-heading); }
+  .nav-links a.active { color: var(--text-strong); border-bottom-color: var(--accent); }
+
+  /* ==========================================================
+     5. Hero —— 车漆场景 + 集成仪表组
+        hero 本身就是"赛车画面"，仪表组浮在上面才有 HUD 感
+     ========================================================== */
+  .hero {
+    position: relative;
+    background:
+      /* 镜面光点：摄影棚主灯打在漆面上 */
+      radial-gradient(60% 48% at 22% 0%, rgba(255, 255, 255, 0.10) 0%, transparent 60%),
+      /* 受光层：车身曲面反射 */
+      radial-gradient(120% 90% at 30% 0%, rgba(41, 168, 146, 0.18) 0%, transparent 55%),
+      /* 车漆底色层：亮部收紧到右下角落 */
+      linear-gradient(135deg, #06100F 0%, #002420 45%, #04554A 76%, #0B8A74 92%, #29A892 100%);
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%);
+    padding: 72px 0 96px;
+  }
+  /* 流光层：一条窄光带每 9 秒缓慢扫过车漆表面 */
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg,
+      transparent 34%,
+      rgba(255, 255, 255, 0.07) 46%,
+      rgba(41, 168, 146, 0.16) 52%,
+      transparent 64%);
+    animation: sheen 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  @keyframes sheen {
+    0%   { transform: translateX(-70%); }
+    60%  { transform: translateX(70%); }
+    100% { transform: translateX(70%); } /* 尾段停顿，避免跑马灯 */
+  }
+  .hero-grid {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+  /* Hero 内容进场：左文案与仪表组依次上浮 */
+  .hero-copy > * { animation: rise 600ms cubic-bezier(0.2, 0, 0, 1) backwards; }
+  .hero-copy > *:nth-child(2) { animation-delay: 80ms; }
+  .hero-copy > *:nth-child(3) { animation-delay: 160ms; }
+  .hero-copy > *:nth-child(4) { animation-delay: 240ms; }
+  .cluster { animation: rise 700ms cubic-bezier(0.2, 0, 0, 1) 200ms backwards; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+
+  .hero h1 {
+    font-size: 42px; font-weight: 800; line-height: 1.1;
+    text-transform: uppercase; letter-spacing: -0.015em;
+    margin: 14px 0 16px;
+    /* 金属字面：白 → 冷银绿渐变裁进文字，像抛光金属铭牌 */
+    background: linear-gradient(180deg, #FFFFFF 0%, #DCE9E5 52%, #9CBBB2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .hero p { color: var(--text-heading); margin-bottom: 28px; max-width: 460px; }
+
+  /* 速度感 tag：斜切装饰条，内层反向抵消保持文字水平 */
+  .speed-tag {
+    display: inline-block;
+    transform: skewX(var(--skew));
+    background: rgba(169, 210, 62, 0.14);
+    border-left: 2px solid var(--lime);
+    padding: 3px 12px;
+  }
+  .speed-tag span {
+    display: inline-block;
+    transform: skewX(calc(var(--skew) * -1));
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    color: var(--lime);
+  }
+
+  /* ---- 集成仪表组：复刻转播 halo 仪表的构图 ----
+     左：竖排 LED 灯组（rev lights 的量条化）
+     右上：双读数（对应 194 KM/H | 121 MPH）
+     右中：双描边读数框（对应 2.0G 框）
+     右下：宽弧刻度表（对应 RPM ×1000 弧） */
+  .cluster {
+    display: flex; gap: 20px;
+    padding: 22px 24px 16px;
+    border-radius: 18px;
+    /* 低填充 + 背景模糊 + 亮描边：浮在车漆上的半透明 HUD 面板 */
+    background: rgba(7, 17, 16, 0.40);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(41, 168, 146, 0.30);
+    border-top-color: rgba(41, 168, 146, 0.50); /* 顶边稍亮：受光方向 */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06); /* HUD 是"浮"不是"压"，无外阴影 */
+  }
+  .cluster-leds { display: flex; flex-direction: column-reverse; gap: 4px; width: 16px; }
+  .cluster-leds i {
+    flex: 1; border-radius: 2px;
+    background: rgba(18, 28, 26, 0.8);
+    border: 1px solid rgba(30, 49, 44, 0.9);
+  }
+  .cluster-leds i.on {
+    background: linear-gradient(90deg, #29A892, #037A68);
+    border-color: transparent;
+    /* 从下往上逐格点亮（column-reverse 保证 nth-child 顺序即点亮顺序） */
+    animation: ledOn 240ms cubic-bezier(0.2, 0, 0, 1) backwards;
+  }
+  .cluster-leds i.on:nth-child(2) { animation-delay: 60ms; }
+  .cluster-leds i.on:nth-child(3) { animation-delay: 120ms; }
+  .cluster-leds i.on:nth-child(4) { animation-delay: 180ms; }
+  .cluster-leds i.on:nth-child(5) { animation-delay: 240ms; }
+  .cluster-leds i.on:nth-child(6) { animation-delay: 300ms; }
+  .cluster-leds i.on:nth-child(7) { animation-delay: 360ms; }
+  .cluster-leds i.on:nth-child(8) { animation-delay: 420ms; }
+  @keyframes ledOn { from { opacity: 0.15; } }
+
+  .cluster-main { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .cluster-top { display: flex; }
+  .c-read { flex: 1; text-align: center; }
+  .c-read + .c-read { border-left: 1px solid rgba(41, 168, 146, 0.22); }
+  .c-read b {
+    display: block;
+    font-family: var(--font-mono); font-weight: 500;
+    font-size: 30px; line-height: 1.15;
+    color: var(--text-strong);
+  }
+  .c-read span {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* 双描边读数框："2.0G" 框的网页化 */
+  .cluster-box {
+    position: relative;
+    align-self: center;
+    min-width: 210px;
+    padding: 10px 30px 8px;
+    text-align: center;
+    border: 1px solid rgba(72, 140, 125, 0.55);
+    border-radius: 14px;
+    background: linear-gradient(180deg, rgba(16, 27, 26, 0.45) 0%, rgba(7, 17, 16, 0.55) 100%);
+  }
+  .cluster-box::before {
+    content: ""; position: absolute; inset: 4px;
+    border: 1px solid rgba(41, 168, 146, 0.22); /* 内层第二道描边 */
+    border-radius: 10px; pointer-events: none;
+  }
+  .cluster-box b {
+    font-family: var(--font-mono); font-weight: 500;
+    font-size: 38px; line-height: 1.15;
+    color: var(--text-strong);
+  }
+  .cluster-box .unit { font-size: 16px; color: var(--accent-edge); margin-left: 3px; }
+  .cluster-box .label { display: block; margin-top: 0; }
+
+  /* 宽弧刻度表：RPM ×1000 弧的网页化 */
+  .cluster-arc { position: relative; }
+  .cluster-arc svg { display: block; width: 100%; }
+  .gauge-tick-label {
+    font-family: var(--font-mono); font-size: 10px;
+    fill: #8FA7A1; text-anchor: middle;
+  }
+  .arc-progress {
+    /* 最终值写在类里；动画只提供 from 值（写内联 style 会压过动画目标） */
+    stroke-dashoffset: 97.1;  /* 303.5 × (1 - 68%) */
+    animation: arcSweep 1100ms cubic-bezier(0.2, 0, 0, 1) 400ms backwards;
+  }
+  @keyframes arcSweep { from { stroke-dashoffset: 303.5; } }
+  .cluster-arc .caption {
+    position: absolute; left: 0; right: 0; bottom: -2px;
+    text-align: center;
+  }
+
+  /* ==========================================================
+     6. 按钮
+     ========================================================== */
+  .btn {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 14px; font-weight: 600;
+    padding: 11px 26px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .btn-primary {
+    /* 纵向漆面渐变 + 顶部 1px 内高光：喷漆金属件的受光方式 */
+    background: linear-gradient(180deg, #08917C 0%, #037A68 55%, #02614F 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    color: #FFFFFF;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(180deg, #0AA58D 0%, #0A8B76 60%, #037A68 100%);
+    transform: translateX(2px); /* 横向位移：速度感 hover */
+  }
+  .btn-primary:active { background: var(--btn-active); box-shadow: none; }
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--btn-2-border);
+    color: #DCE8E5;
+  }
+  .btn-secondary:hover { background: rgba(3, 122, 104, 0.10); transform: translateX(2px); }
+  .btn .arr { display: inline-block; margin-left: 6px; transition: transform 180ms cubic-bezier(0.2, 0, 0, 1); }
+  .btn:hover .arr { transform: translateX(3px); }
+
+  /* ==========================================================
+     7. 仪表盘 —— 12 栏不对称网格 + 卡片 + 图表 + 表格
+     ========================================================== */
+  .dash-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .span-8 { grid-column: span 8; }
+  /* 图表卡与右侧指标列同行：让图表纵向撑满，避免卡片底部留白 */
+  .card.span-8 { display: flex; flex-direction: column; }
+  .card.span-8 .chart { flex: 1; height: auto; min-height: 150px; }
+  .span-7 { grid-column: span 7; }
+  .span-5 { grid-column: span 5; }
+  .span-4 { grid-column: span 4; }
+  .stat-rail { display: flex; flex-direction: column; gap: 16px; }
+  .stat-rail .card { flex: 1; }
+
+  .card {
+    /* 纵向微渐变 + 顶部内高光：受光的漆面板件，不是平涂色块 */
+    background: linear-gradient(180deg, #101B1A 0%, #0D1716 46%, #0B1413 100%);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent); /* 顶部高光边线：赛车高光边 */
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 8px rgba(0, 0, 0, 0.45);
+    transition: border-color 180ms cubic-bezier(0.2, 0, 0, 1),
+                transform 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .card:hover { border-color: #295C54; border-top-color: var(--accent-edge); transform: translateY(-2px); }
+  .card .value { font-size: 26px; font-weight: 500; color: var(--text-strong); margin: 4px 0 2px; }
+  .card .delta { font-size: 12px; }
+  .delta.up { color: var(--accent-edge); }
+  .delta.warn { color: var(--lime); } /* Lime 只做信号：峰值 / 异常 / 关注 */
+
+  /* CSS 柱状图：主序列高光绿，只有峰值用 Lime */
+  .chart {
+    display: flex; align-items: flex-end; gap: 10px;
+    height: 150px; margin-top: 16px;
+    position: relative;
+    border-bottom: 1px solid #2A3D38; /* 基线 */
+  }
+  .chart::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 6%;
+    border-top: 1px dashed rgba(169, 210, 62, 0.32); /* 虚线目标线：仪表感 */
+  }
+  .chart .bar {
+    flex: 1; border-radius: 2px 2px 0 0;
+    background: linear-gradient(180deg, var(--accent) 0%, #025547 100%);
+  }
+  .chart .bar.alt { background: linear-gradient(180deg, var(--accent-2) 0%, #06463C 100%); opacity: 0.75; }
+  .chart .bar.signal { background: linear-gradient(180deg, var(--lime) 0%, #6E8F1F 100%); }
+  /* 进入视口后从底部生长，逐根错峰 */
+  .reveal.in .chart .bar { transform-origin: bottom; animation: grow 700ms cubic-bezier(0.2, 0, 0, 1) backwards; }
+  .reveal.in .chart .bar:nth-child(2) { animation-delay: 60ms; }
+  .reveal.in .chart .bar:nth-child(3) { animation-delay: 120ms; }
+  .reveal.in .chart .bar:nth-child(4) { animation-delay: 180ms; }
+  .reveal.in .chart .bar:nth-child(5) { animation-delay: 240ms; }
+  .reveal.in .chart .bar:nth-child(6) { animation-delay: 300ms; }
+  .reveal.in .chart .bar:nth-child(7) { animation-delay: 360ms; }
+  @keyframes grow { from { transform: scaleY(0); } }
+  .chart-x { display: flex; gap: 10px; margin-top: 8px; }
+  .chart-x span {
+    flex: 1; text-align: center;
+    font-size: 11px; color: #8FA7A1;
+    font-family: var(--font-mono);
+  }
+
+  /* 数据表：表头是标牌，数字右对齐 + 等宽 */
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 11px 14px; font-size: 14px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-body);
+  }
+  td.num, th.num { text-align: right; }
+  tr:hover td { background: rgba(3, 122, 104, 0.06); }
+  .pos { color: var(--text-strong); font-weight: 600; }
+  .tag-lime {
+    display: inline-block; padding: 1px 8px;
+    border-radius: 999px; /* 药丸形只允许出现在小 tag 上 */
+    background: rgba(169, 210, 62, 0.14);
+    color: var(--lime); font-size: 11px; font-weight: 600;
+  }
+
+  /* ==========================================================
+     8. 交互控件 —— 输入框 / 开关 / Tabs
+     ========================================================== */
+  .field { margin-bottom: 14px; }
+  .field .label { display: block; margin-bottom: 8px; }
+  .input {
+    width: 100%;
+    padding: 10px 12px;
+    background: #0A1413; /* 比卡片再深一层：输入区是"凹进去的" */
+    border: 1px solid #24403A;
+    border-radius: var(--radius);
+    color: var(--text-strong);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    transition: border-color 180ms cubic-bezier(0.2, 0, 0, 1),
+                box-shadow 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .input::placeholder { color: #5E706B; }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(3, 122, 104, 0.18); /* 克制的焦点环，不是发光 */
+  }
+  .switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: relative;
+    width: 40px; height: 22px;
+    border-radius: 11px;
+    background: #16221F;
+    border: 1px solid #24403A;
+    transition: background 180ms cubic-bezier(0.2, 0, 0, 1),
+                border-color 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .switch .track::after {
+    content: "";
+    position: absolute; top: 50%; left: 3px;
+    transform: translateY(-50%);
+    width: 15px; height: 15px;
+    border-radius: 50%;
+    background: #7E908B;
+    transition: left 180ms cubic-bezier(0.2, 0, 0, 1),
+                background 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .switch input:checked + .track { background: var(--accent); border-color: var(--accent); }
+  .switch input:checked + .track::after { left: 21px; background: #FFFFFF; }
+  .switch .text { font-size: 13px; color: var(--text-body); }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); }
+  .tab {
+    padding: 9px 16px;
+    font-family: var(--font-sans);
+    font-size: 12px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 180ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .tab:hover { color: var(--text-heading); }
+  .tab.active { color: var(--text-strong); border-bottom-color: var(--accent); }
+
+  /* ==========================================================
+     9. Design DNA 带 —— 色卡 + 材质压缩成一行
+     ========================================================== */
+  .dna-row { display: flex; gap: 18px; align-items: stretch; flex-wrap: wrap; }
+  .dna-chip { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .dna-chip i {
+    display: block; width: 64px; height: 40px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    position: relative; overflow: hidden;
+  }
+  /* 色卡受光层：漆面色板，不是平涂矩形 */
+  .dna-chip i.paint::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(90% 70% at 25% 0%, rgba(255, 255, 255, 0.13) 0%, transparent 55%);
+  }
+  .dna-chip span { font-family: var(--font-mono); font-size: 10px; color: var(--text-muted); }
+  .dna-divider { width: 1px; background: var(--border); }
+
+  /* 材质工具类：既用于 DNA 带，也用于 footer */
+  .m-paint {
+    background:
+      radial-gradient(120% 80% at 28% 0%, rgba(41, 168, 146, 0.22) 0%, transparent 55%),
+      linear-gradient(135deg, #06100F 0%, #002420 48%, #04554A 100%);
+  }
+  .m-carbon {
+    background-color: #0C1110;
+    background-image:
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.028) 0 2px, transparent 2px 4px),
+      repeating-linear-gradient(-45deg, rgba(0, 0, 0, 0.35) 0 2px, transparent 2px 4px);
+  }
+  .m-matte { position: relative; background: var(--bg-deep); }
+  .m-matte::after {
+    content: ""; position: absolute; inset: 0; opacity: 0.10;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ==========================================================
+     10. Footer —— 碳纤维压重心，页面低位收尾
+     ========================================================== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0;
+    margin-top: 24px;
+  }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; }
+  footer .label { font-size: 11px; }
+
+  /* ==========================================================
+     11. 响应式 —— 先收装饰，再收列数，最后收字号
+     ========================================================== */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .c-read b { font-size: 26px; }
+    .cluster-box b { font-size: 32px; }
+  }
+  @media (max-width: 820px) {
+    .hero { padding: 56px 0 80px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .cluster { max-width: 540px; }
+    .hero h1 { font-size: 34px; }
+    .span-8, .span-7, .span-5, .span-4 { grid-column: span 12; }
+    .nav-links { gap: 16px; overflow-x: auto; }
+    section { padding: 44px 0; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 0 20px; }
+    .nav-inner { padding: 0 20px; gap: 16px; }
+    .hero h1 { font-size: 29px; }
+    .btn { padding: 10px 18px; }
+    .cluster { padding: 16px; gap: 14px; }
+    .c-read b { font-size: 22px; }
+    .cluster-box { min-width: 170px; }
+    .cluster-box b { font-size: 28px; }
+    .dna-row { gap: 12px; }
+    footer .wrap { flex-direction: column; gap: 10px; align-items: flex-start; }
+  }
+
+  /* 动效可访问性：用户要求减少动画时全部降级 */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 导航：当前项用品牌绿下划线标记 -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">MERIDIAN<b>·</b>CLOUD</div>
+    <div class="nav-links">
+      <a href="#" class="active">Dashboard</a>
+      <a href="#">Projects</a>
+      <a href="#">Analytics</a>
+      <a href="#">Reports</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero：左文案 + 右集成仪表组，仪表组浮在车漆渐变上 -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <div class="speed-tag"><span>2026 · Quarterly Review</span></div>
+      <h1>Racing Green,<br>Engineered for the Web</h1>
+      <p>深色金属车漆底、方向性受光、克制的英伦工程感。内容与赛车无关，视觉身份依然成立——这是把 Aston Martin F1 配色移植到普通产品页的基准示例。</p>
+      <div>
+        <button class="btn btn-primary">开始使用<span class="arr">→</span></button>
+        <button class="btn btn-secondary">查看设计规范</button>
+      </div>
+    </div>
+
+    <!-- 集成仪表组：转播 halo 仪表的构图，数据是通用产品指标 -->
+    <div class="cluster" role="img" aria-label="业务指标仪表面板：营收 248.6 万元，转化率 3.82%，系统负载 72.4%，请求速率 8.2k">
+      <!-- 左侧竖排 LED 灯组：从下往上逐格点亮 -->
+      <div class="cluster-leds" aria-hidden="true">
+        <i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="cluster-main">
+        <!-- 顶部双读数：对应转播画面的 194 KM/H | 121 MPH -->
+        <div class="cluster-top">
+          <div class="c-read"><b class="num"><span data-count="248.6">248.6</span></b><span>万元 · Revenue</span></div>
+          <div class="c-read"><b class="num"><span data-count="3.82">3.82</span></b><span>% · Conversion</span></div>
+        </div>
+        <!-- 中央读数框：对应 2.0G 框 -->
+        <div class="cluster-box">
+          <b class="num"><span data-count="72.4">72.4</span></b><span class="unit">%</span>
+          <span class="label">System Load</span>
+        </div>
+        <!-- 底部宽弧刻度表：对应 RPM ×1000 弧 -->
+        <div class="cluster-arc">
+          <svg viewBox="0 0 300 108" aria-hidden="true">
+            <defs>
+              <linearGradient id="arc-grad" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0" stop-color="#037A68"/>
+                <stop offset="1" stop-color="#29A892"/>
+              </linearGradient>
+            </defs>
+            <!-- 背景弧 -->
+            <path d="M 20 90 A 160 160 0 0 1 280 90"
+                  fill="none" stroke="rgba(22,34,31,0.9)" stroke-width="9" stroke-linecap="round"/>
+            <!-- 刻度弧：虚线间隔当刻度线 -->
+            <path d="M 32.2 98.7 A 145 145 0 0 1 267.8 98.7"
+                  fill="none" stroke="#2A3D38" stroke-width="5" stroke-dasharray="1.5 20"/>
+            <!-- 红区：尾段 lime 标记告警区间 -->
+            <path d="M 248.6 57.3 A 160 160 0 0 1 280 90"
+                  fill="none" stroke="#A9D23E" stroke-width="9" stroke-linecap="round" opacity="0.45"/>
+            <!-- 进度弧：dasharray = 弧长 303.5，载入后从 0 扫到 68% -->
+            <path class="arc-progress" d="M 20 90 A 160 160 0 0 1 280 90"
+                  fill="none" stroke="url(#arc-grad)" stroke-width="9" stroke-linecap="round"
+                  stroke-dasharray="303.5"/>
+            <text x="24" y="104" class="gauge-tick-label">0</text>
+            <text x="100" y="20" class="gauge-tick-label">4</text>
+            <text x="200" y="20" class="gauge-tick-label">8</text>
+            <text x="276" y="104" class="gauge-tick-label">12</text>
+          </svg>
+          <div class="caption label">Requests ×1000 / sec</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 01 仪表盘：12 栏不对称网格，像真产品不像样式文档 -->
+<section class="reveal">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="label">01 · Live Dashboard</div>
+      <h2>实时业务仪表盘</h2>
+    </div>
+    <div class="dash-grid">
+      <!-- 大图表：8 栏 -->
+      <div class="card span-8">
+        <div class="label">Weekly Traffic · 主序列用高光绿，Lime 只标记峰值</div>
+        <div class="chart">
+          <div class="bar" style="height:52%"></div>
+          <div class="bar alt" style="height:66%"></div>
+          <div class="bar" style="height:78%"></div>
+          <div class="bar signal" style="height:94%"></div>
+          <div class="bar" style="height:70%"></div>
+          <div class="bar alt" style="height:58%"></div>
+          <div class="bar" style="height:84%"></div>
+        </div>
+        <div class="chart-x"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+      </div>
+      <!-- 指标竖列：4 栏 -->
+      <div class="span-4 stat-rail">
+        <div class="card">
+          <div class="label">Active Users</div>
+          <div class="value num"><span data-count="18.2">18.2</span><span style="font-size:15px;color:var(--text-muted)"> k</span></div>
+          <div class="delta up num">▲ +4.1% 环比</div>
+        </div>
+        <div class="card">
+          <div class="label">Error Rate</div>
+          <div class="value num"><span data-count="0.42">0.42</span><span style="font-size:15px;color:var(--text-muted)"> %</span></div>
+          <div class="delta warn num">● 高于上周，需关注</div>
+        </div>
+        <div class="card">
+          <div class="label">Uptime</div>
+          <div class="value num"><span data-count="99.98">99.98</span><span style="font-size:15px;color:var(--text-muted)"> %</span></div>
+          <div class="delta up num">▲ 30 天滚动</div>
+        </div>
+      </div>
+      <!-- 渠道表：7 栏 -->
+      <div class="card span-7" style="padding:8px 4px 4px">
+        <table>
+          <thead>
+            <tr><th>Channel</th><th class="num">Visits</th><th class="num">Conv</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="pos">自然搜索</td><td class="num">8,204</td><td class="num">4.2%</td><td><span class="tag-lime">Top</span></td></tr>
+            <tr><td class="pos">直接访问</td><td class="num">5,113</td><td class="num">3.1%</td><td>稳定</td></tr>
+            <tr><td class="pos">社交媒体</td><td class="num">2,882</td><td class="num">2.4%</td><td>上升</td></tr>
+            <tr><td class="pos">邮件营销</td><td class="num">1,997</td><td class="num">1.8%</td><td>观察</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- 控件卡：5 栏，输入框 / Tabs / 开关集中示范 -->
+      <div class="card span-5">
+        <div class="tabs" style="margin-bottom:18px">
+          <button class="tab active" type="button">Overview</button>
+          <button class="tab" type="button">Analytics</button>
+          <button class="tab" type="button">Settings</button>
+        </div>
+        <div class="field">
+          <label class="label" for="demo-search">全局搜索</label>
+          <input class="input" id="demo-search" type="text" placeholder="搜索项目或成员…">
+        </div>
+        <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:4px">
+          <label class="switch">
+            <input type="checkbox" checked>
+            <span class="track"></span>
+            <span class="text">实时数据同步</span>
+          </label>
+          <label class="switch">
+            <input type="checkbox">
+            <span class="track"></span>
+            <span class="text">异常告警</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Design DNA：色卡与材质压缩成一行，保留参考功能 -->
+<section class="reveal section-alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="label">02 · Design DNA</div>
+      <h2>设计基因</h2>
+    </div>
+    <div class="dna-row">
+      <div class="dna-chip"><i class="paint" style="background:#002420"></i><span>#002420</span></div>
+      <div class="dna-chip"><i class="paint" style="background:#037A68"></i><span>#037A68</span></div>
+      <div class="dna-chip"><i class="paint" style="background:#29A892"></i><span>#29A892</span></div>
+      <div class="dna-chip"><i class="paint" style="background:#0D1716"></i><span>#0D1716</span></div>
+      <div class="dna-chip"><i class="paint" style="background:#071110"></i><span>#071110</span></div>
+      <div class="dna-chip"><i class="paint" style="background:#A9D23E"></i><span>#A9D23E</span></div>
+      <div class="dna-divider" aria-hidden="true"></div>
+      <div class="dna-chip"><i class="m-paint"></i><span>金属车漆</span></div>
+      <div class="dna-chip"><i class="m-carbon"></i><span>碳纤维</span></div>
+      <div class="dna-chip"><i class="m-matte"></i><span>哑光噪点</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer：碳纤维 + 低重心收尾 -->
+<footer class="m-carbon">
+  <div class="wrap">
+    <div class="nav-logo" style="font-size:12px">MERIDIAN<b>·</b>CLOUD</div>
+    <div class="label">内容与赛车无关，仍应一眼认出 Aston Martin 配色 —— 这是最终校验标准</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  /* ========================================================
+     动效脚本：数字滚动 + 区块滚动进场
+     用户系统开启"减少动画"时整体跳过，页面直接显示最终状态
+     ======================================================== */
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+    return;
+  }
+
+  /* 数字滚动进场：从 0 滚到 data-count 写好的最终值。
+     HTML 里保留最终值，JS 失效时仍显示正确 */
+  document.querySelectorAll("[data-count]").forEach(function (el) {
+    var target = parseFloat(el.dataset.count);
+    var decimals = (el.dataset.count.split(".")[1] || "").length;
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / 900, 1); // 900ms 内完成
+      p = 1 - Math.pow(1 - p, 3);              // easeOutCubic：快出缓入
+      el.textContent = (target * p).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+
+  /* 区块滚动进场：进入视口 15% 后加 .in（柱状图生长动画也由 .in 触发） */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>

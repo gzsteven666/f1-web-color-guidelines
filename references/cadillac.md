@@ -234,7 +234,20 @@ background: linear-gradient(
 
 ---
 
-## 六、给 AI 的风格指令模板
+## 六、浅色编辑模式（可选）
+
+当用户要杂志化、宽松留白的品牌官网 / 落地页而不是深色 dashboard 时，可保留 Cadillac 身份做浅色方案（可运行参考：`assets/templates/cadillac-editorial.html`，结构方法见 `references/web-craft.md`）：
+
+* **纸面体系**（American Racing White 派生的冷白）：画布 `#F7F8F9`、交替区块 `#EEF0F2`、发丝线 `#CDD2D7`
+* **全页仍是单色系统**：没有任何彩色；巨字点睛词用银灰 `#A7ADB4`（单色系统的"高亮"是明度不是色相）
+* **主按钮**：浅色纸面上主次对调为黑实心 + 上缘 1px 内高光（金属铭牌质感），深色面上仍用规范的白底黑字
+* 深色横带直接做成 黑 → 金属灰 → 银 → 白 的 black-to-white split 渐变 + chevron 暗纹叠加；文字停在黑段内
+* **形状语言收紧**：车漆场用直角小圆角（4px）而不是其他队的大圆弧，残片圆角收到 12px——锋利切面是识别的一部分
+* Top 标签等强调用黑底白字小铭牌，不用彩色药丸
+
+---
+
+## 七、给 AI 的风格指令模板
 
 ```text
 请将页面设计为 Cadillac Formula 1 Team 风格的数据可视化网页。
@@ -266,7 +279,7 @@ monochrome luxury, sculpted aggression, black-white split identity, chevron geom
 
 ---
 
-## 七、最终落地判断标准
+## 八、最终落地判断标准
 
 如果做对了，页面看起来应该像：
 

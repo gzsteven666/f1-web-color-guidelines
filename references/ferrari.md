@@ -239,7 +239,20 @@ background: linear-gradient(
 
 ---
 
-## 六、给 AI 的风格指令模板
+## 六、浅色编辑模式（可选）
+
+当用户要杂志化、宽松留白的品牌官网 / 落地页而不是深色 dashboard 时，可保留 Ferrari 身份做浅色方案（可运行参考：`assets/templates/ferrari-editorial.html`，结构方法见 `references/web-craft.md`）：
+
+* **纸面体系**（Ferrari White `#F4F2EE` 派生的暖白，意式暖调）：画布 `#F9F7F4`、交替区块 `#F1EDE8`、发丝线 `#D9CFC6`
+* **墨色**：炭黑偏酒红 `#241416` 承担标题、幽灵按钮
+* **主识别**：Rosso Scuderia `#D3141C` 做主按钮（白字）、巨字点睛、横带、幽灵编号
+* 深色横带用 深酒红 → Rosso 渐变 + 底缘 3px 结构白切线（2026 红白结构对比的最小表达）
+* Giallo `#F7D117` 仍只做血统点缀（图表端点、Top 标签），总面积 < 2%
+* 辅助文字用暖灰 `#7A6663`，与梅奔的冷灰区分
+
+---
+
+## 七、给 AI 的风格指令模板
 
 ```text
 请将页面设计为 Scuderia Ferrari 风格的数据可视化网页。
@@ -272,7 +285,7 @@ italian racing passion, rosso scuderia intensity, premium speed, dramatic contra
 
 ---
 
-## 七、最终落地判断标准
+## 八、最终落地判断标准
 
 如果做对了，页面看起来应该像：
 

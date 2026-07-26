@@ -238,7 +238,19 @@ background: linear-gradient(
 
 ---
 
-## 六、给 AI 的风格指令模板
+## 六、浅色编辑模式（可选）
+
+当用户要杂志化、宽松留白的品牌官网 / 落地页而不是深色 dashboard 时，可保留梅奔身份做浅色方案（可运行参考：`assets/templates/mercedes-editorial.html`，结构方法见 `references/web-craft.md`）：
+
+* **纸面体系**（冷银稀释，偏冷不偏暖）：画布 `#F4F6F6`、交替区块 `#EAEEEE`、发丝线 `#C8D1D2`
+* **墨色**：碳黑 `#060708` 承担标题、幽灵按钮、深色车漆场
+* **唯一彩色**：PETRONAS 青绿 `#00A19B` 只做主按钮（配深色字 `#041010`）、链接、图表主线、低位流线
+* 深色横带用 黑碳 → 钛灰 渐变 + 下缘一条 2px 青绿流线（2026 低位 flow line 的版面化），不要整条横带铺青绿
+* 巨字标题的斜体点睛词可用青绿；辅助文字用冷灰 `#5C686B`，不要暖灰
+
+---
+
+## 七、给 AI 的风格指令模板
 
 ```text
 请将页面设计为 Mercedes-AMG PETRONAS Formula One Team 风格的数据可视化网页。
@@ -273,7 +285,7 @@ precision engineering, carbon-fibre luxury, black-silver contrast, petronas teal
 
 ---
 
-## 七、最终落地判断标准
+## 八、最终落地判断标准
 
 如果做对了，页面看起来应该像：
 

@@ -235,7 +235,20 @@ background: linear-gradient(
 
 ---
 
-## 六、给 AI 的风格指令模板
+## 六、浅色编辑模式（可选）
+
+当用户要杂志化、宽松留白的品牌官网 / 落地页而不是深色 dashboard 时，可保留 McLaren 身份做浅色方案（可运行参考：`assets/templates/mclaren-editorial.html`，结构方法见 `references/web-craft.md`）：
+
+* **纸面体系**（anthracite 稀释的冷灰）：画布 `#F6F6F5`、交替区块 `#EDEDEB`、发丝线 `#D0D0CC`
+* **墨色**：anthracite `#1E1F22` 承担标题、幽灵按钮
+* **主识别**：papaya `#FF8700` 做主按钮（配深色字 `#111`，高能见度识别块）、巨字点睛、横带、幽灵编号
+* 浅底上的小号 papaya 文字要压深到 `#D96F00` 一档保证可读
+* 深色横带用 papaya 前段受光 → anthracite 后段压稳（2026 正反结构的版面化），横带白字加轻 text-shadow
+* Teal `#4FD5D6` 仍只做极小信号（图表端点），总面积 < 5%
+
+---
+
+## 七、给 AI 的风格指令模板
 
 ```text
 请将页面设计为 McLaren Formula 1 Team 风格的数据可视化网页。
@@ -267,7 +280,7 @@ papaya performance, high-visibility speed, modern motorsport energy, anthracite 
 
 ---
 
-## 七、最终落地判断标准
+## 八、最终落地判断标准
 
 如果做对了，页面看起来应该像：
 

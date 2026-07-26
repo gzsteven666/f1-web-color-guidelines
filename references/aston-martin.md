@@ -199,7 +199,50 @@ background: linear-gradient(
 
 ---
 
-## 六、给 AI 的风格指令模板
+## 六、字体与形状语言
+
+颜色之外决定"像不像阿斯顿·马丁"的两个维度。完整实现配方见 `references/web-craft.md`，可运行基准见 `assets/templates/aston-martin.html`。
+
+### 字体
+
+* **标题 / Display**：Archivo 或 Instrument Sans，字重 600-800，大标题可全大写并收紧字距（`-0.01em ~ -0.02em`）。气质是优雅克制的工程感，不要过窄过挤。
+* **标签 / 导航 / 表头**：12-13px，全大写，字距放宽 `0.08em ~ 0.14em`，用弱化文字色，做出仪表舱标牌感。
+* **数据数字**：IBM Plex Mono 或 `font-variant-numeric: tabular-nums`，关键数值大字号 + 中等字重。
+* 禁止圆润人文字体（Nunito 类）和科幻字体（Orbitron 类），前者变消费 App，后者变电竞。
+
+### 形状
+
+* **深色工程模式**：圆角统一 4-6px；斜切统一 `-8deg`；卡片使用 1px 低对比边框与 2px 高光边线；阴影低而硬。
+* **浅色编辑模式**：允许采用另一套结构语言——内容卡 24px 大圆角、按钮全圆药丸形、悬浮产品残片 20px 圆角。此模式不使用斜切卡片或厚重边框，靠留白、排版和极少数悬浮阴影建立层级。
+* 两种模式不能混用：不要在同一页面里同时出现 5px 工程卡、24px 编辑卡、斜切色块和大量药丸控件。
+
+### 浅色编辑模式（可选）
+
+当用户喜欢杂志化、编辑式、宽松留白的产品页面时，可以保留 Aston Martin 配色身份，但不必坚持深色 dashboard：
+
+* **页面画布 / Paper**：`#FBFCFB`
+* **交替区块 / Fog**：`#F4F7F6`
+* **平卡表面 / Mist**：`#ECF1EF`
+* **正文墨色 / Green Ink**：`#0B1F1A`
+* **标题与实心按钮 / Racing Ink**：`#002420`
+* **链接与图表描线**：`#037A68`
+* **唯一强调卡 / Green Wash**：`#DFEDE6`，其中文字用 `#01352E`
+* **信号点**：`#A9D23E`，仍然必须极少量使用
+
+结构规则：
+
+* 用 44-90px、400 字重的衬线字体承担 H1/H2；不要加粗，依靠尺寸与留白建立权威感。
+* 正文、导航和 UI 使用克制无衬线；数字继续使用等宽字体。
+* 产品 UI 以 2-3 张“悬浮残片”围绕 hero 标题展开，不要套进完整 dashboard 外壳。
+* 普通内容卡为平面浅雾绿、无边框、无阴影；只有悬浮产品残片可以使用低透明度阴影。
+* 每页最多一张浅绿水洗强调卡，避免整页泛绿。
+* F1/HUD 语言可以缩成一张微型弧形仪表残片，不要让整页重新变成赛车主题。
+
+可运行参考：`assets/templates/aston-martin-editorial.html`。深色工程/HUD 参考仍为 `assets/templates/aston-martin.html`。
+
+---
+
+## 七、给 AI 的风格指令模板
 
 ```text
 请将页面设计为 Aston Martin Aramco Formula One Team 风格的数据可视化网页。
@@ -223,6 +266,13 @@ british racing luxury, deep racing green, refined performance, premium motorspor
 - 图表以绿色层级为主，不要引入多余高饱和彩色
 - 高光要有方向性，像曲面车身在灯光下形成的线性反射
 
+字体与形状要求：
+- 标题使用 Archivo 或类似的现代无衬线，大标题全大写并收紧字距
+- 数据数字使用等宽字体或 tabular-nums，表格数字必须对齐
+- 小标签全大写并放宽字距
+- 圆角统一 4-6px，不要大圆角，不要药丸形卡片
+- 阴影低而硬，不要飘浮软阴影和发光
+
 材质感要求：
 - 模拟 gloss paint、carbon fibre、premium motorsport finish
 - 加入 subtle automotive metallic finish
@@ -237,7 +287,7 @@ british racing luxury, deep racing green, refined performance, premium motorspor
 
 ---
 
-## 七、最终落地判断标准
+## 八、最终落地判断标准
 
 如果做对了，页面看起来应该像：
 

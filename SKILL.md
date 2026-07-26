@@ -1,6 +1,6 @@
 ---
 name: f1-web-color-guidelines
-description: F1 team web color and styling guide for designing, restyling, reviewing, or implementing web pages, dashboards, landing pages, admin panels, design systems, and data visualization UIs in Aston Martin, Mercedes-AMG PETRONAS, McLaren, Ferrari, or Cadillac Formula 1 aesthetics. Make sure to use this skill whenever the user mentions F1 风格、车队配色、赛车视觉、车队官网、赛车 dashboard、Aston Martin 风格、梅奔风格、McLaren 风格、Ferrari 风格、Cadillac 风格、网页配色、Tailwind 配色、design token、CSS variables、提示词、视觉审查，哪怕用户没有明确说“skill”或“配色指引”，只要核心问题是在把网页做成某支 F1 车队的视觉语言，就应该触发。
+description: F1 team web color and styling guide for designing, restyling, reviewing, or implementing web pages, dashboards, landing pages, admin panels, design systems, and data visualization UIs in Aston Martin, Mercedes-AMG PETRONAS, McLaren, Ferrari, or Cadillac Formula 1 aesthetics. Outputs full design guidelines, color tokens (CSS variables / Tailwind theme / design token JSON), AI style prompts, and design reviews. 当用户提到 F1 风格、车队配色、赛车视觉、车队官网、赛车 dashboard，或点名车队（Aston Martin/阿斯顿马丁、Mercedes/梅奔/梅赛德斯、McLaren/迈凯伦、Ferrari/法拉利、Cadillac/凯迪拉克），或在 F1/车队语境下提到网页配色、Tailwind 配色、design token、CSS variables、风格提示词、视觉审查时触发。用户点名 Red Bull、Alpine 等未收录车队时也应触发，以便说明覆盖边界。哪怕用户没明确说“skill”或“配色指引”，只要核心问题是把网页做成某支 F1 车队的视觉语言，就应该触发。
 ---
 
 # F1 Web Color Guidelines
@@ -36,6 +36,18 @@ description: F1 team web color and styling guide for designing, restyling, revie
 - McLaren: `references/mclaren.md`
 - Ferrari: `references/ferrari.md`
 - Cadillac: `references/cadillac.md`
+
+遇到以下场景时，再额外读取 `references/web-craft.md`（字体、形状、材质、动效、页面构图、无盒版式的通用配方）：
+
+- 用户要代码实现（HTML / CSS / Tailwind / React）
+- 用户要提升美观度，或抱怨"颜色对了但不好看 / 不够 outstanding"
+- 审查页面时问题出在字体、圆角、材质、动效、构图而不是色号
+
+遇到以下场景时，再读取 `assets/templates/` 下对应车队的基准模板（单文件 HTML，可直接双击打开）：
+
+- 用户要完整页面实现或视觉基准对照
+- 每队有 `<team>-editorial.html`（浅色杂志模式，默认主参考）；Aston Martin 另有 `aston-martin.html`（深色 Mission Control，dashboard 场景用）
+- 模板是参考不是固定骨架：参考其 token 与手法，不要整页照抄
 
 遇到以下场景时，再额外读取 `references/cross-team-methodology.md`：
 
@@ -106,6 +118,14 @@ description: F1 team web color and styling guide for designing, restyling, revie
 - Tailwind `theme.extend.colors`
 - Design token JSON
 - React/HTML/CSS 中的具体组件色彩映射
+
+如果用户还提供了喜欢的参考网站或设计系统：
+
+1. 先提炼其结构语言（构图、排版、留白、卡片层级、组件形状），不要只做表面模仿
+2. 再把车队颜色映射到对应语义角色，而不是把参考页面里的每个颜色机械替换为车队主色
+3. 允许产生新的结构方向，不必被已有模板、深色 dashboard 或既有经验绑死
+4. 同时保留车队身份的硬约束：主色关系、强调色用量、材质气质、反模式
+5. 若已有多个模板，按内容形态选择最合适的一个；模板只是参考，不是固定输出骨架
 
 如果用户要提示词，最后补一段可直接给 AI 设计工具使用的 prompt，且必须包含硬限制，不要只写气质词。
 

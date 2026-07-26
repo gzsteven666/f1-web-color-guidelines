@@ -66,6 +66,39 @@
         "会明确说明超出当前 skill 覆盖范围",
         "会避免输出看似完整但实际错误的 Red Bull 指引"
       ]
+    },
+    {
+      "id": 7,
+      "prompt": "我做了一个 Aston Martin 绿的落地页，色号都是对的，但总觉得不好看、不够高级。帮我看看还能怎么优化。",
+      "expected_output": "读取 references/web-craft.md，从字体、形状、材质、动效、构图等非颜色维度给出优化建议，而不是重新报一遍色号。",
+      "files": [],
+      "expectations": [
+        "会读取 web-craft.md 而不是只读车队颜色规范",
+        "诊断维度覆盖字体/圆角/材质/动效/构图中的至少三项",
+        "不会把问题归因于色号并简单换色"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "给我一个 McLaren 配色的 SaaS 官网首页完整 HTML，注意我要的是普通产品官网，不是赛车主题站。",
+      "expected_output": "参考 assets/templates/mclaren-editorial.html 的浅色编辑模式产出普通产品页：papaya 做识别色，内容与赛车无关，不出现车号/赛车剪影等具象元素。",
+      "files": [],
+      "expectations": [
+        "参考对应车队的 editorial 模板而不是从零发挥",
+        "页面内容与赛车无关，装饰抽象化",
+        "papaya 是识别色不铺满，anthracite 承担墨色角色"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "我喜欢某个设计网站的排版结构（超大衬线标题、悬浮卡片、大量留白），想用 Ferrari 的配色做一个类似的页面。",
+      "expected_output": "先提炼参考结构的语言（构图/排版/层级），再把 Ferrari 颜色映射到语义角色（Rosso 做识别、炭黑做墨色、纸面由 Ferrari White 派生），而不是机械把参考站的颜色逐一换成红色。",
+      "files": [],
+      "expectations": [
+        "先提炼结构方法再做颜色映射，不机械换色",
+        "保留 Ferrari 身份硬约束（Rosso 主识别、giallo < 2%、红白结构）",
+        "允许产生新结构，不被既有模板绑死"
+      ]
     }
   ]
 }
