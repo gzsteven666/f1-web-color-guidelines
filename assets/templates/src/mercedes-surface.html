@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercedes-AMG PETRONAS F1 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Mercedes-AMG PETRONAS F1 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  与 editorial 模板的根本区别：页面不再是一段段色带，而是一块连续的车身。
+  - 车漆层：position: fixed 的全屏 WebGL（assets/surface/paint-surface.js），
+    所有区块背景透明，金属反射和颜色贯穿整页
+  - 前银后黑：页顶冷银金属漆，经过 [data-seam] 过渡区后变成碳黑清漆
+    （2026 W17 官方语义：银色车头 → 深黑车尾）
+  - 贯穿线：一条 PETRONAS 青绿涂装线从页顶描到页底（racing-line.js），
+    取代区块之间的硬切分隔
+  - 动效等级 L2（产品官网）：连续车漆 + 涂装线 + 文字进场，没有 hero 招牌特效
+  - 内容与赛车无关：证明配色体系可迁移到任何网页
+  颜色 token 与 references/mercedes.md 对齐。
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  // 有 JS 时才启用"进场前隐藏"的样式；JS 失败时内容保持可见
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!--
+  依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
+  第二行是一个小技巧：jsDelivr 的 three.module.min.js 内部 import 的是未压缩的
+  three.core.js，这里用 import map 把它重定向到压缩版，少传约 100KB。
+-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 黑银骨架 × PETRONAS 信号
+     ========================================================== */
+  :root {
+    /* 品牌核心（references/mercedes.md） */
+    --carbon:      #060708;  /* 碳黑：页面底色、车漆层加载前的底 */
+    --silver:      #C8CCCE;  /* 结构银 */
+    --gunmetal:    #565F64;  /* 深灰 */
+    --titanium:    #3E464B;  /* 深钛灰 */
+    --teal:        #00A19B;  /* PETRONAS 青绿：主按钮、涂装线、图表主数据 */
+    --teal-soft:   #53C5BF;  /* 辅助青绿：hover、弱信号 */
+    --teal-glow:   #66D2CB;  /* 信号端点：涂装线笔尖、数据端点 */
+
+    /* 文字：全部浮在车漆上，一律冷白系（规范：偏冷，不要暖灰、不要米白） */
+    --text-1:      #F5F7F7;
+    --text-2:      #B8C0C2;
+    --text-3:      #7C878B;
+    --hairline:        rgba(200, 204, 206, 0.16);
+    --hairline-strong: rgba(200, 204, 206, 0.34);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 4px;                           /* Mercedes 圆角：精密、统一（web-craft.md） */
+    --ease: cubic-bezier(0.2, 0, 0, 1); /* 快出缓入 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: var(--titanium) var(--carbon); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--carbon); }
+  ::-webkit-scrollbar-thumb { background: var(--titanium); border-radius: 5px; border: 2px solid var(--carbon); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--teal); }
+  ::selection { background: var(--teal); color: #041010; }
+  :focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 2px; }
+
+  /* Lenis 平滑滚动需要的最小样式（来自 lenis/dist/lenis.css） */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  body {
+    position: relative;             /* 涂装线 SVG 以 body 为定位参照 */
+    background: var(--carbon);      /* 车漆层加载前 / 不可用时的底色，回退渐变由脚本按预设写入 */
+    background-attachment: fixed;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* ==========================================================
+     2. 车身图层 —— 车漆层 / 可读性压光 / 涂装线 / 内容
+     ========================================================== */
+  /* 车漆层：铺满视口、固定不动，页面内容在它上面滚过 */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;  /* 第一帧渲染完成后再淡入，避免加载时闪一下 */
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
+  /* 可读性压光：像摄影用的渐变灰镜，左侧（文字栏）压暗、右侧留给反射带。
+     规则：高光走留白，文字待在暗部 */
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(5, 6, 7, 0.60) 0%, rgba(5, 6, 7, 0.30) 42%, rgba(5, 6, 7, 0) 72%),
+      linear-gradient(180deg, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0) 14%, rgba(5, 6, 7, 0) 82%, rgba(5, 6, 7, 0.40) 100%);
+  }
+  /* 哑光噪点：极轻，消除大面积深色的"数字塑料感" */
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* 涂装线：覆盖整个文档，尺寸由 racing-line.js 设置 */
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* ==========================================================
+     3. 导航 —— 低重心、安静，顶部一层渐隐压光保证可读
+     ========================================================== */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(5, 6, 7, 0.72) 0%, rgba(5, 6, 7, 0) 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 18px; letter-spacing: -0.01em;
+    color: var(--text-1); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: #98A4A8; text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--teal); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     4. 按钮 —— 主按钮像仪表盘上的激活信号，不是营销大按钮
+     ========================================================== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 18px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary { background: var(--teal); color: #041010; }
+  .btn-primary:hover { background: #13B5AE; }
+  .btn-primary:active { background: #008882; }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }  /* 箭头前窜 3px：速度感微交互 */
+  /* 次按钮：透明 + 冷灰描边，垫一层极淡的碳黑，保证在亮反射带上也能读 */
+  .btn-ghost { background: rgba(6, 7, 8, 0.32); color: #D6DDDF; border-color: rgba(200, 204, 206, 0.34); }
+  .btn-ghost:hover { background: rgba(0, 161, 155, 0.10); border-color: rgba(83, 197, 191, 0.6); }
+
+  /* ==========================================================
+     5. Hero —— 前段冷银：巨字 + 遥测读数，全部直接浮在车漆上
+     ========================================================== */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(56px, 10.6vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  /* 逐行遮罩进场：每行是一个 overflow: hidden 的窗口，文字从窗口下方升起 */
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 7vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  /* 金属字面：白 → 冷银 → 钛灰 → 亮银的纵向渐变，像抛光金属铭牌 */
+  .metal-text {
+    font-style: normal;
+    background: linear-gradient(180deg, #FFFFFF 0%, #DCE1E3 34%, #8E989C 58%, #C9CFD1 78%, #F2F4F5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  /* 遥测读数：无盒排布，只有顶部发丝线和竖向分隔 —— HUD 是"浮"不是"压" */
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--text-2); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--teal-soft); font-weight: 500; }
+
+  /* ==========================================================
+     6. 区块通用 —— 背景一律透明，靠留白和涂装线分段，不再用色带
+     ========================================================== */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  /* ---- 功能索引：杂志目录式无盒行 ---- */
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  /* hover：一道 PETRONAS 青绿细线从左扫入，像光带扫过板件边缘 */
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--teal) 0%, rgba(0, 161, 155, 0) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--teal-soft); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--teal-soft); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     7. 过渡区（seam）—— 前银在这里交接给后黑
+     这一段留白最多：两种涂装混合的中间态不承载大段正文
+     ========================================================== */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 440px; color: var(--text-2); }
+  /* 涂装读数：随 --surface-tone（0 = 冷银，1 = 碳黑）实时变化 */
+  .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .bar::after {
+    content: ""; position: absolute; inset: 0;
+    background: var(--teal);
+    transform-origin: left;
+    transform: scaleX(var(--surface-tone, 0));
+  }
+
+  /* ==========================================================
+     8. 后段碳黑 —— 无盒数据版面 + 关键数字
+     ========================================================== */
+  .spread { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 72px; align-items: start; }
+  .spread h2 { font-family: var(--font-display); font-weight: 500; font-size: 34px; letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 16px; }
+  .spread p { color: var(--text-2); max-width: 360px; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 10px 4px;
+    font-family: var(--font-mono); font-size: 11px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--text-3);
+    border-bottom: 1px solid var(--silver);   /* 表头压一条银色结构线 */
+  }
+  td { padding: 18px 4px; font-size: 16px; border-bottom: 1px solid var(--hairline); }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; }
+  tbody tr { transition: background 250ms var(--ease); }
+  tbody tr:hover { background: rgba(0, 161, 155, 0.06); }
+  .tag {
+    display: inline-block; padding: 2px 8px;
+    border-radius: 999px;   /* 药丸形只允许用在小 tag 上 */
+    background: rgba(0, 161, 155, 0.16);
+    color: var(--teal-glow);
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); margin-top: 120px; border-top: 1px solid var(--hairline-strong); }
+  .stat { padding: 28px 24px 0; border-left: 1px solid var(--hairline); }
+  .stat:first-child { border-left: none; padding-left: 0; }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: clamp(44px, 5.4vw, 76px); line-height: 1; letter-spacing: -0.03em; }
+  .stat .unit { font-family: var(--font-mono); font-size: 18px; color: var(--text-2); margin-left: 6px; }
+  .stat .label { margin-top: 14px; font-size: 14px; color: var(--text-3); }
+
+  /* ---- 引用：不装卡片，直接写在碳黑车漆上 ---- */
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.8vw, 52px);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    max-width: 1000px;
+  }
+  .quote cite {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 32px;
+    font-style: normal; font-size: 14px; color: var(--text-3);
+  }
+  .quote cite::before { content: ""; width: 40px; height: 2px; background: var(--teal); }
+
+  /* ---- 收尾行动区 ---- */
+  .cta { padding-bottom: 200px; }
+  .cta .section-title { margin-bottom: 40px; }
+
+  /* ==========================================================
+     9. Footer —— 涂装线在这里收成一条终点线
+     ========================================================== */
+  footer { padding: 40px 0 48px; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  footer .note { font-size: 13px; color: var(--text-3); }
+
+  /* ==========================================================
+     10. 响应式 —— 先收装饰，再收列数，最后收字号
+     ========================================================== */
+  @media (max-width: 960px) {
+    .hero-foot { grid-template-columns: 1fr; gap: 0; }
+    .spread { grid-template-columns: 1fr; gap: 40px; }
+    .index-row { grid-template-columns: 56px 1fr 24px; }
+    .index-row p { grid-column: 2; }
+  }
+  @media (max-width: 760px) {
+    #racing-line { display: none; }         /* 窄屏装饰整体退场，不缩小硬塞 */
+    .nav-links { display: none; }
+    .hero { padding-top: 112px; }
+    .hero-title .l2 { padding-left: 0; }
+    .telemetry, .stats { grid-template-columns: 1fr; }
+    .readout, .stat { border-left: none; padding-left: 0; border-top: 1px solid var(--hairline); }
+    section { padding: 96px 0; }
+    .seam { min-height: 110vh; }
+    .paint-shade { background: linear-gradient(180deg, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0.35) 100%); }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 0 20px; }
+    .nav-cta .btn-ghost { display: none; }
+    footer .wrap { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .js .reveal, .js .hero-title .line > span { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 车身图层：车漆（WebGL）→ 可读性压光 → 涂装线；内容在最上层 -->
+<canvas id="paint" aria-hidden="true"></canvas>
+<div class="paint-shade" aria-hidden="true"></div>
+<svg id="racing-line"></svg>
+
+<nav class="nav" aria-label="主导航">
+  <div class="wrap">
+    <a class="nav-logo" href="#">Vertex</a>
+    <div class="nav-links">
+      <a href="#" aria-current="page">产品</a>
+      <a href="#">客户</a>
+      <a href="#">资源</a>
+      <a href="#">定价</a>
+    </div>
+    <div class="nav-cta">
+      <a class="btn btn-ghost btn-sm" href="#">预约演示</a>
+      <a class="btn btn-primary btn-sm" href="#">开始使用</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!--
+    data-line：涂装线经过的锚点（区块盒子内的百分比坐标 x,y）。
+    所有区块的锚点按顺序连成一条线；y 要逐个往下走。
+  -->
+  <header class="hero" data-line="0,60 30,66 68,74 97,86">
+    <div class="wrap">
+      <p class="eyebrow">Vertex · 2026 Quarterly Review</p>
+      <h1 class="hero-title">
+        <span class="line"><span>Data, forged</span></span>
+        <span class="line l2"><span>in <em class="metal-text">Silver Arrows.</em></span></span>
+      </h1>
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p>把 Mercedes-AMG PETRONAS 的黑银与精密，穿在一个普通数据产品身上。整页是一块车身：前段冷银，后段碳黑，唯一的彩色是一条低位 PETRONAS 流线。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#">开始使用 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#">预约演示</a>
+          </div>
+        </div>
+      </div>
+      <dl class="telemetry">
+        <div class="readout">
+          <dt data-decrypt>Monthly signups</dt>
+          <dd><span class="value" data-count="2.4">2.4</span><span class="unit">k</span></dd>
+          <dd class="delta"><b>↑ 5.5×</b> vs 上周</dd>
+        </div>
+        <div class="readout">
+          <dt data-decrypt>System load</dt>
+          <dd><span class="value" data-count="72.4">72.4</span><span class="unit">%</span></dd>
+          <dd class="delta">峰值 <b>81.0%</b> · 14:20</dd>
+        </div>
+        <div class="readout">
+          <dt data-decrypt>P95 latency</dt>
+          <dd><span class="value" data-count="38">38</span><span class="unit">ms</span></dd>
+          <dd class="delta"><b>↓ 12%</b> 环比</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <section class="precision" data-line="97,4 97,62 52,90 4,98">
+    <div class="wrap">
+      <h2 class="section-title reveal">精密不是复杂，<br>是把每个像素放在该在的位置。</h2>
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>问一句，看穿一层</h3>
+          <p>自然语言查询直接下钻到明细。图表是手势般的一根线，不是塞满坐标轴的报表。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" href="#" style="--d: 80ms">
+          <span class="no">02</span>
+          <h3>让流程自己跑</h3>
+          <p>工作流在表面之下安静运转，只有需要你决策的时刻才浮上来。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" href="#" style="--d: 160ms">
+          <span class="no">03</span>
+          <h3>权限清晰到行</h3>
+          <p>行级权限与审计一体。青绿只出现在你按下去的那个按钮上。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 过渡区：视口中线从这里的上沿走到下沿时，车漆从冷银过渡到碳黑 -->
+  <section class="seam" data-seam data-line="4,6 22,34 78,64 96,94">
+    <div class="wrap">
+      <p class="eyebrow reveal">02 → 03 · Handoff</p>
+      <h2 class="seam-title reveal">每一次交接，<br>都不留缝。</h2>
+      <p class="reveal" style="--d: 80ms">查询、建模、告警、审计在同一块表面上完成交接。你看到的是一条线，而不是四个系统。</p>
+      <div class="tone-meter reveal" style="--d: 160ms" aria-hidden="true">
+        <span>SILVER</span><span class="bar"></span><span>CARBON</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="data" data-line="96,4 96,56 48,86 4,96">
+    <div class="wrap">
+      <div class="spread">
+        <div class="reveal">
+          <h2>渠道，摊开在碳黑上。</h2>
+          <p>数据不必装进盒子。发丝线、等宽数字和留白，就是它需要的全部结构。</p>
+        </div>
+        <table class="reveal" style="--d: 80ms">
+          <thead>
+            <tr><th>渠道</th><th class="num">访问</th><th class="num">转化</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr><td>自然搜索</td><td class="num">8,204</td><td class="num">4.2%</td><td><span class="tag">TOP</span></td></tr>
+            <tr><td>直接访问</td><td class="num">5,113</td><td class="num">3.1%</td><td></td></tr>
+            <tr><td>社交媒体</td><td class="num">2,882</td><td class="num">2.4%</td><td></td></tr>
+            <tr><td>邮件营销</td><td class="num">1,997</td><td class="num">1.8%</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value" data-count="99.99">99.99</span><span class="unit">%</span></div>
+          <p class="label">过去 12 个月可用性</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value" data-count="38">38</span><span class="unit">ms</span></div>
+          <p class="label">P95 查询延迟</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value" data-count="1.2">1.2</span><span class="unit">B</span></div>
+          <p class="label">每日处理行数</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" data-line="4,6 4,70 36,96">
+    <div class="wrap">
+      <blockquote class="reveal">“它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。”</blockquote>
+      <cite class="reveal" style="--d: 80ms">Head of Operations, Vantage Team</cite>
+    </div>
+  </section>
+
+  <section class="cta" data-line="36,4 74,40 97,86">
+    <div class="wrap">
+      <h2 class="section-title reveal">把精密交给系统，<br>把判断留给你。</h2>
+      <div class="actions reveal" style="--d: 80ms">
+        <a class="btn btn-primary" href="#">开始使用 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#">预约演示</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-line="97,0 72,0">
+  <div class="wrap">
+    <span class="nav-logo">Vertex</span>
+    <span class="note">内容与赛车无关，仍应一眼认出 Silver Arrows 的前银后黑与 PETRONAS 流线 —— 这是最终校验标准</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { MERCEDES } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  /* ==========================================================
+     页面脚本：连续车身 + 进场动效
+     ========================================================== */
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 车漆层不可用（不支持 WebGL / GPU 上下文丢失）时，换成预设里的 CSS 渐变
+  document.body.style.backgroundImage = MERCEDES.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('paint'),
+    svg: document.getElementById('racing-line'),
+    preset: MERCEDES,
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+
+  // 调试入口：控制台里可以用 window.__surface 调参（例如 __surface.surface.setTone(1)）
+  window.__surface = page;
+
+  /* ---- 进入视口时触发：淡入、数字滚动、标签解码 ---- */
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
+    }
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal, [data-count], [data-decrypt]').forEach((el) => {
+    if (reducedMotion) el.classList.add('in');  // 减少动态效果：直接显示最终状态
+    else observer.observe(el);
+  });
+
+  /** 数字从 0 滚动到目标值（等宽数字，宽度不跳） */
+  function countUp(el) {
+    const raw = el.dataset.count;
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);  // easeOutCubic
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /** 标签解码：先显示随机字符，再从左到右逐个"锁定"成真实文字，像遥测信号接入 */
+  function decrypt(el) {
+    const finalText = el.textContent;
+    const glyphs = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const duration = 900;
+    const start = performance.now();
+    el.setAttribute('aria-label', finalText);  // 读屏软件直接读最终文字，不读乱码
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const locked = Math.floor(p * finalText.length);
+      let out = '';
+      for (let i = 0; i < finalText.length; i++) {
+        const ch = finalText[i];
+        out += i < locked || ch === ' ' ? ch : glyphs[(Math.random() * glyphs.length) | 0];
+      }
+      el.textContent = out;
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+</script>
+</body>
+</html>

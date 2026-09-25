@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scuderia Ferrari HP 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Scuderia Ferrari HP 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  与 editorial 模板的根本区别：页面不再是一段段色带，而是一块连续的车身。
+  - 车漆层：position: fixed 的全屏 WebGL（assets/surface/paint-surface.js），
+    所有区块背景透明，高光泽 Rosso Scuderia 与环境反射贯穿整页
+  - 亮红向深酒红过渡：页顶高能见度 Rosso Scuderia 赛车烤漆，经过 [data-seam]
+    过渡区后变成深酒红与炭黑（2026 SF-26 官方语义：鲜烈车头 → 雕塑暗影）
+  - 贯穿线：一条 Ferrari 结构白涂装线配法拉利黄笔尖（racing-line.js）从页顶描到页底
+  - 动效等级 L2（产品官网）：连续车漆 + 涂装线 + 文字进场，没有 hero 招牌特效
+  - 内容与赛车无关：证明配色体系可迁移到任何网页
+  颜色 token 与 references/ferrari.md 对齐。
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  // 有 JS 时才启用"进场前隐藏"的样式；JS 失败时内容保持可见
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!--
+  依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
+-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 跃马意式红 × 结构白 × 炭黑
+     ========================================================== */
+  :root {
+    /* 品牌核心（references/ferrari.md） */
+    --carbon:        #0E0E0F;  /* 炭黑：页面底色、暗部骨架 */
+    --rosso:         #D3141C;  /* 主红 / Rosso Scuderia：主识别、主按钮、高光反射 */
+    --rosso-deep:    #A3161B;  /* 深红：中间层 */
+    --rosso-shadow:  #6D0F13;  /* 辅助深红：阴影结构 */
+    --white:         #F4F2EE;  /* 结构白：车身切线、涂装线、首要文字 */
+    --giallo:        #F7D117;  /* 法拉利黄：信号端点、微量血统强调 */
+
+    /* 文字：浮在车漆上，意式暖白冷灰体系 */
+    --text-1:        #F7F4F1;
+    --text-2:        #D7CDCA;
+    --text-3:        #A69390;
+    --hairline:        rgba(244, 242, 238, 0.16);
+    --hairline-strong: rgba(244, 242, 238, 0.34);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;                           /* Ferrari 风格：棱角锐利、紧绷雕塑感 */
+    --ease: cubic-bezier(0.2, 0, 0, 1); /* 快出缓入 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: var(--rosso-shadow) var(--carbon); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--carbon); }
+  ::-webkit-scrollbar-thumb { background: #2A1215; border-radius: 4px; border: 2px solid var(--carbon); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--rosso); }
+  ::selection { background: var(--rosso); color: #FFFFFF; }
+  :focus-visible { outline: 2px solid var(--rosso); outline-offset: 3px; border-radius: 2px; }
+
+  /* Lenis 平滑滚动样式 */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  body {
+    position: relative;
+    background: var(--carbon);
+    background-attachment: fixed;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* ==========================================================
+     2. 车身图层 —— 车漆层 / 可读性压光 / 涂装线 / 内容
+     ========================================================== */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(14, 14, 15, 0.65) 0%, rgba(14, 14, 15, 0.30) 42%, rgba(14, 14, 15, 0) 72%),
+      linear-gradient(180deg, rgba(14, 14, 15, 0.55) 0%, rgba(14, 14, 15, 0) 14%, rgba(14, 14, 15, 0) 82%, rgba(14, 14, 15, 0.40) 100%);
+  }
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* ==========================================================
+     3. 导航
+     ========================================================== */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(14, 14, 15, 0.8) 0%, rgba(14, 14, 15, 0) 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 18px; letter-spacing: -0.01em;
+    color: var(--text-1); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: var(--text-2); text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--rosso); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     4. 按钮
+     ========================================================== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 18px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary { background: var(--rosso); color: #FFFFFF; }
+  .btn-primary:hover { background: #E51D25; }
+  .btn-primary:active { background: #B30F16; }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn-ghost { background: rgba(14, 14, 15, 0.4); color: var(--text-1); border-color: rgba(244, 242, 238, 0.28); }
+  .btn-ghost:hover { background: rgba(211, 20, 28, 0.12); border-color: rgba(211, 20, 28, 0.6); }
+
+  /* ==========================================================
+     5. Hero
+     ========================================================== */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(56px, 10.6vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 7vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  .metal-text {
+    font-style: normal;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F5CECF 32%, #A3161B 65%, #F4F2EE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--text-2); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--giallo); font-weight: 500; }
+
+  /* ==========================================================
+     6. 区块通用
+     ========================================================== */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--rosso) 0%, rgba(211, 20, 28, 0) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--rosso); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--rosso); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     7. 过渡区（seam）—— Rosso Scuderia 交接给深酒红与炭黑暗影
+     ========================================================== */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 440px; color: var(--text-2); }
+  .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: calc(var(--surface-tone, 0) * 100%);
+    background: var(--rosso);
+    box-shadow: 0 0 8px var(--rosso);
+  }
+
+  /* ==========================================================
+     8. 深度呈现
+     ========================================================== */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; border-top: 1px solid var(--hairline-strong);
+    padding-top: 56px;
+  }
+  .feature-col h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin-bottom: 14px; color: var(--text-1); }
+  .feature-col p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+  .feature-col .tag { font-family: var(--font-mono); font-size: 11px; color: var(--giallo); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
+
+  /* 统计数字行 */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 80px;
+    padding-top: 48px; border-top: 1px solid var(--hairline);
+  }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--text-1); }
+  .stat .unit { font-family: var(--font-mono); font-size: 20px; color: var(--rosso); margin-left: 4px; }
+  .stat .label { font-size: 14px; color: var(--text-3); margin-top: 10px; }
+
+  /* 引言 */
+  .quote { padding: 120px 0; }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    max-width: 880px;
+  }
+  .quote cite { display: block; font-family: var(--font-mono); font-size: 12px; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 28px; }
+
+  /* CTA */
+  .cta .wrap { border-top: 1px solid var(--hairline-strong); padding-top: 96px; }
+
+  /* 页脚 */
+  footer { padding: 64px 0 80px; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: baseline; }
+  footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .hero-foot { grid-template-columns: 1fr; gap: 40px; }
+    .telemetry { grid-template-columns: 1fr; border-top: none; }
+    .readout { border-left: none; border-top: 1px solid var(--hairline); padding: 16px 0; }
+    .index-row { grid-template-columns: 56px 1fr; gap: 12px; }
+    .index-row p { grid-column: 2; }
+    .index-row .arr { display: none; }
+    .feature-grid, .stats { grid-template-columns: 1fr; gap: 40px; }
+    footer .wrap { flex-direction: column; gap: 20px; }
+    footer .note { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 连续车漆 Canvas：全屏、WebGL PBR 物理反射 -->
+<canvas id="paint"></canvas>
+
+<!-- 渐变灰镜压光 -->
+<div class="paint-shade" aria-hidden="true"></div>
+
+<!-- 贯穿全页的 SVG 涂装线 -->
+<svg id="racing-line" aria-hidden="true"></svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="#">Vertex</a>
+    <nav class="nav-links">
+      <a href="#features" aria-current="page">技术架构</a>
+      <a href="#seam">车身过渡</a>
+      <a href="#performance">遥测规格</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost" href="#">文档</a>
+      <a class="btn btn-sm btn-primary" href="#">申请试用</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero：首段高光 Rosso Scuderia -->
+  <section class="hero" data-line="50,22 15,85">
+    <div class="wrap">
+      <p class="eyebrow" data-decrypt="SCUDERIA FERRARI // MARANELLO SPEC">SCUDERIA FERRARI // MARANELLO SPEC</p>
+
+      <h1 class="hero-title">
+        <span class="line"><span>Rosso</span></span>
+        <span class="line l2"><span class="metal-text">Scuderia</span></span>
+      </h1>
+
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p>
+            意式赛车激情回归高光泽赛车烤漆。更亮、更强烈的 Rosso Scuderia 主识别色，
+            配合白色结构切线与深酒红暗影，重塑极具攻击性的机械雕塑美学。
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#features">探索材质规范 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#performance">查看遥测参数</a>
+          </div>
+        </div>
+
+        <dl class="telemetry">
+          <div class="readout">
+            <dt>进站基准</dt>
+            <dd><span class="value num" data-count="1.82">1.82</span><span class="unit">s</span></dd>
+            <p class="delta">极速换胎 <b>PRECISION</b></p>
+          </div>
+          <div class="readout">
+            <dt>动力单元</dt>
+            <dd><span class="value num" data-count="1065">1065</span><span class="unit">BHP</span></dd>
+            <p class="delta">066/12 <b>MAX REV</b></p>
+          </div>
+          <div class="readout">
+            <dt>蒙扎极速</dt>
+            <dd><span class="value num" data-count="356">356</span><span class="unit">km/h</span></dd>
+            <p class="delta">低风阻配置 <b>REDLINE</b></p>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 目录索引 -->
+  <section id="features" data-line="88,18 72,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="ENGINEERING ARCHITECTURE">ENGINEERING ARCHITECTURE</p>
+      <h2 class="section-title reveal">精密意式工程，<br>每寸曲面皆为速度而生。</h2>
+
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>高光泽赛车烤漆</h3>
+          <p>摒弃哑光磨砂质感，回归纯正 Gloss Paint，在明亮日光下映射出高锐利度反射。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 60ms" href="#">
+          <span class="no">02</span>
+          <h3>结构白力量切线</h3>
+          <p>白色承担驾驶舱周围与引擎盖速度带的结构分割职责，勾勒张力十足的雕塑感线条。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 120ms" href="#">
+          <span class="no">03</span>
+          <h3>黄旗血统点睛</h3>
+          <p>微量 Giallo Modena 点缀于轮毂锁止机构与端板细节，致敬跃马数十载马拉内罗荣耀。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装缝合区 (Seam)：亮红过渡至深酒红暗影 -->
+  <section id="seam" class="seam" data-seam data-line="28,25 50,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="BODYWORK SEAM TRANSITION">BODYWORK SEAM TRANSITION</p>
+      <h2 class="seam-title reveal">从高能见度主红，<br>过渡到后段雕塑暗影。</h2>
+      <p class="reveal" style="--d: 80ms">
+        随视口滚动，PBR 材质在全屏 Mesh 上插值流动，色相平滑转变为深酒红与底盘炭黑。
+      </p>
+      <div class="tone-meter reveal" style="--d: 140ms">
+        <span>ROSSO SCUDERIA</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>BODYWORK SHADOW</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 性能数据与统计 -->
+  <section id="performance" data-line="75,20 30,80">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="MOTORSPORT LEGACY">MOTORSPORT LEGACY</p>
+      <h2 class="section-title reveal">赛道验证的极限性能指标</h2>
+
+      <div class="feature-grid">
+        <div class="feature-col reveal">
+          <span class="tag">CONSTRUCTORS</span>
+          <h3>16 次世界冠军</h3>
+          <p>F1 历史上最成功的车队，深厚的工程积淀与意式美学深度融合。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 80ms">
+          <span class="tag">COMPRESSION</span>
+          <h3>高压缩比点火</h3>
+          <p>极速响应的涡轮增压系统与混合动力 MGU-K 实现毫秒级动能释放。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 160ms">
+          <span class="tag">STABILITY</span>
+          <h3>主动悬挂感知</h3>
+          <p>高速弯道极限姿态下精准掌控气流走向，提供源源不断的地面效应下压力。</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value" data-count="99.98">99.98</span><span class="unit">%</span></div>
+          <p class="label">遥测系统可用率</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value" data-count="32">32</span><span class="unit">ms</span></div>
+          <p class="label">ECU 传感器采样延迟</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value" data-count="16">16</span><span class="unit">x</span></div>
+          <p class="label">车队世界总冠军</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" data-line="4,6 4,70 36,96">
+    <div class="wrap">
+      <blockquote class="reveal">“当你坐进驾驶舱，那抹鲜红不仅是一种颜色，更是所有马拉内罗技师的心跳。”</blockquote>
+      <cite class="reveal" style="--d: 80ms">Scuderia Ferrari HP Race Engineer</cite>
+    </div>
+  </section>
+
+  <section class="cta" data-line="36,4 74,40 97,86">
+    <div class="wrap">
+      <h2 class="section-title reveal">将意式激情注入架构，<br>体验极致高光泽车漆。</h2>
+      <div class="actions reveal" style="--d: 80ms">
+        <a class="btn btn-primary" href="#">立刻开始 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#">技术咨询</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-line="97,0 72,0">
+  <div class="wrap">
+    <span class="nav-logo">Vertex</span>
+    <span class="note">内容与赛车无关，仍应一眼认出 Rosso Scuderia 的高光泽车漆与结构白切线</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { FERRARI } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  /* ==========================================================
+     页面脚本：连续车身 + 进场动效
+     ========================================================== */
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.body.style.backgroundImage = FERRARI.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('paint'),
+    svg: document.getElementById('racing-line'),
+    preset: FERRARI,
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+
+  window.__surface = page;
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
+    }
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal, [data-count], [data-decrypt]').forEach((el) => {
+    if (reducedMotion) el.classList.add('in');
+    else observer.observe(el);
+  });
+
+  function countUp(el) {
+    const raw = el.dataset.count;
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function decrypt(el) {
+    const final = el.dataset.decrypt || el.textContent;
+    const chars = '0123456789ABCDEF/_-';
+    const len = final.length;
+    let step = 0;
+    const total = 14;
+    const timer = setInterval(() => {
+      step++;
+      const locked = Math.floor((step / total) * len);
+      let out = final.slice(0, locked);
+      for (let i = locked; i < len; i++) {
+        out += final[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (step >= total) {
+        clearInterval(timer);
+        el.textContent = final;
+      }
+    }, 40);
+  }
+</script>
+</body>
+</html>

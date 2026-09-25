@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aston Martin Aramco F1 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Aston Martin Aramco F1 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  与 editorial 模板的根本区别：页面不再是一段段色带，而是一块连续的车身。
+  - 车漆层：position: fixed 的全屏 WebGL（assets/surface/paint-surface.js），
+    所有区块背景透明，深邃致密的 Aston Martin Racing Green 金属车漆贯穿整页
+  - 浓绿向碳黑过渡：页顶深暗夜绿，经过 [data-seam] 过渡区后过渡为暗夜碳黑与青绿反光
+    （2026 AMR26 官方语义：深邃车头 → 碳纤维轻量后段）
+  - 贯穿线：一条荧光黄绿 Lime 信号流线（racing-line.js）从页顶描到页底
+  - 动效等级 L2（产品官网）：连续车漆 + 涂装线 + 文字进场，沉稳、奢华、克制
+  - 内容与赛车无关：证明配色体系可迁移到任何网页
+  颜色 token 与 references/aston-martin.md 对齐。
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 英伦竞速绿 × 荧光黄绿 × 奢华深黑
+     ========================================================== */
+  :root {
+    /* 品牌核心（references/aston-martin.md） */
+    --carbon:        #0D0F10;  /* 碳黑：页面底色 */
+    --racing-green:  #002420;  /* 主深绿 / Racing Green Base：深色金属底漆 */
+    --green-accent:  #037A68;  /* 高光绿 / Green Accent：车身反射带 */
+    --lime:          #A9D23E;  /* 荧光黄绿 / Lime Highlight：涂装线、主按钮信号 */
+    --lime-glow:     #BCE34B;  /* 荧光笔尖 / High Voltage Pulse */
+    --white:         #FFFFFF;
+
+    /* 文字系统 */
+    --text-1:        #F2F5F4;
+    --text-2:        #B0BEBB;
+    --text-3:        #6E7F7C;
+    --hairline:        rgba(242, 245, 244, 0.14);
+    --hairline-strong: rgba(242, 245, 244, 0.30);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;                           /* Aston Martin 风格：精雕细琢的英伦奢华切角 */
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: #12302A var(--carbon); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--carbon); }
+  ::-webkit-scrollbar-thumb { background: #12302A; border-radius: 4px; border: 2px solid var(--carbon); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--lime); }
+  ::selection { background: var(--lime); color: #002420; }
+  :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 2px; }
+
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  body {
+    position: relative;
+    background: var(--carbon);
+    background-attachment: fixed;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* 车身渲染层 */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(13, 15, 16, 0.65) 0%, rgba(13, 15, 16, 0.30) 42%, rgba(13, 15, 16, 0) 72%),
+      linear-gradient(180deg, rgba(13, 15, 16, 0.55) 0%, rgba(13, 15, 16, 0) 14%, rgba(13, 15, 16, 0) 82%, rgba(13, 15, 16, 0.40) 100%);
+  }
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* 导航 */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(13, 15, 16, 0.8) 0%, rgba(13, 15, 16, 0) 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 18px; letter-spacing: -0.01em;
+    color: var(--text-1); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: var(--text-2); text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--lime); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* 按钮 */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 18px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary { background: var(--lime); color: #002420; font-weight: 600; }
+  .btn-primary:hover { background: #BCE34B; }
+  .btn-primary:active { background: #8AB52A; }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn-ghost { background: rgba(13, 15, 16, 0.4); color: var(--text-1); border-color: rgba(242, 245, 244, 0.28); }
+  .btn-ghost:hover { background: rgba(169, 210, 62, 0.12); border-color: rgba(169, 210, 62, 0.6); }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(56px, 10.6vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 7vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  .metal-text {
+    font-style: normal;
+    background: linear-gradient(180deg, #FFFFFF 0%, #D4F0E4 34%, #037A68 68%, #F2F5F4 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--text-2); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--lime); font-weight: 500; }
+
+  /* 区块通用 */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--lime) 0%, rgba(169, 210, 62, 0) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--lime); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--lime); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* 过渡区（seam）：竞速绿交接给碳黑 */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 440px; color: var(--text-2); }
+  .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: calc(var(--surface-tone, 0) * 100%);
+    background: var(--lime);
+    box-shadow: 0 0 8px var(--lime);
+  }
+
+  /* 深度呈现 */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; border-top: 1px solid var(--hairline-strong);
+    padding-top: 56px;
+  }
+  .feature-col h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin-bottom: 14px; color: var(--text-1); }
+  .feature-col p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+  .feature-col .tag { font-family: var(--font-mono); font-size: 11px; color: var(--lime); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 80px;
+    padding-top: 48px; border-top: 1px solid var(--hairline);
+  }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--text-1); }
+  .stat .unit { font-family: var(--font-mono); font-size: 20px; color: var(--lime); margin-left: 4px; }
+  .stat .label { font-size: 14px; color: var(--text-3); margin-top: 10px; }
+
+  .quote { padding: 120px 0; }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    max-width: 880px;
+  }
+  .quote cite { display: block; font-family: var(--font-mono); font-size: 12px; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 28px; }
+
+  .cta .wrap { border-top: 1px solid var(--hairline-strong); padding-top: 96px; }
+
+  footer { padding: 64px 0 80px; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: baseline; }
+  footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .hero-foot { grid-template-columns: 1fr; gap: 40px; }
+    .telemetry { grid-template-columns: 1fr; border-top: none; }
+    .readout { border-left: none; border-top: 1px solid var(--hairline); padding: 16px 0; }
+    .index-row { grid-template-columns: 56px 1fr; gap: 12px; }
+    .index-row p { grid-column: 2; }
+    .index-row .arr { display: none; }
+    .feature-grid, .stats { grid-template-columns: 1fr; gap: 40px; }
+    footer .wrap { flex-direction: column; gap: 20px; }
+    footer .note { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="paint"></canvas>
+<div class="paint-shade" aria-hidden="true"></div>
+<svg id="racing-line" aria-hidden="true"></svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="#">Vertex</a>
+    <nav class="nav-links">
+      <a href="#features" aria-current="page">技术架构</a>
+      <a href="#seam">车身过渡</a>
+      <a href="#performance">遥测规格</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost" href="#">文档</a>
+      <a class="btn btn-sm btn-primary" href="#">申请试用</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero" data-line="50,22 15,85">
+    <div class="wrap">
+      <p class="eyebrow" data-decrypt="ASTON MARTIN ARAMCO // SILVERSTONE SPEC">ASTON MARTIN ARAMCO // SILVERSTONE SPEC</p>
+
+      <h1 class="hero-title">
+        <span class="line"><span>Racing</span></span>
+        <span class="line l2"><span class="metal-text">Green</span></span>
+      </h1>
+
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p>
+            深邃、克制、速度感强。Aston Martin Racing Green 呈现金属车漆在光线下的厚重层次，
+            青绿反射带与少量荧光黄绿 Lime 高光交织，展现英伦现代高端赛车的克制奢华。
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#features">探索材质规范 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#performance">查看遥测参数</a>
+          </div>
+        </div>
+
+        <dl class="telemetry">
+          <div class="readout">
+            <dt>进站耗时</dt>
+            <dd><span class="value num" data-count="1.88">1.88</span><span class="unit">s</span></dd>
+            <p class="delta">极速换胎 <b>STABLE</b></p>
+          </div>
+          <div class="readout">
+            <dt>混合动力输出</dt>
+            <dd><span class="value num" data-count="1050">1050</span><span class="unit">BHP</span></dd>
+            <p class="delta">Honda Works PU <b>PEAK</b></p>
+          </div>
+          <div class="readout">
+            <dt>斯帕直道极速</dt>
+            <dd><span class="value num" data-count="351">351</span><span class="unit">km/h</span></dd>
+            <p class="delta">低阻翼片 <b>AERO FLOW</b></p>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" data-line="88,18 72,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="BRITISH RACING LUXURY">BRITISH RACING LUXURY</p>
+      <h2 class="section-title reveal">沉稳克制的工程哲学，<br>每一道反射都是深思熟虑的结果。</h2>
+
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>深邃竞速绿金属漆</h3>
+          <p>高密度金属漆底色，在摄影棚柔光带照射下展开层层递进的暗夜绿韵律。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 60ms" href="#">
+          <span class="no">02</span>
+          <h3>反射绿车身流动层</h3>
+          <p>受光边缘展现清脆的薄荷青绿反射，赋予静态车身极具压迫感的速度弧度。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 120ms" href="#">
+          <span class="no">03</span>
+          <h3>荧光 Lime 脉冲点缀</h3>
+          <p>高饱和 Lime 黄绿细线精准标定气流分离边界，在沉暗色系中瞬间抓住视线聚焦。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section id="seam" class="seam" data-seam data-line="28,25 50,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="RACING GREEN TO CARBON TRANSITION">RACING GREEN TO CARBON TRANSITION</p>
+      <h2 class="seam-title reveal">从深邃暗夜绿，<br>平滑过渡至碳黑清漆。</h2>
+      <p class="reveal" style="--d: 80ms">
+        随视口滚动，PBR 材质在全屏 Mesh 上插值流动，展现浓绿车头向碳纤维轻量引擎盖的自然融合。
+      </p>
+      <div class="tone-meter reveal" style="--d: 140ms">
+        <span>RACING GREEN BASE</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>CARBON BLACK SHADOW</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="performance" data-line="75,20 30,80">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="AMR TECHNOLOGY CAMPUS">AMR TECHNOLOGY CAMPUS</p>
+      <h2 class="section-title reveal">银石工厂顶级工程设施支撑</h2>
+
+      <div class="feature-grid">
+        <div class="feature-col reveal">
+          <span class="tag">AMRTC FACILITY</span>
+          <h3>银石技术园区总部</h3>
+          <p>配备全新独立专用风洞与尖端模拟器，实现整车研发全周期自给自足。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 80ms">
+          <span class="tag">HONDA WORKS</span>
+          <h3>厂队动力单元合作</h3>
+          <p>与本田建立深度独家厂队动力系统集成，实现底盘与引擎的最优热管理封装。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 160ms">
+          <span class="tag">SUSTAINABILITY</span>
+          <h3>可持续燃料调校</h3>
+          <p>依托沙特阿美先进燃油科技，率先在 2026 规程下验证 100% 净零排放燃料。</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value" data-count="99.96">99.96</span><span class="unit">%</span></div>
+          <p class="label">遥测传输可靠性</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value" data-count="35">35</span><span class="unit">ms</span></div>
+          <p class="label">气动传感器响应时延</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value" data-count="2026">2026</span><span class="unit">ERA</span></div>
+          <p class="label">厂队新纪元启航</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" data-line="4,6 4,70 36,96">
+    <div class="wrap">
+      <blockquote class="reveal">“豪华不是堆砌繁杂的元素，而是在最极端的速度面前，保持绝对的从容与克制。”</blockquote>
+      <cite class="reveal" style="--d: 80ms">Aston Martin Aramco Chief Technical Officer</cite>
+    </div>
+  </section>
+
+  <section class="cta" data-line="36,4 74,40 97,86">
+    <div class="wrap">
+      <h2 class="section-title reveal">体验英伦赛车奢华，<br>探索致密金属竞速绿。</h2>
+      <div class="actions reveal" style="--d: 80ms">
+        <a class="btn btn-primary" href="#">立刻开始 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#">技术咨询</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-line="97,0 72,0">
+  <div class="wrap">
+    <span class="nav-logo">Vertex</span>
+    <span class="note">内容与赛车无关，仍应一眼认出 Racing Green 的金属质感与 Lime 高光点缀</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { ASTON_MARTIN } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.body.style.backgroundImage = ASTON_MARTIN.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('paint'),
+    svg: document.getElementById('racing-line'),
+    preset: ASTON_MARTIN,
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+
+  window.__surface = page;
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
+    }
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal, [data-count], [data-decrypt]').forEach((el) => {
+    if (reducedMotion) el.classList.add('in');
+    else observer.observe(el);
+  });
+
+  function countUp(el) {
+    const raw = el.dataset.count;
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function decrypt(el) {
+    const final = el.dataset.decrypt || el.textContent;
+    const chars = '0123456789ABCDEF/_-';
+    const len = final.length;
+    let step = 0;
+    const total = 14;
+    const timer = setInterval(() => {
+      step++;
+      const locked = Math.floor((step / total) * len);
+      let out = final.slice(0, locked);
+      for (let i = locked; i < len; i++) {
+        out += final[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (step >= total) {
+        clearInterval(timer);
+        el.textContent = final;
+      }
+    }, 40);
+  }
+</script>
+</body>
+</html>

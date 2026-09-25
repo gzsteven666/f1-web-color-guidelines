@@ -30,9 +30,14 @@
 │  ├─ cross-team-methodology.md
 │  └─ official-2026-sources.md
 ├─ assets/
+│  ├─ surface/                  ← 共享核心：WebGL PBR 车漆、PMREM 摄影棚天穹、SVG 贯穿赛道线与车队预设
 │  └─ templates/                ← 可直接双击打开的单文件 HTML 基准模板
+│     ├─ <team>-surface.html    ← 连续车身 PBR + 贯穿涂装线模式（双击直接运行）
 │     ├─ <team>-editorial.html  ← 每队一个浅色杂志模式（默认主参考）
 │     └─ aston-martin.html      ← 深色 Mission Control（dashboard 场景）
+├─ showcase/                    ← React + Vite + Tailwind CSS + React Bits 动效工程化 Showcase
+├─ scripts/
+│  └─ build-templates.mjs       ← 递归内联生成单文件模板的构建脚本
 └─ evals/
    └─ evals.json
 ```

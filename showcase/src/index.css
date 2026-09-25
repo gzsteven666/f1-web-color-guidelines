@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --petronas-green: #00A19B;
+    --petronas-bright: #27F4D2;
+    --silver: #C8CCCE;
+    --carbon-black: #090A0B;
+  }
+
+  html {
+    scroll-behavior: auto; /* 由 Lenis 接管平滑滚动，避免与 CSS 原生平滑滚动冲突 */
+    background-color: #050607;
+    color: #C8CCCE;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    background-color: #050607;
+  }
+}
+
+/* 优雅降级：当不支持 WebGL 或 WebGL 上下文丢失时的 CSS 受光渐变回退 */
+.no-webgl #surface-canvas {
+  display: none !important;
+}
+
+.no-webgl {
+  background:
+    radial-gradient(120% 70% at 28% 0%, rgba(200, 204, 206, 0.22) 0%, transparent 55%),
+    linear-gradient(180deg, #3E464B 0%, #101315 32%, #060708 60%, #050607 100%) !important;
+}

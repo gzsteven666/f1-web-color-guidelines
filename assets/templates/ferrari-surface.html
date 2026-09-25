@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<!-- 此文件由 scripts/build-templates.mjs 从 assets/templates/src/ferrari-surface.html 生成，请修改源文件后运行 npm run build:templates -->
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scuderia Ferrari HP 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Scuderia Ferrari HP 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  与 editorial 模板的根本区别：页面不再是一段段色带，而是一块连续的车身。
+  - 车漆层：position: fixed 的全屏 WebGL（assets/surface/paint-surface.js），
+    所有区块背景透明，高光泽 Rosso Scuderia 与环境反射贯穿整页
+  - 亮红向深酒红过渡：页顶高能见度 Rosso Scuderia 赛车烤漆，经过 [data-seam]
+    过渡区后变成深酒红与炭黑（2026 SF-26 官方语义：鲜烈车头 → 雕塑暗影）
+  - 贯穿线：一条 Ferrari 结构白涂装线配法拉利黄笔尖（racing-line.js）从页顶描到页底
+  - 动效等级 L2（产品官网）：连续车漆 + 涂装线 + 文字进场，没有 hero 招牌特效
+  - 内容与赛车无关：证明配色体系可迁移到任何网页
+  颜色 token 与 references/ferrari.md 对齐。
+
+  ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
+  ============================================================
+-->
+<script>
+  // 有 JS 时才启用"进场前隐藏"的样式；JS 失败时内容保持可见
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!--
+  依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
+-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 跃马意式红 × 结构白 × 炭黑
+     ========================================================== */
+  :root {
+    /* 品牌核心（references/ferrari.md） */
+    --carbon:        #0E0E0F;  /* 炭黑：页面底色、暗部骨架 */
+    --rosso:         #D3141C;  /* 主红 / Rosso Scuderia：主识别、主按钮、高光反射 */
+    --rosso-deep:    #A3161B;  /* 深红：中间层 */
+    --rosso-shadow:  #6D0F13;  /* 辅助深红：阴影结构 */
+    --white:         #F4F2EE;  /* 结构白：车身切线、涂装线、首要文字 */
+    --giallo:        #F7D117;  /* 法拉利黄：信号端点、微量血统强调 */
+
+    /* 文字：浮在车漆上，意式暖白冷灰体系 */
+    --text-1:        #F7F4F1;
+    --text-2:        #D7CDCA;
+    --text-3:        #A69390;
+    --hairline:        rgba(244, 242, 238, 0.16);
+    --hairline-strong: rgba(244, 242, 238, 0.34);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;                           /* Ferrari 风格：棱角锐利、紧绷雕塑感 */
+    --ease: cubic-bezier(0.2, 0, 0, 1); /* 快出缓入 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: var(--rosso-shadow) var(--carbon); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--carbon); }
+  ::-webkit-scrollbar-thumb { background: #2A1215; border-radius: 4px; border: 2px solid var(--carbon); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--rosso); }
+  ::selection { background: var(--rosso); color: #FFFFFF; }
+  :focus-visible { outline: 2px solid var(--rosso); outline-offset: 3px; border-radius: 2px; }
+
+  /* Lenis 平滑滚动样式 */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  body {
+    position: relative;
+    background: var(--carbon);
+    background-attachment: fixed;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* ==========================================================
+     2. 车身图层 —— 车漆层 / 可读性压光 / 涂装线 / 内容
+     ========================================================== */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(14, 14, 15, 0.65) 0%, rgba(14, 14, 15, 0.30) 42%, rgba(14, 14, 15, 0) 72%),
+      linear-gradient(180deg, rgba(14, 14, 15, 0.55) 0%, rgba(14, 14, 15, 0) 14%, rgba(14, 14, 15, 0) 82%, rgba(14, 14, 15, 0.40) 100%);
+  }
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* ==========================================================
+     3. 导航
+     ========================================================== */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(14, 14, 15, 0.8) 0%, rgba(14, 14, 15, 0) 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 18px; letter-spacing: -0.01em;
+    color: var(--text-1); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: var(--text-2); text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--rosso); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     4. 按钮
+     ========================================================== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 18px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary { background: var(--rosso); color: #FFFFFF; }
+  .btn-primary:hover { background: #E51D25; }
+  .btn-primary:active { background: #B30F16; }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn-ghost { background: rgba(14, 14, 15, 0.4); color: var(--text-1); border-color: rgba(244, 242, 238, 0.28); }
+  .btn-ghost:hover { background: rgba(211, 20, 28, 0.12); border-color: rgba(211, 20, 28, 0.6); }
+
+  /* ==========================================================
+     5. Hero
+     ========================================================== */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(56px, 10.6vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 7vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  .metal-text {
+    font-style: normal;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F5CECF 32%, #A3161B 65%, #F4F2EE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--text-2); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--giallo); font-weight: 500; }
+
+  /* ==========================================================
+     6. 区块通用
+     ========================================================== */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--rosso) 0%, rgba(211, 20, 28, 0) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--rosso); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--rosso); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     7. 过渡区（seam）—— Rosso Scuderia 交接给深酒红与炭黑暗影
+     ========================================================== */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 440px; color: var(--text-2); }
+  .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: calc(var(--surface-tone, 0) * 100%);
+    background: var(--rosso);
+    box-shadow: 0 0 8px var(--rosso);
+  }
+
+  /* ==========================================================
+     8. 深度呈现
+     ========================================================== */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; border-top: 1px solid var(--hairline-strong);
+    padding-top: 56px;
+  }
+  .feature-col h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin-bottom: 14px; color: var(--text-1); }
+  .feature-col p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+  .feature-col .tag { font-family: var(--font-mono); font-size: 11px; color: var(--giallo); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
+
+  /* 统计数字行 */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 80px;
+    padding-top: 48px; border-top: 1px solid var(--hairline);
+  }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--text-1); }
+  .stat .unit { font-family: var(--font-mono); font-size: 20px; color: var(--rosso); margin-left: 4px; }
+  .stat .label { font-size: 14px; color: var(--text-3); margin-top: 10px; }
+
+  /* 引言 */
+  .quote { padding: 120px 0; }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    max-width: 880px;
+  }
+  .quote cite { display: block; font-family: var(--font-mono); font-size: 12px; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 28px; }
+
+  /* CTA */
+  .cta .wrap { border-top: 1px solid var(--hairline-strong); padding-top: 96px; }
+
+  /* 页脚 */
+  footer { padding: 64px 0 80px; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: baseline; }
+  footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .hero-foot { grid-template-columns: 1fr; gap: 40px; }
+    .telemetry { grid-template-columns: 1fr; border-top: none; }
+    .readout { border-left: none; border-top: 1px solid var(--hairline); padding: 16px 0; }
+    .index-row { grid-template-columns: 56px 1fr; gap: 12px; }
+    .index-row p { grid-column: 2; }
+    .index-row .arr { display: none; }
+    .feature-grid, .stats { grid-template-columns: 1fr; gap: 40px; }
+    footer .wrap { flex-direction: column; gap: 20px; }
+    footer .note { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 连续车漆 Canvas：全屏、WebGL PBR 物理反射 -->
+<canvas id="paint"></canvas>
+
+<!-- 渐变灰镜压光 -->
+<div class="paint-shade" aria-hidden="true"></div>
+
+<!-- 贯穿全页的 SVG 涂装线 -->
+<svg id="racing-line" aria-hidden="true"></svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="#">Vertex</a>
+    <nav class="nav-links">
+      <a href="#features" aria-current="page">技术架构</a>
+      <a href="#seam">车身过渡</a>
+      <a href="#performance">遥测规格</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost" href="#">文档</a>
+      <a class="btn btn-sm btn-primary" href="#">申请试用</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero：首段高光 Rosso Scuderia -->
+  <section class="hero" data-line="50,22 15,85">
+    <div class="wrap">
+      <p class="eyebrow" data-decrypt="SCUDERIA FERRARI // MARANELLO SPEC">SCUDERIA FERRARI // MARANELLO SPEC</p>
+
+      <h1 class="hero-title">
+        <span class="line"><span>Rosso</span></span>
+        <span class="line l2"><span class="metal-text">Scuderia</span></span>
+      </h1>
+
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p>
+            意式赛车激情回归高光泽赛车烤漆。更亮、更强烈的 Rosso Scuderia 主识别色，
+            配合白色结构切线与深酒红暗影，重塑极具攻击性的机械雕塑美学。
+          </p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#features">探索材质规范 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#performance">查看遥测参数</a>
+          </div>
+        </div>
+
+        <dl class="telemetry">
+          <div class="readout">
+            <dt>进站基准</dt>
+            <dd><span class="value num" data-count="1.82">1.82</span><span class="unit">s</span></dd>
+            <p class="delta">极速换胎 <b>PRECISION</b></p>
+          </div>
+          <div class="readout">
+            <dt>动力单元</dt>
+            <dd><span class="value num" data-count="1065">1065</span><span class="unit">BHP</span></dd>
+            <p class="delta">066/12 <b>MAX REV</b></p>
+          </div>
+          <div class="readout">
+            <dt>蒙扎极速</dt>
+            <dd><span class="value num" data-count="356">356</span><span class="unit">km/h</span></dd>
+            <p class="delta">低风阻配置 <b>REDLINE</b></p>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 目录索引 -->
+  <section id="features" data-line="88,18 72,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="ENGINEERING ARCHITECTURE">ENGINEERING ARCHITECTURE</p>
+      <h2 class="section-title reveal">精密意式工程，<br>每寸曲面皆为速度而生。</h2>
+
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>高光泽赛车烤漆</h3>
+          <p>摒弃哑光磨砂质感，回归纯正 Gloss Paint，在明亮日光下映射出高锐利度反射。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 60ms" href="#">
+          <span class="no">02</span>
+          <h3>结构白力量切线</h3>
+          <p>白色承担驾驶舱周围与引擎盖速度带的结构分割职责，勾勒张力十足的雕塑感线条。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 120ms" href="#">
+          <span class="no">03</span>
+          <h3>黄旗血统点睛</h3>
+          <p>微量 Giallo Modena 点缀于轮毂锁止机构与端板细节，致敬跃马数十载马拉内罗荣耀。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装缝合区 (Seam)：亮红过渡至深酒红暗影 -->
+  <section id="seam" class="seam" data-seam data-line="28,25 50,75">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="BODYWORK SEAM TRANSITION">BODYWORK SEAM TRANSITION</p>
+      <h2 class="seam-title reveal">从高能见度主红，<br>过渡到后段雕塑暗影。</h2>
+      <p class="reveal" style="--d: 80ms">
+        随视口滚动，PBR 材质在全屏 Mesh 上插值流动，色相平滑转变为深酒红与底盘炭黑。
+      </p>
+      <div class="tone-meter reveal" style="--d: 140ms">
+        <span>ROSSO SCUDERIA</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>BODYWORK SHADOW</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 性能数据与统计 -->
+  <section id="performance" data-line="75,20 30,80">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="MOTORSPORT LEGACY">MOTORSPORT LEGACY</p>
+      <h2 class="section-title reveal">赛道验证的极限性能指标</h2>
+
+      <div class="feature-grid">
+        <div class="feature-col reveal">
+          <span class="tag">CONSTRUCTORS</span>
+          <h3>16 次世界冠军</h3>
+          <p>F1 历史上最成功的车队，深厚的工程积淀与意式美学深度融合。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 80ms">
+          <span class="tag">COMPRESSION</span>
+          <h3>高压缩比点火</h3>
+          <p>极速响应的涡轮增压系统与混合动力 MGU-K 实现毫秒级动能释放。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 160ms">
+          <span class="tag">STABILITY</span>
+          <h3>主动悬挂感知</h3>
+          <p>高速弯道极限姿态下精准掌控气流走向，提供源源不断的地面效应下压力。</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value" data-count="99.98">99.98</span><span class="unit">%</span></div>
+          <p class="label">遥测系统可用率</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value" data-count="32">32</span><span class="unit">ms</span></div>
+          <p class="label">ECU 传感器采样延迟</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value" data-count="16">16</span><span class="unit">x</span></div>
+          <p class="label">车队世界总冠军</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="quote" data-line="4,6 4,70 36,96">
+    <div class="wrap">
+      <blockquote class="reveal">“当你坐进驾驶舱，那抹鲜红不仅是一种颜色，更是所有马拉内罗技师的心跳。”</blockquote>
+      <cite class="reveal" style="--d: 80ms">Scuderia Ferrari HP Race Engineer</cite>
+    </div>
+  </section>
+
+  <section class="cta" data-line="36,4 74,40 97,86">
+    <div class="wrap">
+      <h2 class="section-title reveal">将意式激情注入架构，<br>体验极致高光泽车漆。</h2>
+      <div class="actions reveal" style="--d: 80ms">
+        <a class="btn btn-primary" href="#">立刻开始 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#">技术咨询</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-line="97,0 72,0">
+  <div class="wrap">
+    <span class="nav-logo">Vertex</span>
+    <span class="note">内容与赛车无关，仍应一眼认出 Rosso Scuderia 的高光泽车漆与结构白切线</span>
+  </div>
+</footer>
+
+<script type="module">
+// ===== 内联自 assets/surface/teams.js =====
+/**
+ * ==================================================================
+ * teams.js —— 车队预设（共享核心，原生 HTML 与 React 通用）
+ * ==================================================================
+ *
+ * 一个预设 = 一支车队"车身"的全部参数：
+ *   id       车队唯一标识符
+ *   name     车队官方名称
+ *   chassis  2026 规则底盘工程代号
+ *   livery   涂装阶段。页面滚动时 tone 从 0 走到 livery.length - 1，
+ *            车漆在相邻两个阶段之间插值（颜色、金属度、粗糙度……）
+ *   studio   摄影棚：几条长条柔光箱，决定反射带长什么样、在哪里
+ *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
+ *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
+ *   render   渲染参数（色调映射、曝光、像素比上限）
+ *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
+ *
+ * 颜色值严格与 references/<team>.md 保持一致；
+ * 遵循 cross-team-methodology.md：区分金属车漆、清漆高光、碳纤维骨架与速度线角色。
+ */
+
+// ------------------------------------------------------------------
+// 1. Mercedes-AMG PETRONAS (梅赛德斯-奔驰)
+// ------------------------------------------------------------------
+export const MERCEDES = {
+  id: 'mercedes',
+  name: 'Mercedes-AMG PETRONAS',
+  chassis: 'W17 E-PERFORMANCE',
+
+  // —— 涂装阶段：2026 W17 的"前银后黑"——
+  livery: [
+    {
+      // 阶段 0：冷银金属漆（Silver #C8CCCE）
+      color: '#C8CCCE',
+      metalness: 1.0,          // 纯金属底漆：反射带着银色本身的冷色调
+      roughness: 0.26,         // 底漆光滑细腻 → 大面积柔润的冷银流动高光
+      clearcoat: 1.0,          // 清漆层满强度
+      clearcoatRoughness: 0.08,// 清漆光滑 → 柔光箱留下清晰亮带
+      envIntensity: 1.05,
+    },
+    {
+      // 阶段 1：碳黑高光泽清漆（Chassis Carbon Black #090A0B）
+      color: '#090A0B',
+      metalness: 0.15,         // 近似非金属的黑漆：底色吸光，只剩清漆镜面反射
+      roughness: 0.32,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,// 钢琴黑观感，反射锐利
+      envIntensity: 1.15,
+    },
+  ],
+
+  studio: {
+    sky: '#6E787C',            // 冷灰棚顶：银漆的"银"主要来自这里
+    horizon: '#262D30',
+    ground: '#0A0C0E',
+    strips: [
+      { azimuth: 0, elevation: 32, w: 20, h: 1.4, color: '#FFFFFF', intensity: 14 },
+      { azimuth: 0, elevation: 13, w: 24, h: 0.3, color: '#FFFFFF', intensity: 10 },
+      { azimuth: 62, elevation: 6, w: 0.9, h: 16, color: '#DFE6EA', intensity: 5 },
+      // 低位 PETRONAS 青绿灯条（官方语义：PETRONAS green flow line 低位扫过车身）
+      { azimuth: -8, elevation: -28, w: 20, h: 0.22, color: '#00A19B', intensity: 11 },
+    ],
+  },
+
+  surface: {
+    waves: [
+      [0.0, 0.92, 0.34, 0.05],
+      [0.52, 0.34, 0.28, -0.04],
+      [-0.78, 0.58, 0.11, 0.06],
+      [1.6, 1.15, 0.025, -0.08],
+    ],
+    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0.11 },
+    parallax: 0.45,
+    sweep: [-0.12, 0.55],
+    pointer: [0.1, 0.05],
+  },
+
+  line: {
+    color: '#00A19B',          // PETRONAS 青绿
+    tipColor: '#27F4D2',       // 脉冲青绿高亮笔尖
+    width: 2,
+    ghostOpacity: 0.14,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.0,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(120% 70% at 28% 0%, rgba(200, 204, 206, 0.22) 0%, transparent 55%),' +
+    'linear-gradient(180deg, #3E464B 0%, #101315 32%, #060708 60%, #050607 100%)',
+};
+
+// ------------------------------------------------------------------
+// 2. Scuderia Ferrari HP (法拉利)
+// ------------------------------------------------------------------
+export const FERRARI = {
+  id: 'ferrari',
+  name: 'Scuderia Ferrari HP',
+  chassis: 'SF-26 (Project 678)',
+
+  // —— 涂装阶段：2026 官方语义更亮、更强烈的 Rosso Scuderia 与高光泽烤漆回归 ——
+  // 前段高能见度主红，后段过渡到深酒红暗影与底盘碳黑；白色承担车身结构切线角色。
+  livery: [
+    {
+      // 阶段 0：Rosso Scuderia Base 极高光泽烤漆（#D3141C）
+      color: '#D3141C',
+      metalness: 0.08,         // 非金属纯色烤漆：底色极其饱满热烈
+      roughness: 0.18,         // 意式镜面清漆：反射极为透亮
+      clearcoat: 1.0,          // 顶级 Gloss Paint 清漆层
+      clearcoatRoughness: 0.03,// 极低粗糙度，反射边缘锋利
+      envIntensity: 1.25,
+    },
+    {
+      // 阶段 1：Rosso Deep / Shadow 深红暗部（#6D0F13）
+      color: '#6D0F13',
+      metalness: 0.15,
+      roughness: 0.28,
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.06,
+      envIntensity: 1.10,
+    },
+  ],
+
+  studio: {
+    sky: '#380B0E',            // 深红暗调天穹，衬托红色烤漆的色纯度
+    horizon: '#1A0708',
+    ground: '#0A0304',
+    strips: [
+      { azimuth: 0, elevation: 34, w: 20, h: 1.3, color: '#FFFFFF', intensity: 15 },
+      // 2026 结构白切光：模拟座舱与引擎盖侧翼的结构白切面
+      { azimuth: 52, elevation: 14, w: 22, h: 0.35, color: '#F4F2EE', intensity: 12 },
+      // 跃马黄点缀光（极少量血统微光）
+      { azimuth: -45, elevation: -22, w: 18, h: 0.2, color: '#F7D117', intensity: 4 },
+    ],
+  },
+
+  surface: {
+    // 激进高张力的雕塑肌肉曲线，更紧凑起伏
+    waves: [
+      [0.0, 1.05, 0.38, 0.04],
+      [0.58, 0.42, 0.24, -0.03],
+      [-0.82, 0.62, 0.14, 0.05],
+    ],
+    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0.14 },
+    parallax: 0.45,
+    sweep: [-0.10, 0.60],
+    pointer: [0.1, 0.05],
+  },
+
+  line: {
+    color: '#F4F2EE',          // 2026 白色结构线（Ferrari White）
+    tipColor: '#F7D117',       // 跃马黄色点睛笔尖
+    width: 2,
+    ghostOpacity: 0.16,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.05,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(120% 70% at 28% 0%, rgba(211, 20, 28, 0.28) 0%, transparent 55%),' +
+    'linear-gradient(180deg, #2D0C0E 0%, #150809 35%, #080304 100%)',
+};
+
+// ------------------------------------------------------------------
+// 3. McLaren Formula 1 Team (迈凯伦)
+// ------------------------------------------------------------------
+export const MCLAREN = {
+  id: 'mclaren',
+  name: 'McLaren Formula 1 Team',
+  chassis: 'MCL39',
+
+  // —— 涂装阶段：All-papaya front / All-anthracite back ——
+  // 前段高能见度木瓜橙，后段烟煤深灰碳纤维骨架，并结合一丝冰感 Teal 速度反光。
+  livery: [
+    {
+      // 阶段 0：Iconic Papaya 标志性高能见度橙（#FF8700）
+      color: '#FF8700',
+      metalness: 0.05,         // 纯正赛车亮橙，低金属度确保饱和度
+      roughness: 0.20,         // 高平滑度
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.20,
+    },
+    {
+      // 阶段 1：Striking Anthracite 烟煤深灰（#1E1F22）
+      color: '#1E1F22',
+      metalness: 0.35,         // 碳纤维增强复合材料的光泽感
+      roughness: 0.38,
+      clearcoat: 0.70,
+      clearcoatRoughness: 0.12,
+      envIntensity: 0.95,
+    },
+  ],
+
+  studio: {
+    sky: '#463E38',            // 带有轻微暖钛调的灰调天穹
+    horizon: '#201D1A',
+    ground: '#0C0C0E',
+    strips: [
+      { azimuth: 0, elevation: 30, w: 22, h: 1.5, color: '#FFFFFF', intensity: 14 },
+      // 迈凯伦特有的一丝冰青蓝速度光晕（Teal Accent #4FD5D6）
+      { azimuth: 65, elevation: 10, w: 1.4, h: 18, color: '#4FD5D6', intensity: 9 },
+      // 下方暖橙受光补强
+      { azimuth: -12, elevation: -26, w: 20, h: 0.25, color: '#FF9B2F', intensity: 8 },
+    ],
+  },
+
+  surface: {
+    // 现代空气动力学锋面起伏
+    waves: [
+      [0.0, 0.88, 0.32, 0.05],
+      [0.48, 0.36, 0.26, -0.04],
+      [-0.72, 0.54, 0.12, 0.06],
+    ],
+    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0.12 },
+    parallax: 0.45,
+    sweep: [-0.12, 0.52],
+    pointer: [0.1, 0.05],
+  },
+
+  line: {
+    color: '#4FD5D6',          // Teal 冰青蓝速度线
+    tipColor: '#7EF0F1',       // 亮青高光笔尖
+    width: 2,
+    ghostOpacity: 0.18,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.02,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(120% 70% at 28% 0%, rgba(255, 135, 0, 0.24) 0%, transparent 55%),' +
+    'linear-gradient(180deg, #2B180C 0%, #161210 35%, #0B0B0C 100%)',
+};
+
+// ------------------------------------------------------------------
+// 4. Aston Martin Aramco F1 Team (阿斯顿·马丁)
+// ------------------------------------------------------------------
+export const ASTON_MARTIN = {
+  id: 'aston-martin',
+  name: 'Aston Martin Aramco F1 Team',
+  chassis: 'AMR26',
+
+  // —— 涂装阶段：英伦深绿金属车漆与 Works-era 工程秩序 ——
+  // 表面致密深邃，高金属度，受光处呈现通透的车漆高光绿，暗部厚重，点缀 Lime 荧光黄绿。
+  livery: [
+    {
+      // 阶段 0：Aston Martin Racing Green 奢华深邃金属车漆（#002824）
+      color: '#002824',
+      metalness: 0.90,         // 高度金属漆：反射带有通透深绿
+      roughness: 0.24,         // 奢华细腻，倒影修长
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.15,
+    },
+    {
+      // 阶段 1：暗部碳黑绿（#070B0A）
+      color: '#070B0A',
+      metalness: 0.30,
+      roughness: 0.35,
+      clearcoat: 0.90,
+      clearcoatRoughness: 0.08,
+      envIntensity: 1.05,
+    },
+  ],
+
+  studio: {
+    sky: '#182C26',            // 墨绿冷调天穹
+    horizon: '#0C1815',
+    ground: '#050908',
+    strips: [
+      // 顶部修长高亮白条：拉出英伦 GT 与 F1 赛车极其优雅平滑的背脊光
+      { azimuth: 0, elevation: 35, w: 24, h: 0.9, color: '#FFFFFF', intensity: 16 },
+      // 侧向车漆反射高光绿
+      { azimuth: 58, elevation: 8, w: 1.0, h: 18, color: '#037A68', intensity: 8 },
+      // 低位 Lime 荧光黄绿速度光带（2026 Works 细节）
+      { azimuth: -10, elevation: -26, w: 22, h: 0.20, color: '#A9D23E', intensity: 9 },
+    ],
+  },
+
+  surface: {
+    // 沉稳克制、流线型更修长的起伏
+    waves: [
+      [0.0, 0.78, 0.30, 0.03],
+      [0.44, 0.30, 0.24, -0.03],
+      [-0.64, 0.50, 0.10, 0.04],
+    ],
+    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0.10 },
+    parallax: 0.42,
+    sweep: [-0.10, 0.50],
+    pointer: [0.08, 0.04],
+  },
+
+  line: {
+    color: '#A9D23E',          // Lime 荧光黄绿
+    tipColor: '#C6F54D',       // 亮荧光黄绿笔尖
+    width: 2,
+    ghostOpacity: 0.16,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.06,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(120% 70% at 28% 0%, rgba(3, 122, 104, 0.25) 0%, transparent 55%),' +
+    'linear-gradient(180deg, #02201C 0%, #06110F 35%, #030605 100%)',
+};
+
+// ------------------------------------------------------------------
+// 5. Cadillac Formula 1 Team (凯迪拉克)
+// ------------------------------------------------------------------
+export const CADILLAC = {
+  id: 'cadillac',
+  name: 'Cadillac Formula 1 Team',
+  chassis: 'MAC-01',
+
+  // —— 涂装阶段：Black-and-White dual-color livery 黑白双面 ——
+  // 阶段 0：American Racing White 冷峻纯白高光雕塑；阶段 1：Bold Attitude 纯粹黑碳面。
+  livery: [
+    {
+      // 阶段 0：American Racing White 雕塑冷白（#F7F8F9）
+      color: '#F7F8F9',
+      metalness: 0.08,
+      roughness: 0.18,         // 极光滑的冷白雕塑车漆
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.25,
+    },
+    {
+      // 阶段 1：Bold Attitude 纯黑碳纤维表面（#060606）
+      color: '#060606',
+      metalness: 0.20,
+      roughness: 0.30,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.03, // 钢琴镜面黑
+      envIntensity: 1.15,
+    },
+  ],
+
+  studio: {
+    sky: '#64686C',            // 纯粹单色灰白高对比天穹，无多余彩色杂光
+    horizon: '#242628',
+    ground: '#080809',
+    strips: [
+      { azimuth: 0, elevation: 32, w: 22, h: 1.6, color: '#FFFFFF', intensity: 16 },
+      // 锐利工业几何切面银光（模拟 Cadillac Chevron 雕塑折面）
+      { azimuth: 60, elevation: 12, w: 1.0, h: 20, color: '#D9DDE1', intensity: 12 },
+      { azimuth: -8, elevation: -26, w: 22, h: 0.25, color: '#E4E7EA', intensity: 10 },
+    ],
+  },
+
+  surface: {
+    // 工业几何 Chevron 切面导向起伏
+    waves: [
+      [0.0, 0.95, 0.36, 0.04],
+      [0.60, 0.40, 0.30, -0.04],
+      [-0.80, 0.60, 0.12, 0.05],
+    ],
+    // 锐利的 Chevron 几何棱线
+    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0.15 },
+    parallax: 0.45,
+    sweep: [-0.12, 0.55],
+    pointer: [0.1, 0.05],
+  },
+
+  line: {
+    color: '#E4E7EA',          // Technical Silver 工业银白线
+    tipColor: '#FFFFFF',       // 纯白高亮笔尖
+    width: 2,
+    ghostOpacity: 0.15,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.0,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(120% 70% at 28% 0%, rgba(247, 248, 249, 0.20) 0%, transparent 55%),' +
+    'linear-gradient(180deg, #323538 0%, #121315 35%, #050506 100%)',
+};
+
+// ------------------------------------------------------------------
+// 车队预设注册表（支持 kebab-case 与 snake_case 查找）
+// ------------------------------------------------------------------
+export const TEAM_PRESETS = {
+  mercedes: MERCEDES,
+  ferrari: FERRARI,
+  mclaren: MCLAREN,
+  'aston-martin': ASTON_MARTIN,
+  aston_martin: ASTON_MARTIN,
+  cadillac: CADILLAC,
+};
+// ===== assets/surface/teams.js 结束 =====
+
+// ===== 内联自 assets/surface/surface-page.js =====
+// ===== 内联自 assets/surface/paint-surface.js =====
+/**
+ * ==================================================================
+ * paint-surface.js —— 连续车漆表面（共享核心，原生 HTML 与 React 通用）
+ * ==================================================================
+ *
+ * 为什么需要它：
+ *   旧模板把车漆做成一块块 CSS 渐变色带，交界处硬切，看起来像"贴了色卡"。
+ *   这里把整页当成一块车身：一个 position: fixed 的全屏 canvas 垫在所有内容下面，
+ *   内容区块全部透明，金属质感和颜色因此贯穿整页。
+ *
+ * 金属感从哪里来（都是 three.js 自带的成熟能力，不手写光照公式）：
+ *   1. MeshPhysicalMaterial 的 clearcoat（清漆层）→ 锐利的柔光箱反射，车漆"亮"的来源
+ *   2. metalness + 金属颗粒法线贴图 → 底漆里细碎的金属闪点
+ *   3. 自定义"摄影棚"：几条发光长条经 PMREMGenerator 预滤波成环境贴图，
+ *      反射顺着曲面流动 —— 汽车摄影里最典型的车漆观感
+ *   唯一的自定义着色器代码是"车身曲面法线"：几组低频正弦 + 腰线台阶，
+ *   逐像素算出法线，让一块平面看起来像起伏的车身板件。
+ *
+ * 滚动时发生什么：
+ *   - 曲面以视差速度向上滑移 → 反射带在屏幕上移动
+ *   - 灯光（环境贴图）绕水平轴缓慢旋转 → 光带从上往下扫过
+ *   - tone 在相邻涂装阶段之间插值（Mercedes：前段冷银 → 后段碳黑）
+ *
+ * 用法：
+ *   const surface = PaintSurface.create(canvas, MERCEDES, { reducedMotion });
+ *   if (!surface) { ...切换 CSS 回退背景... }
+ *   surface.setScroll(scrollY, innerHeight, maxScroll); // 每次滚动调用
+ *   surface.setTone(0 ~ livery.length - 1);             // 涂装阶段
+ *   surface.setPointer(x, y);                           // 鼠标位置，-1 ~ 1
+ *   surface.dispose();                                  // 销毁后 canvas 不能再复用
+ *
+ * 降级策略：
+ *   - 不支持 WebGL2 / 初始化失败 → create() 返回 null，由调用方切换 CSS 渐变
+ *   - reducedMotion → 冻结起伏漂移、视差和鼠标响应，只在涂装变化时重绘
+ *   - 像素比封顶（默认 1.5），标签页隐藏时不渲染
+ */
+import * as THREE from 'three';
+
+// 着色器里正弦波 uniform 数组的长度（预设里最多写这么多组）
+const MAX_WAVES = 6;
+
+// 相机：视场角 35°、距离 10 → 画面可见高度约 6.31 个世界单位。
+// 曲面图案用世界单位定义，所以无论屏幕多大，起伏相对屏幕高度的比例都一样。
+const CAMERA_FOV = 35;
+const CAMERA_DISTANCE = 10;
+const VISIBLE_HEIGHT = 2 * CAMERA_DISTANCE * Math.tan(THREE.MathUtils.degToRad(CAMERA_FOV / 2));
+
+/* ------------------------------------------------------------------
+ * 着色器注入片段
+ * MeshPhysicalMaterial 的着色器由 three.js 内置代码块拼成，
+ * 这里通过 onBeforeCompile 在固定位置插入几行，其余光照计算全部沿用 three.js。
+ * ------------------------------------------------------------------ */
+
+// 顶点着色器：把每个顶点的世界坐标传给片元着色器
+const BODY_PARS_VERTEX = /* glsl */ `
+varying vec2 vBodyPos;
+`;
+const BODY_POS_VERTEX = /* glsl */ `
+vBodyPos = ( modelMatrix * vec4( transformed, 1.0 ) ).xy;
+`;
+
+// 片元着色器：uniform 声明 + 车身曲面法线函数
+const BODY_PARS_FRAGMENT = /* glsl */ `
+uniform vec4 uWaves[ ${MAX_WAVES} ]; // 每组正弦起伏：(kx, ky, 振幅, 漂移速度)
+uniform int uWaveCount;              // 实际使用的组数
+uniform vec4 uCrease;                // 腰线：(方向 x, 方向 y, 间距, 锐度)
+uniform float uCreaseHeight;         // 腰线台阶高差
+uniform float uScrollY;              // 曲面滑移量（世界单位）
+uniform float uTime;                 // 秒，驱动极慢的起伏漂移
+varying vec2 vBodyPos;               // 片元在平面上的世界坐标
+
+// tanh 的导数 sech²：tanh 台阶的"坡度"。腰线正中坡度最大，反射偏折最强，形成一道亮线
+float bodySech2( float x ) {
+  float t = tanh( x );
+  return 1.0 - t * t;
+}
+
+// 车身高度场 h(x, y) 的梯度 → 世界空间法线 (-∂h/∂x, -∂h/∂y, 1)
+vec3 bodyNormal( vec2 p ) {
+  p.y += uScrollY;
+  vec2 grad = vec2( 0.0 );
+  for ( int i = 0; i < ${MAX_WAVES}; i ++ ) {
+    if ( i >= uWaveCount ) break;
+    vec4 w = uWaves[ i ];
+    // h += a·sin(k·p + ω·t)  ⇒  ∇h += a·k·cos(k·p + ω·t)
+    grad += w.z * w.xy * cos( dot( w.xy, p ) + w.w * uTime );
+  }
+  // 腰线：沿 dir 方向每隔 period 一道平滑台阶（h += H·tanh(s·d)），模拟车身折线
+  vec2 dir = normalize( uCrease.xy );
+  float along = dot( dir, p );
+  float d = ( fract( along / uCrease.z + 0.5 ) - 0.5 ) * uCrease.z; // 到最近一道腰线的距离
+  grad += uCreaseHeight * uCrease.w * bodySech2( uCrease.w * d ) * dir;
+  return normalize( vec3( - grad, 1.0 ) );
+}
+`;
+
+// 插在 three.js 的 normal_fragment_begin 之后：用车身曲面法线替换平面自身的法线
+const BODY_NORMAL_FRAGMENT = /* glsl */ `
+normal = normalize( ( viewMatrix * vec4( bodyNormal( vBodyPos ), 0.0 ) ).xyz ); // 世界空间 → 视图空间
+nonPerturbedNormal = normal;
+`;
+
+// 摄影棚背景球：上亮下暗的暗色渐变，给银漆一点"天光"
+const STUDIO_SKY_VERTEX = /* glsl */ `
+varying vec3 vDir;
+void main() {
+  vDir = normalize( position );
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+const STUDIO_SKY_FRAGMENT = /* glsl */ `
+uniform vec3 uSky;
+uniform vec3 uHorizon;
+uniform vec3 uGround;
+varying vec3 vDir;
+void main() {
+  float y = vDir.y;
+  vec3 color = y > 0.0
+    ? mix( uHorizon, uSky, smoothstep( 0.0, 0.8, y ) )
+    : mix( uHorizon, uGround, smoothstep( 0.0, 0.5, - y ) );
+  gl_FragColor = vec4( color, 1.0 );
+}
+`;
+
+const TONE_MAPPINGS = {
+  neutral: THREE.NeutralToneMapping,
+  aces: THREE.ACESFilmicToneMapping,
+  agx: THREE.AgXToneMapping,
+  none: THREE.NoToneMapping,
+};
+
+export class PaintSurface {
+  /** 浏览器能否创建 WebGL2 上下文（用完立即释放，不占上下文名额） */
+  static isSupported() {
+    try {
+      const gl = document.createElement('canvas').getContext('webgl2');
+      if (!gl) return false;
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 创建车漆层。不支持 WebGL 或初始化失败时返回 null，调用方负责 CSS 回退。
+   * @param {HTMLCanvasElement} canvas 由样式表铺满视口（position: fixed; inset: 0）
+   * @param {object} preset 车队预设，结构见 teams.js
+   * @param {object} [options]
+   * @param {boolean} [options.reducedMotion] 用户开启"减少动态效果"时传 true
+   * @param {number} [options.maxDpr] 像素比上限，默认取 preset.render.maxDpr 或 1.5
+   * @param {number} [options.renderScale] 在像素比之上再缩放渲染分辨率，默认 1
+   * @param {() => void} [options.onContextLost] GPU 上下文丢失时回调（用于切换 CSS 回退）
+   */
+  static create(canvas, preset, options = {}) {
+    if (!PaintSurface.isSupported()) return null;
+    try {
+      return new PaintSurface(canvas, preset, options);
+    } catch (error) {
+      console.warn('[paint-surface] 初始化失败，回退到 CSS 背景：', error);
+      return null;
+    }
+  }
+
+  constructor(canvas, preset, options = {}) {
+    this.canvas = canvas;
+    this.preset = preset;
+    this.options = {
+      maxDpr: preset.render?.maxDpr ?? 1.5,
+      renderScale: 1,
+      reducedMotion: false,
+      onContextLost: null,
+      ...options,
+    };
+
+    // 目标值（由 setScroll / setTone / setPointer 写入）与当前值（每帧向目标阻尼靠近）
+    this._target = { scroll: 0, progress: 0, tone: 0, px: 0, py: 0 };
+    this._state = { ...this._target };
+    this._dirty = true; // 是否需要重绘（减少动态效果模式下只在变化时渲染）
+    this._lastTime = 0;
+    this._raf = 0;
+
+    this._initRenderer();
+    this._initStudio();
+    this._initBody();
+
+    this._onResize = this._onResize.bind(this);
+    this._onContextLost = this._onContextLost.bind(this);
+    this._loop = this._loop.bind(this);
+    window.addEventListener('resize', this._onResize);
+    canvas.addEventListener('webglcontextlost', this._onContextLost, false);
+
+    this._onResize();
+    this.start();
+  }
+
+  /* ---------------- 对外接口 ---------------- */
+
+  /**
+   * 同步页面滚动。
+   * @param {number} scrollY 当前滚动位置（px）
+   * @param {number} viewportHeight 视口高度（px）
+   * @param {number} maxScroll 最大可滚动距离（px），用于计算页面进度
+   */
+  setScroll(scrollY, viewportHeight, maxScroll) {
+    const vh = Math.max(1, viewportHeight);
+    // 页面每滚动一屏，曲面滑移 parallax 屏（换算成世界单位）
+    this._target.scroll = (scrollY / vh) * VISIBLE_HEIGHT * this.preset.surface.parallax;
+    this._target.progress = maxScroll > 0 ? clampRange(scrollY / maxScroll, 0, 1) : 0;
+    this._dirty = true;
+  }
+
+  /** 涂装阶段：0 ~ livery.length - 1，小数表示两个阶段之间的过渡 */
+  setTone(tone) {
+    this._target.tone = clampRange(tone, 0, this._livery.length - 1);
+    this._dirty = true;
+  }
+
+  /** 鼠标位置：x、y 都是 -1 ~ 1（屏幕中心为 0） */
+  setPointer(x, y) {
+    if (this.options.reducedMotion) return;
+    this._target.px = clampRange(x, -1, 1);
+    this._target.py = clampRange(y, -1, 1);
+  }
+
+  /**
+   * 运行时动态切换车队预设（无需重新创建 WebGL 上下文与 Canvas）
+   * @param {object} newPreset 新的车队预设对象（来自 teams.js）
+   */
+  setPreset(newPreset) {
+    this.preset = newPreset;
+    const render = newPreset.render ?? {};
+    this.renderer.toneMapping = TONE_MAPPINGS[render.toneMapping ?? 'neutral'] ?? THREE.NeutralToneMapping;
+    this.renderer.toneMappingExposure = render.exposure ?? 1;
+
+    // 重新烘焙摄影棚环境贴图
+    if (this.envTarget) {
+      this.envTarget.dispose();
+    }
+    this._initStudio();
+
+    // 更新涂装阶段数据
+    this._livery = this.preset.livery.map((stop) => ({ ...stop, color: new THREE.Color(stop.color) }));
+
+    // 更新着色器 uniform 参数
+    const surface = this.preset.surface;
+    for (let i = 0; i < MAX_WAVES; i++) {
+      const w = surface.waves[i];
+      if (w) this.uniforms.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
+      else this.uniforms.uWaves.value[i].set(0, 0, 0, 0);
+    }
+    this.uniforms.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
+    const crease = surface.crease;
+    this.uniforms.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
+    this.uniforms.uCreaseHeight.value = crease.height;
+
+    this._applyLivery(this._state.tone);
+    this._dirty = true;
+  }
+
+  start() {
+    if (!this._raf) this._raf = requestAnimationFrame(this._loop);
+  }
+
+  stop() {
+    cancelAnimationFrame(this._raf);
+    this._raf = 0;
+  }
+
+  dispose() {
+    this.stop();
+    window.removeEventListener('resize', this._onResize);
+    this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
+    this.mesh.geometry.dispose();
+    this.material.dispose();
+    this.envTarget.dispose();
+    this.renderer.dispose();
+    this.renderer.forceContextLoss();
+  }
+
+  /* ---------------- 初始化 ---------------- */
+
+  _initRenderer() {
+    const render = this.preset.render ?? {};
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      antialias: false, // 整屏只有一块平面，没有几何边缘需要抗锯齿
+      alpha: false,
+      powerPreference: 'high-performance',
+    });
+    this.renderer.setClearColor(0x050607, 1);
+    this.renderer.toneMapping = TONE_MAPPINGS[render.toneMapping ?? 'neutral'] ?? THREE.NeutralToneMapping;
+    this.renderer.toneMappingExposure = render.exposure ?? 1;
+
+    this.scene = new THREE.Scene();
+    this.camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 50);
+    this.camera.position.set(0, 0, CAMERA_DISTANCE);
+    this.camera.lookAt(0, 0, 0);
+  }
+
+  /** 搭一个"摄影棚"场景，预滤波成环境贴图：车漆上看到的所有反射都来自这里 */
+  _initStudio() {
+    const studio = this.preset.studio;
+    const studioScene = new THREE.Scene();
+
+    // 背景球（半径 40，远小于 PMREM 相机的远裁剪面 100）
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(40, 48, 24),
+      new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        depthWrite: false,
+        uniforms: {
+          uSky: { value: new THREE.Color(studio.sky) },
+          uHorizon: { value: new THREE.Color(studio.horizon) },
+          uGround: { value: new THREE.Color(studio.ground) },
+        },
+        vertexShader: STUDIO_SKY_VERTEX,
+        fragmentShader: STUDIO_SKY_FRAGMENT,
+      }),
+    );
+    studioScene.add(sky);
+
+    // 柔光箱：发光长条，摆在半径 12 的球面上并面朝车身（原点）。
+    // 颜色乘以 intensity 得到 HDR 亮度，PMREM 用半浮点纹理保存，不会被截断到 1。
+    const radius = 12;
+    for (const strip of studio.strips) {
+      const azimuth = THREE.MathUtils.degToRad(strip.azimuth);
+      const elevation = THREE.MathUtils.degToRad(strip.elevation);
+      const panel = new THREE.Mesh(
+        new THREE.PlaneGeometry(strip.w, strip.h),
+        new THREE.MeshBasicMaterial({
+          color: new THREE.Color(strip.color).multiplyScalar(strip.intensity),
+          side: THREE.DoubleSide,
+        }),
+      );
+      panel.position.set(
+        radius * Math.cos(elevation) * Math.sin(azimuth),
+        radius * Math.sin(elevation),
+        radius * Math.cos(elevation) * Math.cos(azimuth),
+      );
+      panel.lookAt(0, 0, 0);
+      studioScene.add(panel);
+    }
+
+    const pmrem = new THREE.PMREMGenerator(this.renderer);
+    this.envTarget = pmrem.fromScene(studioScene, 0.04, 0.1, 100);
+    pmrem.dispose();
+    studioScene.traverse((object) => {
+      object.geometry?.dispose();
+      object.material?.dispose();
+    });
+
+    this.scene.environment = this.envTarget.texture;
+  }
+
+  /** 车身：一块铺满画面的平面 + 物理材质，曲面起伏在片元着色器里逐像素计算 */
+  _initBody() {
+    const surface = this.preset.surface;
+    this._livery = this.preset.livery.map((stop) => ({ ...stop, color: new THREE.Color(stop.color) }));
+
+    const first = this._livery[0];
+    this.material = new THREE.MeshPhysicalMaterial({
+      color: first.color.clone(),
+      metalness: first.metalness,
+      roughness: first.roughness,
+      clearcoat: first.clearcoat,
+      clearcoatRoughness: first.clearcoatRoughness,
+      envMapIntensity: first.envIntensity,
+    });
+
+    // 这些 uniform 对象会直接挂进着色器，之后改 .value 即可生效，无需重新编译
+    const waves = Array.from({ length: MAX_WAVES }, (_, i) => {
+      const w = surface.waves[i];
+      return w ? new THREE.Vector4(w[0], w[1], w[2], w[3]) : new THREE.Vector4();
+    });
+    const crease = surface.crease;
+    this.uniforms = {
+      uWaves: { value: waves },
+      uWaveCount: { value: Math.min(surface.waves.length, MAX_WAVES) },
+      uCrease: { value: new THREE.Vector4(crease.dir[0], crease.dir[1], crease.period, crease.sharpness) },
+      uCreaseHeight: { value: crease.height },
+      uScrollY: { value: 0 },
+      uTime: { value: 0 },
+    };
+
+    this.material.onBeforeCompile = (shader) => {
+      Object.assign(shader.uniforms, this.uniforms);
+      shader.vertexShader = shader.vertexShader
+        .replace('#include <common>', `#include <common>\n${BODY_PARS_VERTEX}`)
+        .replace('#include <begin_vertex>', `#include <begin_vertex>\n${BODY_POS_VERTEX}`);
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', `#include <common>\n${BODY_PARS_FRAGMENT}`)
+        .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`);
+    };
+
+    this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
+    this.scene.add(this.mesh);
+  }
+
+  /* ---------------- 每帧 ---------------- */
+
+  _loop(now) {
+    this._raf = requestAnimationFrame(this._loop);
+    if (document.hidden) return; // 标签页不可见时不渲染
+
+    const dt = this._lastTime ? Math.min(0.1, (now - this._lastTime) / 1000) : 0;
+    this._lastTime = now;
+    const reduced = this.options.reducedMotion;
+    if (reduced && !this._dirty) return; // 减少动态效果：画面没变就不重绘
+
+    // 帧率无关的阻尼：约 0.1 秒追上目标，给滚动一点惯性
+    const follow = reduced ? 1 : 1 - Math.exp(-dt * 10);
+    const state = this._state;
+    for (const key of Object.keys(this._target)) {
+      state[key] += (this._target[key] - state[key]) * follow;
+    }
+
+    const surface = this.preset.surface;
+    // 减少动态效果：不滑移、不漂移、灯光固定在页顶位置，只保留涂装颜色变化
+    this.uniforms.uScrollY.value = reduced ? 0 : state.scroll;
+    this.uniforms.uTime.value = reduced ? 0 : now / 1000;
+    const sweep = reduced ? surface.sweep[0] : lerpNumber(surface.sweep[0], surface.sweep[1], state.progress);
+    const [pointerX, pointerY] = surface.pointer ?? [0, 0];
+    this.scene.environmentRotation.set(sweep + state.py * pointerY, state.px * pointerX, 0);
+
+    this._applyLivery(state.tone);
+    this.renderer.render(this.scene, this.camera);
+    this._dirty = false;
+
+    // 第一帧画完后打上标记：样式表据此把 canvas 淡入，避免加载时闪一下
+    if (!this.canvas.hasAttribute('data-ready')) this.canvas.setAttribute('data-ready', '');
+  }
+
+  /** 在相邻两个涂装阶段之间插值材质参数 */
+  _applyLivery(tone) {
+    const stops = this._livery;
+    const index = Math.min(Math.floor(tone), stops.length - 2);
+    const a = stops[Math.max(0, index)];
+    const b = stops[Math.min(stops.length - 1, index + 1)];
+    const f = stops.length > 1 ? tone - Math.max(0, index) : 0;
+    const m = this.material;
+    m.color.copy(a.color).lerp(b.color, f); // 在线性色彩空间插值，过渡不发灰
+    m.metalness = lerpNumber(a.metalness, b.metalness, f);
+    m.roughness = lerpNumber(a.roughness, b.roughness, f);
+    m.clearcoat = Math.max(0.01, lerpNumber(a.clearcoat, b.clearcoat, f)); // 保持 > 0，避免切换着色器变体
+    m.clearcoatRoughness = lerpNumber(a.clearcoatRoughness, b.clearcoatRoughness, f);
+    m.envMapIntensity = lerpNumber(a.envIntensity, b.envIntensity, f);
+  }
+
+  _onResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, this.options.maxDpr) * this.options.renderScale;
+    this.renderer.setPixelRatio(dpr);
+    this.renderer.setSize(width, height, false); // false：canvas 的 CSS 尺寸交给样式表
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+
+    // 平面刚好铺满画面（多留 2% 余量）
+    const visibleWidth = VISIBLE_HEIGHT * this.camera.aspect;
+    this.mesh.scale.set(visibleWidth * 1.02, VISIBLE_HEIGHT * 1.02, 1);
+    this._dirty = true;
+  }
+
+  _onContextLost(event) {
+    event.preventDefault();
+    this.stop();
+    this.options.onContextLost?.();
+  }
+}
+
+/* ------------------------------------------------------------------
+ * 工具函数
+ * ------------------------------------------------------------------ */
+
+function clampRange(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function lerpNumber(a, b, t) {
+  return a + (b - a) * t;
+}
+// ===== assets/surface/paint-surface.js 结束 =====
+
+// ===== 内联自 assets/surface/racing-line.js =====
+/**
+ * ==================================================================
+ * racing-line.js —— 贯穿全页的涂装线（共享核心，原生 HTML 与 React 通用）
+ * ==================================================================
+ *
+ * 一条 SVG 路径从页顶走到页底，随滚动逐段描出，把所有内容串成一块车身。
+ * 它和车漆层一起取代旧模板里"区块之间硬切"的分隔方式。
+ *
+ * 路线怎么声明：给区块加 data-line 属性，写若干个"盒子内百分比坐标"：
+ *   <section data-line="4,20 96,88">   → 经过该区块左上 (4%, 20%) 和右下 (96%, 88%)
+ * 所有锚点按 DOM 顺序连接，再用 Catmull-Rom 样条平滑成三次贝塞尔曲线（曲线穿过每个锚点）。
+ * 锚点的 y 应该逐个往下走：笔尖只会单调向下推进。
+ *
+ * 用法：
+ *   const line = new RacingLine(svgElement, { color: '#00A19B' });
+ *   line.layout();                       // 布局变化（resize、字体加载）后重新调用
+ *   line.update(scrollY, innerHeight);   // 每次滚动调用
+ *   line.playIntro();                    // 首屏描线进场
+ *   line.showAll();                      // 减少动态效果：直接显示整条线
+ */
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+export class RacingLine {
+  /**
+   * @param {SVGSVGElement} svg 绝对定位在文档左上角的 SVG，尺寸由 layout() 设置
+   * @param {object} [options]
+   */
+  constructor(svg, options = {}) {
+    this.svg = svg;
+    this.options = {
+      selector: '[data-line]', // 声明路线锚点的元素
+      lead: 0.66, // 笔尖停在视口高度的哪个位置（0 = 顶部，1 = 底部）
+      samples: 800, // 预采样点数：越多，笔尖定位越准
+      color: '#00A19B',
+      tipColor: '#66D2CB',
+      width: 2,
+      ghostOpacity: 0.14, // 整条路线的淡影
+      introDuration: 1400, // 进场描线时长（毫秒）
+      ...options,
+    };
+
+    this.svg.setAttribute('aria-hidden', 'true');
+    this.svg.setAttribute('focusable', 'false');
+    // 三层：淡影（整条路线）→ 实线（已描出的部分）→ 笔尖
+    this.ghost = this._createNode('path', {
+      fill: 'none',
+      stroke: this.options.color,
+      'stroke-width': 1,
+      'stroke-opacity': this.options.ghostOpacity,
+    });
+    this.live = this._createNode('path', {
+      fill: 'none',
+      stroke: this.options.color,
+      'stroke-width': this.options.width,
+      'stroke-linecap': 'round',
+    });
+    this.tip = this._createNode('circle', { r: 3.5, fill: this.options.tipColor, opacity: 0 });
+
+    this.length = 0; // 路径总长（px）
+    this._samples = null; // 预采样：{ lens, xs, ys, reach }
+    this._scroll = { y: 0, vh: 1 }; // 最近一次 update 的参数（进场动画需要）
+    this._intro = null; // 进场动画进度 0 ~ 1；null 表示不在进场中
+    this._static = false; // showAll() 之后不再跟随滚动
+  }
+
+  /** 读取锚点、生成路径并预采样。布局变化（resize、字体加载、内容变化）后调用 */
+  layout() {
+    const doc = document.documentElement;
+    // 先把 SVG 高度清零，避免它把文档撑高、量到错误的页面高度
+    this.svg.style.height = '0px';
+    const width = doc.clientWidth;
+    const height = doc.scrollHeight;
+    this.svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    this.svg.style.width = `${width}px`;
+    this.svg.style.height = `${height}px`;
+
+    const points = this._collectPoints();
+    if (points.length < 2) {
+      this.length = 0;
+      this.ghost.removeAttribute('d');
+      this.live.removeAttribute('d');
+      this.tip.setAttribute('opacity', 0);
+      return;
+    }
+
+    const d = catmullRomToBezier(points);
+    this.ghost.setAttribute('d', d);
+    this.live.setAttribute('d', d);
+    this.length = this.live.getTotalLength();
+    this.live.style.strokeDasharray = `${this.length} ${this.length}`;
+
+    // 预采样：记录每个采样点的弧长和坐标。reach = 截至该点的"最大 y"，
+    // 保证笔尖单调向下推进 —— 路径局部的小回弯不会让线条倒退
+    const n = this.options.samples;
+    const lens = new Float32Array(n + 1);
+    const xs = new Float32Array(n + 1);
+    const ys = new Float32Array(n + 1);
+    const reach = new Float32Array(n + 1);
+    let maxY = -Infinity;
+    for (let i = 0; i <= n; i++) {
+      const len = (this.length * i) / n;
+      const pt = this.live.getPointAtLength(len);
+      lens[i] = len;
+      xs[i] = pt.x;
+      ys[i] = pt.y;
+      maxY = Math.max(maxY, pt.y);
+      reach[i] = maxY;
+    }
+    this._samples = { lens, xs, ys, reach };
+    this._render();
+  }
+
+  /** 同步滚动：笔尖跟着视口往下走 */
+  update(scrollY, viewportHeight) {
+    this._scroll.y = scrollY;
+    this._scroll.vh = viewportHeight;
+    if (!this._static) this._render();
+  }
+
+  /** 首屏描线进场：线条从起点描到当前滚动位置 */
+  playIntro() {
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - start) / this.options.introDuration);
+      this._intro = 1 - Math.pow(1 - p, 3); // easeOutCubic：快出缓停
+      this._render();
+      if (p < 1) requestAnimationFrame(tick);
+      else this._intro = null;
+    };
+    this._intro = 0;
+    requestAnimationFrame(tick);
+  }
+
+  /** 减少动态效果：直接显示整条线，不再随滚动描线 */
+  showAll() {
+    this._static = true;
+    this._intro = null;
+    this.live.style.strokeDashoffset = '0';
+    this.tip.setAttribute('opacity', 0);
+  }
+
+  /**
+   * 运行时动态更新路线样式选项（例如车队颜色与笔尖高光切换）
+   * @param {object} newOptions 新的路线参数对象（来自 teams.js 的 line）
+   */
+  updateOptions(newOptions = {}) {
+    Object.assign(this.options, newOptions);
+    this.ghost.setAttribute('stroke', this.options.color);
+    this.ghost.setAttribute('stroke-opacity', this.options.ghostOpacity);
+    this.live.setAttribute('stroke', this.options.color);
+    if (this.options.width) this.live.setAttribute('stroke-width', this.options.width);
+    this.tip.setAttribute('fill', this.options.tipColor);
+    this._render();
+  }
+
+  dispose() {
+    this.ghost.remove();
+    this.live.remove();
+    this.tip.remove();
+  }
+
+  /* ---------------- 内部 ---------------- */
+
+  _createNode(tag, attrs) {
+    const node = document.createElementNS(SVG_NS, tag);
+    for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+    this.svg.appendChild(node);
+    return node;
+  }
+
+  /** 把所有 data-line 锚点换算成文档坐标（px） */
+  _collectPoints() {
+    const points = [];
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    document.querySelectorAll(this.options.selector).forEach((el) => {
+      const rect = el.getBoundingClientRect();
+      const spec = (el.getAttribute('data-line') || '').trim();
+      if (!spec) return;
+      for (const pair of spec.split(/\s+/)) {
+        const [px, py] = pair.split(',').map(Number);
+        if (!Number.isFinite(px) || !Number.isFinite(py)) continue;
+        points.push([rect.left + sx + (rect.width * px) / 100, rect.top + sy + (rect.height * py) / 100]);
+      }
+    });
+    return points;
+  }
+
+  /** 按当前滚动位置（和进场进度）画出已描部分，并移动笔尖 */
+  _render() {
+    if (!this._samples || this._static) return;
+    const targetY = this._scroll.y + this._scroll.vh * this.options.lead;
+    let drawn = this._lengthAtY(targetY);
+    if (this._intro !== null) drawn *= this._intro;
+    this.live.style.strokeDashoffset = `${this.length - drawn}`;
+
+    const tipVisible = drawn > 1 && drawn < this.length - 1;
+    this.tip.setAttribute('opacity', tipVisible ? 1 : 0);
+    if (tipVisible) {
+      const [x, y] = this._pointAtLength(drawn);
+      this.tip.setAttribute('cx', x.toFixed(1));
+      this.tip.setAttribute('cy', y.toFixed(1));
+    }
+  }
+
+  /** 二分查找：笔尖到达 targetY 时已经描出的弧长 */
+  _lengthAtY(targetY) {
+    const { lens, reach } = this._samples;
+    const last = reach.length - 1;
+    if (targetY <= reach[0]) return 0;
+    if (targetY >= reach[last]) return this.length;
+    let lo = 0;
+    let hi = last;
+    while (hi - lo > 1) {
+      const mid = (lo + hi) >> 1;
+      if (reach[mid] < targetY) lo = mid;
+      else hi = mid;
+    }
+    const span = reach[hi] - reach[lo];
+    const f = span > 0 ? (targetY - reach[lo]) / span : 1;
+    return lens[lo] + (lens[hi] - lens[lo]) * f;
+  }
+
+  /** 用预采样数据插值出某个弧长处的坐标（比每帧调 getPointAtLength 便宜） */
+  _pointAtLength(len) {
+    const { xs, ys } = this._samples;
+    const n = xs.length - 1;
+    const pos = (len / this.length) * n;
+    const i = Math.min(n - 1, Math.floor(pos));
+    const f = pos - i;
+    return [xs[i] + (xs[i + 1] - xs[i]) * f, ys[i] + (ys[i + 1] - ys[i]) * f];
+  }
+}
+
+/**
+ * Catmull-Rom 样条 → SVG 三次贝塞尔路径。
+ * 每段 P1→P2 的两个控制点由前后相邻点推出，曲线平滑且穿过所有锚点。
+ */
+function catmullRomToBezier(points) {
+  const fmt = (v) => v.toFixed(1);
+  let d = `M ${fmt(points[0][0])} ${fmt(points[0][1])}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i - 1] || points[i];
+    const p1 = points[i];
+    const p2 = points[i + 1];
+    const p3 = points[i + 2] || p2;
+    const c1x = p1[0] + (p2[0] - p0[0]) / 6;
+    const c1y = p1[1] + (p2[1] - p0[1]) / 6;
+    const c2x = p2[0] - (p3[0] - p1[0]) / 6;
+    const c2y = p2[1] - (p3[1] - p1[1]) / 6;
+    d += ` C ${fmt(c1x)} ${fmt(c1y)}, ${fmt(c2x)} ${fmt(c2y)}, ${fmt(p2[0])} ${fmt(p2[1])}`;
+  }
+  return d;
+}
+// ===== assets/surface/racing-line.js 结束 =====
+/**
+ * ==================================================================
+ * surface-page.js —— 把"连续车身"页面接起来（共享核心，原生 HTML 与 React 通用）
+ * ==================================================================
+ *
+ * 一次调用完成整页的滚动编排：
+ *   Lenis 平滑滚动 ─┬→ 车漆层：曲面滑移、光带扫过、涂装过渡
+ *                   └→ 涂装线：随滚动描线
+ *
+ * 涂装过渡区（seams）：页面上标记为"过渡区"的元素。视口中线从它的上沿走到下沿时，
+ * 车漆从第 i 个涂装阶段过渡到第 i+1 个（Mercedes 只有一个过渡区：前银 → 后黑）。
+ * 过渡区里应该留白多、文字少 —— 两种涂装混合的中间态不适合承载大段正文。
+ *
+ * 用法：
+ *   const page = mountSurfacePage({
+ *     canvas, svg, preset: MERCEDES,
+ *     seams: [document.querySelector('[data-seam]')],
+ *     onFallback: () => document.documentElement.classList.add('no-webgl'),
+ *   });
+ *   page.destroy(); // React 卸载组件时调用
+ */
+import Lenis from 'lenis';
+
+/**
+ * @param {object} config
+ * @param {HTMLCanvasElement | null} config.canvas 车漆层 canvas
+ * @param {SVGSVGElement | null} config.svg 涂装线 SVG
+ * @param {object} config.preset 车队预设（teams.js）
+ * @param {Element[]} [config.seams] 涂装过渡区，按页面顺序
+ * @param {boolean} [config.smooth] 是否启用 Lenis 平滑滚动，默认 true
+ * @param {() => void} [config.onFallback] 车漆层不可用时回调（切换 CSS 回退背景）
+ */
+export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = true, onFallback = null }) {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const surface = canvas
+    ? PaintSurface.create(canvas, preset, { reducedMotion, onContextLost: onFallback })
+    : null;
+  if (canvas && !surface) onFallback?.();
+
+  const line = svg ? new RacingLine(svg, preset.line) : null;
+
+  let seamRects = []; // 过渡区在文档中的位置：{ top, height }
+
+  /** 滚动时调用：把滚动位置分发给车漆层和涂装线 */
+  function applyScroll(scrollY) {
+    const vh = window.innerHeight;
+    const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+    // 每个过渡区贡献 0 ~ 1：视口中线从过渡区上沿走到下沿
+    let tone = 0;
+    const center = scrollY + vh * 0.5;
+    for (const rect of seamRects) tone += smoothstepUnit((center - rect.top) / rect.height);
+    if (surface) {
+      surface.setScroll(scrollY, vh, maxScroll);
+      surface.setTone(tone);
+    }
+    // 同步给 CSS：页面上想跟着涂装变化的元素可以读 var(--surface-tone)
+    document.documentElement.style.setProperty('--surface-tone', tone.toFixed(3));
+    line?.update(scrollY, vh);
+  }
+
+  /** 布局变化后重新测量过渡区和涂装线路线 */
+  function measure() {
+    seamRects = seams.filter(Boolean).map((el) => {
+      const rect = el.getBoundingClientRect();
+      return { top: rect.top + window.scrollY, height: Math.max(1, rect.height) };
+    });
+    line?.layout();
+    applyScroll(window.scrollY);
+  }
+
+  // —— 平滑滚动：Lenis 接管滚轮，让整页滚动像一个连续的镜头 ——
+  // 减少动态效果时不启用，保留浏览器原生滚动
+  let lenis = null;
+  const onNativeScroll = () => applyScroll(window.scrollY);
+  if (smooth && !reducedMotion) {
+    lenis = new Lenis({ autoRaf: true, anchors: true });
+    lenis.on('scroll', (instance) => applyScroll(instance.scroll));
+  } else {
+    window.addEventListener('scroll', onNativeScroll, { passive: true });
+  }
+
+  // —— 鼠标：灯光随指针轻微偏转，反射带跟着手动 ——
+  const onPointerMove = (event) => {
+    surface?.setPointer((event.clientX / window.innerWidth) * 2 - 1, (event.clientY / window.innerHeight) * 2 - 1);
+  };
+  if (surface && !reducedMotion) window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+  // —— 布局变化：窗口尺寸、字体加载、内容高度变化都会移动锚点位置 ——
+  let resizeTimer = 0;
+  const scheduleMeasure = () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(measure, 120);
+  };
+  window.addEventListener('resize', scheduleMeasure);
+  const bodyObserver = new ResizeObserver(scheduleMeasure);
+  bodyObserver.observe(document.body);
+  document.fonts?.ready.then(measure);
+
+  measure();
+  if (line) {
+    if (reducedMotion) line.showAll();
+    else line.playIntro();
+  }
+
+  return {
+    surface,
+    line,
+    lenis,
+    measure,
+    /**
+     * 运行时动态切换车队预设
+     * @param {object} newPreset 新的车队预设
+     */
+    setPreset(newPreset) {
+      preset = newPreset;
+      surface?.setPreset(newPreset);
+      line?.updateOptions(newPreset.line);
+      if (newPreset.fallback) {
+        document.documentElement.style.setProperty('--surface-fallback', newPreset.fallback);
+      }
+      applyScroll(window.scrollY);
+    },
+    destroy() {
+      clearTimeout(resizeTimer);
+      window.removeEventListener('scroll', onNativeScroll);
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('resize', scheduleMeasure);
+      bodyObserver.disconnect();
+      lenis?.destroy();
+      line?.dispose();
+      surface?.dispose();
+    },
+  };
+}
+
+/** 0 ~ 1 之外截断，之内做 smoothstep 缓动：过渡两端平缓、中段快 */
+function smoothstepUnit(x) {
+  const t = Math.min(1, Math.max(0, x));
+  return t * t * (3 - 2 * t);
+}
+// ===== assets/surface/surface-page.js 结束 =====
+
+
+  /* ==========================================================
+     页面脚本：连续车身 + 进场动效
+     ========================================================== */
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.body.style.backgroundImage = FERRARI.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('paint'),
+    svg: document.getElementById('racing-line'),
+    preset: FERRARI,
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+
+  window.__surface = page;
+
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
+    }
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal, [data-count], [data-decrypt]').forEach((el) => {
+    if (reducedMotion) el.classList.add('in');
+    else observer.observe(el);
+  });
+
+  function countUp(el) {
+    const raw = el.dataset.count;
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function decrypt(el) {
+    const final = el.dataset.decrypt || el.textContent;
+    const chars = '0123456789ABCDEF/_-';
+    const len = final.length;
+    let step = 0;
+    const total = 14;
+    const timer = setInterval(() => {
+      step++;
+      const locked = Math.floor((step / total) * len);
+      let out = final.slice(0, locked);
+      for (let i = locked; i < len; i++) {
+        out += final[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (step >= total) {
+        clearInterval(timer);
+        el.textContent = final;
+      }
+    }, 40);
+  }
+</script>
+</body>
+</html>

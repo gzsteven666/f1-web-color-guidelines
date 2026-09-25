@@ -1,0 +1,11 @@
+{
+  "name": "f1-web-color-guidelines",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:templates": "node scripts/build-templates.mjs",
+    "build:templates:check": "node scripts/build-templates.mjs --check"
+  },
+  "devDependencies": {}
+}
