@@ -98,6 +98,17 @@ export const Navbar: React.FC = () => {
           </div>
 
           <a
+            href={`./templates/${currentTeam.id}-surface.html`}
+            target="_blank"
+            rel="noreferrer"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-white/5 hover:bg-white/10 text-white/90 border border-white/10 text-xs font-mono transition-all"
+            title="在新标签页打开当前车队的独立单文件模板 (无框架/纯原生)"
+          >
+            <span>原生模板</span>
+            <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+          </a>
+
+          <a
             href="https://github.com/gzsteven666/f1-web-color-guidelines"
             target="_blank"
             rel="noreferrer"

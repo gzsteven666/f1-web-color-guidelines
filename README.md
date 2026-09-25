@@ -37,7 +37,10 @@
 │     └─ aston-martin.html      ← 深色 Mission Control（dashboard 场景）
 ├─ showcase/                    ← React + Vite + Tailwind CSS + React Bits 动效工程化 Showcase
 ├─ scripts/
-│  └─ build-templates.mjs       ← 递归内联生成单文件模板的构建脚本
+│  ├─ build-templates.mjs       ← 递归内联生成单文件模板的构建脚本
+│  └─ package-quickshare.mjs    ← 自动化打包 QuickShare 专用 ZIP 压缩包脚本
+├─ QUICKSHARE_DEPLOY.md         ← QuickShare 部署与使用完整指南
+├─ f1-surface-quickshare.zip    ← QuickShare 专用即插即用打包产物
 └─ evals/
    └─ evals.json
 ```

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mercedes-AMG PETRONAS F1 配色 — Editorial 基准模板</title>
+<!--
+  ============================================================
+  Mercedes-AMG PETRONAS F1 配色 · "Editorial" 基准模板
+  ============================================================
+  与 aston-martin-editorial.html 同一骨架（尺度暴力 + 无盒版式 +
+  双通道视差），颜色与材质换成 Mercedes 体系：
+  - 纸面由冷银稀释（Silver Arrows 的浅色化），不是暖白
+  - 碳黑 #060708 是"墨色"：标题、幽灵按钮、深色车漆场
+  - PETRONAS 青绿 #00A19B 只做信号：主按钮、链接、图表、流线
+  - 车漆横带 = 黑碳底 + 低位 PETRONAS 流线（2026 官方语义）
+  - 内容与赛车无关：证明配色体系可迁移到任何网页
+  颜色 token 与 references/mercedes.md 对齐。
+  ============================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ==========================================================
+     1. Design Tokens —— Steep 结构 × Mercedes 黑银青绿
+     ========================================================== */
+  :root {
+    /* 纸面层级：冷银稀释，偏冷不偏暖（Silver Arrows 的纸面化） */
+    --paper:      #F4F6F6;
+    --fog:        #EAEEEE;
+    --mist:       #DEE4E5;
+    --hairline:   #C8D1D2;
+
+    /* 品牌核心 */
+    --ink:        #0E1011;  /* 正文：碳黑灰 */
+    --deep:       #060708;  /* 碳黑：标题、幽灵按钮、车漆场基底 */
+    --accent:     #00A19B;  /* PETRONAS 青绿：主按钮、链接、图表、流线 */
+    --edge:       #53C5BF;  /* 辅助青绿：hover / 弧形亮部 */
+    --signal:     #66D2CB;  /* 信号端点：图表端点、微量提示 */
+
+    /* 协作气泡等浅色对：银灰水洗 */
+    --wash:       #D5DBDC;
+    --wash-ink:   #060708;
+
+    --muted:      #5C686B;  /* 辅助文字：冷灰 */
+    --ghost:      #7C878B;
+
+    --font-serif: "Source Serif 4", "Georgia", ui-serif, serif;
+    --font-sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
+    --font-mono:  "IBM Plex Mono", "Consolas", monospace;
+
+    --r-card: 24px;
+    --r-artifact: 20px;
+    --r-pill: 9999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: #AEB9BB var(--paper); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: #AEB9BB; border-radius: 5px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: #00A19B; }
+  ::selection { background: #00A19B; color: #041010; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.5;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  .ghost-tag { font-size: 14px; color: var(--ghost); }
+
+  .reveal { opacity: 0; transform: translateY(8px); transition: opacity 700ms ease, transform 700ms ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ==========================================================
+     2. 导航 —— 耳语级
+     ========================================================== */
+  nav .wrap { display: flex; align-items: center; gap: 32px; height: 76px; }
+  .nav-logo { font-weight: 600; font-size: 17px; color: var(--deep); letter-spacing: -0.01em; }
+  .nav-links { display: flex; gap: 28px; margin-left: 24px; }
+  .nav-links a { font-size: 16px; text-decoration: none; color: var(--ink); transition: color 180ms ease; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     3. 药丸按钮 —— PETRONAS 实心 + 碳黑描边幽灵
+     ========================================================== */
+  .pill {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 16px; font-weight: 400;
+    padding: 10px 22px;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+  /* 主按钮像仪表盘上的激活信号：青绿底配深色字（规范色） */
+  .pill-filled { background: var(--accent); color: #041010; font-weight: 500; }
+  .pill-filled:hover { background: #13B5AE; }
+  .pill-ghost { background: transparent; color: var(--deep); border-color: var(--deep); }
+  .pill-ghost:hover { background: rgba(0, 161, 155, 0.10); }
+  .pill-sm { font-size: 15px; padding: 7px 18px; }
+
+  .arrow-link { font-size: 16px; color: var(--deep); text-decoration: none; }
+  .arrow-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ==========================================================
+     4. Hero —— 巨字出血 + 黑银车漆场 + 悬浮残片
+     ========================================================== */
+  .hero { padding: 40px 0 110px; position: relative; overflow: hidden; }
+  /* 车漆场：黑碳 → 钛灰 → PETRONAS 收尾（规范渐变方案 A），
+     锚定底部只占下半区，巨字区完全让开 */
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: auto; right: 0; bottom: 0;
+    height: 46%;
+    width: 55%;
+    border-top-left-radius: 140px;
+    background:
+      radial-gradient(80% 70% at 22% 0%, rgba(83, 197, 191, 0.25) 0%, transparent 60%),
+      linear-gradient(135deg, #050607 0%, #101315 40%, #3E464B 75%, #00A19B 100%);
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute;
+    top: auto; right: 0; bottom: 0;
+    height: 46%;
+    width: 55%;
+    border-top-left-radius: 140px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero-glow::before {
+    content: "";
+    position: absolute;
+    width: 130%; height: 130%;
+    top: -30%; left: -20%;
+    background: radial-gradient(45% 40% at 50% 50%, rgba(102, 210, 203, 0.30) 0%, transparent 70%);
+    animation: glowDrift 14s ease-in-out infinite alternate;
+  }
+  @keyframes glowDrift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(18%, 22%); }
+  }
+  .hero-grid {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .hero .ghost-tag { display: block; margin-bottom: 20px; }
+  /* 巨字：碳黑衬线撞破右缘；em 用 PETRONAS 青绿点睛 */
+  .hero-display {
+    position: relative; z-index: 1;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(64px, 15vw, 200px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--deep);
+    white-space: nowrap;
+    margin: 8px 0 44px;
+  }
+  .hero-display em { font-style: italic; color: var(--accent); }
+  .hero-display .l2 { display: block; padding-left: 8vw; }
+  .hero p {
+    font-size: 20px; line-height: 1.5;
+    color: var(--muted);
+    max-width: 460px;
+    margin-bottom: 32px;
+  }
+  .hero-actions { display: flex; gap: 12px; align-items: center; }
+
+  .hero-copy > * { animation: fadeUp 700ms ease backwards; }
+  .hero-copy > *:nth-child(2) { animation-delay: 80ms; }
+  .hero-copy > *:nth-child(3) { animation-delay: 160ms; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } }
+
+  /* ---- 悬浮产品残片 ---- */
+  .artifacts { position: relative; min-height: 380px; }
+  .artifact {
+    position: absolute;
+    background: #FCFDFD;
+    border-radius: var(--r-artifact);
+    padding: 18px 20px;
+    box-shadow:
+      0 0 0 1px rgba(6, 7, 8, 0.08),
+      0 20px 25px -5px rgba(6, 7, 8, 0.22),
+      0 8px 10px -6px rgba(6, 7, 8, 0.18);
+    animation: fadeUp 800ms ease backwards;
+    transform: translate(
+      calc(var(--mx, 0) * 1px),
+      calc(var(--plx, 0) * 1px + var(--my, 0) * 1px)
+    );
+    will-change: transform;
+    transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .artifact .label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
+  .artifact .metric { font-size: 22px; font-weight: 500; color: var(--deep); }
+  .artifact .delta { font-size: 14px; color: var(--muted); margin-top: 2px; }
+  .artifact .delta b { color: var(--accent); font-weight: 500; }
+
+  .artifact-1 { top: 6%; right: 0; width: 250px; animation-delay: 300ms; }
+  .artifact-2 { top: 40%; left: 4%; width: 210px; animation-delay: 420ms; z-index: 2; }
+  .artifact-3 { bottom: 4%; right: 10%; width: 230px; animation-delay: 540ms; }
+
+  .gesture-chart { display: block; width: 100%; margin-top: 10px; }
+  .gesture-chart path {
+    stroke-dasharray: 240;
+    stroke-dashoffset: 240;
+    animation: drawLine 1200ms ease 500ms forwards;
+  }
+  .gesture-chart circle { opacity: 0; animation: dotIn 300ms ease 1600ms forwards; }
+  @keyframes drawLine { to { stroke-dashoffset: 0; } }
+  @keyframes dotIn { to { opacity: 1; } }
+
+  .mini-gauge { position: relative; margin-top: 6px; }
+  .mini-gauge svg { display: block; width: 100%; }
+  .mini-gauge .val {
+    position: absolute; left: 0; right: 0; bottom: 2px;
+    text-align: center;
+    font-size: 22px; font-weight: 500; color: var(--deep);
+  }
+  .mini-gauge .val small { font-size: 13px; color: var(--muted); }
+  .mini-arc-progress {
+    stroke-dashoffset: 52;
+    animation: miniSweep 1000ms ease 600ms backwards;
+  }
+  @keyframes miniSweep { from { stroke-dashoffset: 163.4; } }
+
+  .bubbles { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .bubble {
+    width: 40px; height: 40px; border-radius: var(--r-pill);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 500; color: var(--wash-ink);
+  }
+  .bubble-1 { background: var(--wash); }
+  .bubble-2 { background: #C4E8E5; color: #06514D; }
+  .bubbles span { font-size: 14px; color: var(--muted); }
+
+  /* ==========================================================
+     5. 区块与功能索引（无盒版式）
+     ========================================================== */
+  section { padding: 80px 0; }
+  section + section { border-top: none; }
+  .section-fog { background: var(--fog); }
+  .section-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(38px, 5.5vw, 72px);
+    letter-spacing: -0.02em;
+    line-height: 1.16;
+    color: var(--deep);
+    margin-bottom: 48px;
+    max-width: 900px;
+  }
+  .index-list { border-top: 1px solid var(--hairline); }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 72px 0.9fr 1.1fr 40px;
+    gap: 24px; align-items: baseline;
+    padding: 44px 8px;
+    border-bottom: 1px solid var(--hairline);
+    text-decoration: none;
+    transition: background 300ms ease;
+    overflow: hidden;
+  }
+  .index-row:hover { background: linear-gradient(90deg, rgba(0, 161, 155, 0.08) 0%, transparent 70%); }
+  .index-row .no {
+    position: absolute;
+    left: -6px; top: 50%;
+    transform: translateY(-52%);
+    font-family: var(--font-serif);
+    font-size: 128px;
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.14;
+    pointer-events: none;
+    transition: opacity 300ms ease, transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .index-row:hover .no { opacity: 0.30; transform: translateY(-52%) translateX(8px); }
+  .index-row h3 {
+    grid-column: 2;
+    font-size: 26px; font-weight: 500; color: var(--deep);
+    letter-spacing: -0.01em;
+  }
+  .index-row p { font-size: 16px; color: var(--muted); line-height: 1.5; }
+  .index-row .arr {
+    color: var(--accent); font-size: 20px; justify-self: end;
+    transition: transform 300ms cubic-bezier(0.2, 0, 0, 1);
+  }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     6. 车漆横带 + 无盒数据版面
+     ========================================================== */
+  /* 黑碳横带 + 低位 PETRONAS 流线：2026 官方语义
+     （PETRONAS green flow line 低位扫过车身）的版面化 */
+  .paint-band {
+    position: relative;
+    background:
+      radial-gradient(70% 90% at 18% 0%, rgba(83, 197, 191, 0.14) 0%, transparent 58%),
+      linear-gradient(120deg, #050607 0%, #101315 50%, #23282B 84%, #3E464B 100%);
+    padding: 88px 0;
+    overflow: hidden;
+  }
+  .paint-band::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(115deg,
+      transparent 36%,
+      rgba(255, 255, 255, 0.05) 47%,
+      rgba(83, 197, 191, 0.12) 53%,
+      transparent 64%);
+    animation: sheen 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  /* 低位 PETRONAS 流线：横带下缘一条 2px 青绿光带 */
+  .paint-band::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 15%;
+    height: 2px; pointer-events: none;
+    background: linear-gradient(90deg, transparent 0%, #00A19B 30%, #66D2CB 60%, transparent 100%);
+  }
+  @keyframes sheen {
+    0%   { transform: translateX(-70%); }
+    60%  { transform: translateX(70%); }
+    100% { transform: translateX(70%); }
+  }
+  .paint-band blockquote {
+    position: relative; z-index: 1;
+    font-family: var(--font-serif);
+    font-style: italic; font-weight: 400;
+    font-size: clamp(30px, 4.4vw, 54px);
+    line-height: 1.28; letter-spacing: -0.015em;
+    color: #F5F7F7;
+    max-width: 1000px;
+  }
+  .paint-band cite {
+    display: block; margin-top: 22px;
+    font-family: var(--font-sans); font-style: normal;
+    font-size: 15px; color: rgba(245, 247, 247, 0.58);
+  }
+
+  .data-spread { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: start; }
+  .data-note h3 {
+    font-family: var(--font-serif); font-weight: 400;
+    font-size: 30px; letter-spacing: -0.01em; line-height: 1.3;
+    color: var(--deep); margin-bottom: 14px;
+  }
+  .data-note p { font-size: 16px; color: var(--muted); max-width: 380px; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; padding: 10px 4px;
+    font-size: 13px; font-weight: 500; color: var(--ghost);
+    border-bottom: 1px solid var(--deep);
+  }
+  td {
+    padding: 16px 4px; font-size: 16px; color: var(--ink);
+    border-bottom: 1px solid var(--hairline);
+  }
+  tr:last-child td { border-bottom: none; }
+  td.num, th.num { text-align: right; }
+  tr { transition: background 250ms ease; }
+  tbody tr:hover { background: rgba(0, 161, 155, 0.06); }
+  .tag-pill {
+    display: inline-block; padding: 2px 10px;
+    border-radius: var(--r-pill);
+    background: rgba(0, 161, 155, 0.15);
+    color: #00726D; font-size: 12px; font-weight: 500;
+  }
+
+  /* ==========================================================
+     7. Footer —— PETRONAS 流线收尾
+     ========================================================== */
+  footer { padding: 48px 0 40px; }
+  footer::before {
+    content: ""; display: block; height: 2px; margin-bottom: 40px;
+    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--signal) 75%, transparent 100%);
+    opacity: 0.5;
+  }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  footer .note { font-size: 14px; color: var(--muted); }
+
+  /* ==========================================================
+     8. 响应式
+     ========================================================== */
+  @media (max-width: 1024px) {
+    .hero-display { font-size: clamp(56px, 13vw, 150px); }
+    .artifacts { min-height: 340px; }
+  }
+  @media (max-width: 820px) {
+    .hero { padding: 40px 0 64px; }
+    .hero-grid { grid-template-columns: 1fr; }
+    .hero-display { white-space: normal; font-size: clamp(48px, 15vw, 90px); line-height: 1.02; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero::before, .hero-glow {
+      top: auto; width: 100%; height: 320px;
+      border-top-left-radius: 80px;
+    }
+    .artifacts { min-height: 0; display: flex; flex-direction: column; gap: 16px; margin-top: 8px; }
+    .artifact { position: static; width: auto; }
+    .index-row { grid-template-columns: 1fr 24px; padding: 30px 8px 30px 24px; }
+    .index-row h3 { grid-column: 1; }
+    .index-row p { grid-column: 1; }
+    .index-row .no { font-size: 80px; left: -10px; }
+    .data-spread { grid-template-columns: 1fr; gap: 28px; }
+    .paint-band { padding: 64px 0; }
+    section { padding: 56px 0; }
+    .section-title { font-size: clamp(32px, 8vw, 44px); }
+    .nav-links { display: none; }
+  }
+  @media (max-width: 520px) {
+    .wrap { padding: 0 20px; }
+    .hero-display { font-size: clamp(40px, 14vw, 56px); }
+    footer .wrap { flex-direction: column; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="nav-logo">Vertex</div>
+    <div class="nav-links">
+      <a href="#">产品</a>
+      <a href="#">客户</a>
+      <a href="#">资源</a>
+      <a href="#">定价</a>
+    </div>
+    <div class="nav-cta">
+      <button class="pill pill-ghost pill-sm">预约演示</button>
+      <button class="pill pill-filled pill-sm">开始使用</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-glow" aria-hidden="true"></div>
+  <div class="wrap">
+    <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
+    <div class="hero-display" role="heading" aria-level="1">Data, forged<span class="l2">in <em>Silver Arrows</em>.</span></div>
+  </div>
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p>把 Mercedes-AMG PETRONAS 的黑银与精密，穿在一个普通数据产品身上。冷银纸面、碳黑墨色，唯一的彩色是一条 PETRONAS 青绿流线。</p>
+      <div class="hero-actions">
+        <button class="pill pill-filled">开始使用</button>
+        <button class="pill pill-ghost">预约演示</button>
+        <a class="arrow-link" href="#" style="margin-left:8px">阅读设计规范 →</a>
+      </div>
+    </div>
+
+    <div class="artifacts" aria-label="产品界面残片示意">
+      <div class="artifact artifact-1">
+        <div class="label">本月注册</div>
+        <div class="metric num"><span data-count="2.4">2.4</span>k</div>
+        <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
+        <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
+          <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
+                fill="none" stroke="#00A19B" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="206" cy="10" r="3.5" fill="#66D2CB"/>
+        </svg>
+      </div>
+      <div class="artifact artifact-2">
+        <div class="label">System Load</div>
+        <div class="mini-gauge">
+          <svg viewBox="0 0 150 84" aria-hidden="true">
+            <path d="M 23 76 A 52 52 0 0 1 127 76"
+                  fill="none" stroke="#DEE4E5" stroke-width="8" stroke-linecap="round"/>
+            <path class="mini-arc-progress" d="M 23 76 A 52 52 0 0 1 127 76"
+                  fill="none" stroke="#00A19B" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="163.4"/>
+          </svg>
+          <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
+        </div>
+      </div>
+      <div class="artifact artifact-3">
+        <div class="label">实时协作</div>
+        <div class="bubbles">
+          <div class="bubble bubble-1">JB</div>
+          <div class="bubble bubble-2">AF</div>
+          <span>2 人正在编辑</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="section-fog reveal">
+  <div class="wrap">
+    <h2 class="section-title">精密不是复杂，<br>是把每个像素放在该在的位置。</h2>
+    <div class="index-list">
+      <a class="index-row" href="#">
+        <span class="no">01</span>
+        <h3>问一句，看穿一层</h3>
+        <p>自然语言查询直接下钻到明细。图表是手势般的一根线，不是塞满坐标轴的报表。</p>
+        <span class="arr">→</span>
+      </a>
+      <a class="index-row" href="#">
+        <span class="no">02</span>
+        <h3>让流程自己跑</h3>
+        <p>工作流在纸面之下安静运转，只有需要你决策的时刻才浮出一张卡片。</p>
+        <span class="arr">→</span>
+      </a>
+      <a class="index-row" href="#">
+        <span class="no">03</span>
+        <h3>权限清晰到行</h3>
+        <p>行级权限与审计一体。青绿只出现在你按下去的那个按钮上。</p>
+        <span class="arr">→</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 车漆横带：黑碳底 + 低位 PETRONAS 流线（2026 官方语义的版面化） -->
+<section class="paint-band reveal">
+  <div class="wrap">
+    <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
+    <cite>— Head of Operations, Vantage Team</cite>
+  </div>
+</section>
+
+<section class="reveal">
+  <div class="wrap">
+    <div class="data-spread">
+      <div class="data-note">
+        <h3>渠道，摊开在纸面上。</h3>
+        <p>数据不必装进盒子。发丝线、等宽数字和留白，就是它需要的全部结构。</p>
+      </div>
+      <table>
+        <thead>
+          <tr><th>渠道</th><th class="num">访问</th><th class="num">转化</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr><td>自然搜索</td><td class="num">8,204</td><td class="num">4.2%</td><td><span class="tag-pill">Top</span></td></tr>
+          <tr><td>直接访问</td><td class="num">5,113</td><td class="num">3.1%</td><td></td></tr>
+          <tr><td>社交媒体</td><td class="num">2,882</td><td class="num">2.4%</td><td></td></tr>
+          <tr><td>邮件营销</td><td class="num">1,997</td><td class="num">1.8%</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="nav-logo" style="font-size:15px">Vertex</div>
+    <div class="note">内容与赛车无关，仍应一眼认出 Silver Arrows 的黑银与 PETRONAS 青绿 —— 这是最终校验标准</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+    return;
+  }
+  document.querySelectorAll("[data-count]").forEach(function (el) {
+    var target = parseFloat(el.dataset.count);
+    var decimals = (el.dataset.count.split(".")[1] || "").length;
+    var start = null;
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / 900, 1);
+      p = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * p).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+
+  var artifacts = Array.prototype.map.call(
+    document.querySelectorAll(".artifact"),
+    function (el, i) {
+      var conf = [{ rate: -0.28, depth: 34 }, { rate: 0.12, depth: 52 }, { rate: -0.45, depth: 22 }];
+      return { el: el, rate: conf[i % 3].rate, depth: conf[i % 3].depth };
+    }
+  );
+  var wideScreen = window.matchMedia("(min-width: 821px)");
+  var ticking = false;
+  function parallax() {
+    var y = window.scrollY;
+    artifacts.forEach(function (a) {
+      a.el.style.setProperty("--plx", wideScreen.matches ? (y * a.rate).toFixed(1) : "0");
+    });
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(parallax); }
+  }, { passive: true });
+
+  var hero = document.querySelector(".hero");
+  if (hero) {
+    hero.addEventListener("mousemove", function (ev) {
+      if (!wideScreen.matches) return;
+      var r = hero.getBoundingClientRect();
+      var nx = (ev.clientX - r.left) / r.width - 0.5;
+      var ny = (ev.clientY - r.top) / r.height - 0.5;
+      artifacts.forEach(function (a) {
+        a.el.style.setProperty("--mx", (nx * a.depth).toFixed(1));
+        a.el.style.setProperty("--my", (ny * a.depth).toFixed(1));
+      });
+    });
+    hero.addEventListener("mouseleave", function () {
+      artifacts.forEach(function (a) {
+        a.el.style.setProperty("--mx", "0");
+        a.el.style.setProperty("--my", "0");
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

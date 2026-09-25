@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build:templates": "node scripts/build-templates.mjs",
-    "build:templates:check": "node scripts/build-templates.mjs --check"
+    "build:templates:check": "node scripts/build-templates.mjs --check",
+    "build:showcase": "npm --prefix showcase run build",
+    "package:quickshare": "node scripts/package-quickshare.mjs"
   },
   "devDependencies": {}
 }
