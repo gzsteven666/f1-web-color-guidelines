@@ -1,6 +1,6 @@
 # Official 2026 Sources
 
-以下来源用于本 skill 的 2026 校对，校对日期为 2026-03-09。优先使用官方车队站点；当官方页面文本抓取受限时，以官方发布页可见摘要或官方技术页交叉确认。
+以下来源用于本 skill 的 2026 校对：初始五队校对日期为 2026-03-09；Williams 补充校对日期为 2026-09-26。优先使用官方车队站点；当官方页面文本抓取受限时，以官方发布页可见摘要或官方技术页交叉确认。文档中的 HEX 如未有官方品牌规范来源，均为网页复现建议值，并非官方公布的色号。
 
 ## Aston Martin
 
@@ -33,3 +33,12 @@
 - Cadillac Formula 1 Team, `Livery`
   - 链接：[cadillacf1.com](https://www.cadillacf1.com/livery)
   - 用到的信息：bold and modern、make the car look fast standing still、chevron-based black-to-white gradient、American innovation / spirit / pride。
+
+## Williams（2026-09-26 补充）
+
+- Atlassian Williams F1 Team, `Atlassian Williams F1 Team reveals bold new racing livery for 2026`（2026-02-03）
+  - 链接：[williamsf1.com](https://www.williamsf1.com/articles/5363520c-1e22-4d62-a568-7f1c7b6ff529/atlassian-williams-f1-team-reveals-bold-new-racing-livery-for-2026)
+  - 用到的信息：FW48 vibrant gloss blue、侧部至尾部的 flowing black、红白冠军传统 keyline、侧箱及前后翼的 white。官方描述的是颜色与结构，不是 HEX 数值。
+- Atlassian Williams F1 Team, `Evolution of an icon: Williams unveils new name and logo for 2026`（2025-11-03）
+  - 链接：[williamsf1.com](https://www.williamsf1.com/articles/30b994e6-0753-4f10-a003-7b5cc9fd52a2/evolution-of-an-icon-williams-unveils-new-name-and-logo-for-2026)
+  - 用到的信息：2026 队名 Atlassian Williams F1 Team、Frank Williams `Forward W` 的重新诠释与历史传承语义。

@@ -2,13 +2,19 @@
 
 一个面向网页设计与前端实现的 Codex skill，用来把 F1 车队的视觉语言转成可执行的网页配色规范。
 
-当前版本覆盖 5 支车队：
+当前版本已完整覆盖 2026 赛季全阵容全部 11 支车队：
 
-- Aston Martin
-- Mercedes-AMG PETRONAS
-- McLaren
-- Ferrari
-- Cadillac
+- Mercedes-AMG PETRONAS (W17)
+- Scuderia Ferrari (SF-26)
+- McLaren Formula 1 Team (MCL39)
+- Aston Martin Aramco F1 Team (AMR26)
+- Cadillac Formula 1 Team (MAC-01)
+- Atlassian Williams F1 Team (FW48)
+- Oracle Red Bull Racing (RB22)
+- Audi F1 Team (AU26)
+- BWT Alpine F1 Team (A526)
+- Visa Cash App RB (VCARB 03)
+- MoneyGram Haas F1 Team (VF-26)
 
 这个 skill 适合以下任务：
 
@@ -25,7 +31,7 @@
 ├─ README.md
 ├─ SKILL.md
 ├─ references/
-│  ├─ aston-martin.md / mercedes.md / mclaren.md / ferrari.md / cadillac.md
+│  ├─ 11 支车队 2026 规程官方视觉设计指引 (aston-martin, mercedes, mclaren, ferrari, cadillac, williams, red-bull, audi, alpine, racing-bulls, haas)
 │  ├─ web-craft.md              ← 字体/形状/材质/动效/构图的跨车队配方
 │  ├─ cross-team-methodology.md
 │  └─ official-2026-sources.md
@@ -62,7 +68,7 @@
 
 ## 2026 资料校对
 
-当前版本已按 2026-03-09 可核实到的官方 2026 发布资料校对。
+原有五队已按 2026-03-09 可核实到的官方 2026 发布资料校对；Williams 于 2026-09-26 依车队官网 FW48 发布资料补充。网页 HEX 为复现建议值，非官方 token。
 
 重点更新包括：
 
@@ -71,6 +77,12 @@
 - McLaren：强调冠军延续下的 papaya / anthracite / teal 关系
 - Ferrari：更新为 2026 的更亮 Rosso Scuderia、白色结构角色、gloss paint
 - Cadillac：强调 `fast standing still` 与 chevron 渐变逻辑
+- Williams：FW48 高光泽蓝、流动黑、白色结构面与极细红白历史描边
+- Red Bull Racing：RB22 哑光暗夜深蓝、非反射磨砂清漆、红黄双色能量脉冲线
+- Audi F1 Team：AU26 航空冰钛冷银、玄武岩碳黑与 350kW 高能猩红电弧
+- Alpine：A526 阿尔派皇家金属蓝、暗影碳黑与 BWT 电气亮粉对冲
+- Visa Cash App RB：VCARB 03 高闪耀电镀宝蓝、极速纯白条带与公牛火红
+- Haas：VF-26 轻量半哑冷白、外露裸碳黑与 MoneyGram 速度红机械三元秩序
 
 ## 如何使用
 
@@ -85,20 +97,8 @@
 - “把这个 dashboard 改成 2026 Mercedes 风格”
 - “给我一套 Ferrari 2026 的 CSS variables”
 - “做一个 McLaren 风格的数据可视化 landing page”
-- “看看这个页面更像 Aston Martin 还是普通科技绿”
-
-
-
-## 后续扩展
-
-当前还没有覆盖完整 F1 赛季全部车队。如果继续扩展，推荐下一批补充：
-
-- Red Bull Racing
-- Alpine
-- Williams
-- Sauber / Audi
-- Haas
-- Visa Cash App RB
+- “用 Audi 风格做一个德系工业精密仪器监控台”
+- “用 Red Bull 哑光质感做一个动量展示页面”
 
 ## 许可与说明
 

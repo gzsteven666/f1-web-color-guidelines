@@ -759,6 +759,8 @@ export const MCLAREN = {
       { azimuth: 65, elevation: 10, w: 1.4, h: 18, color: '#4FD5D6', intensity: 9 },
       // 下方暖橙受光补强
       { azimuth: -12, elevation: -26, w: 20, h: 0.25, color: '#FF9B2F', intensity: 8 },
+      // 轮毂罩 Google Chrome 液态高光与微反射（Chrome Wheel Rim Specular #E2E8F0）
+      { azimuth: -58, elevation: 16, w: 1.2, h: 14, color: '#E2E8F0', intensity: 10 },
     ],
   },
 
@@ -790,6 +792,7 @@ export const MCLAREN = {
 
   fallback:
     'radial-gradient(120% 70% at 28% 0%, rgba(255, 135, 0, 0.24) 0%, transparent 55%),' +
+    'radial-gradient(60% 40% at 88% 22%, rgba(226, 232, 240, 0.12) 0%, transparent 50%),' +
     'linear-gradient(180deg, #2B180C 0%, #161210 35%, #0B0B0C 100%)',
 };
 
@@ -945,7 +948,481 @@ export const CADILLAC = {
 };
 
 // ------------------------------------------------------------------
-// 车队预设注册表（支持 kebab-case 与 snake_case 查找）
+// 6. Atlassian Williams F1 Team (2026 FW48)
+// ------------------------------------------------------------------
+// 官方 2026 FW48 涂装语义：
+//   - 纯正的 Vibrant Gloss Blue（高光泽鲜蓝车头与主识别）
+//   - 车身侧壁向尾部收束的 Flowing Carbon Black（空气动力学流动碳黑）
+//   - 侧箱切口、前翼端板的纯白结构面（Wing White）
+//   - 蓝黑交界处极其克制的红白双轨冠军描边（Championship Heritage Keyline）
+//   - 整体传递牛津郡 Grove 研发中心的尖端复合材料工程感与 9 届世界冠军的从容自信
+export const WILLIAMS = {
+  id: 'williams',
+  name: 'Atlassian Williams F1 Team',
+  chassis: 'FW48',
+
+  // —— 涂装阶段：2026 FW48 从鲜蓝车头向车尾流动碳黑的平滑过渡 ——
+  livery: [
+    {
+      // 阶段 0：FW48 高光泽鲜蓝主漆（Vibrant Gloss Blue #0858C9）
+      color: '#0858C9',
+      metalness: 0.12,          // 低金属度高饱和底漆，呈现纯正深邃的英国赛车蓝
+      roughness: 0.18,          // 底漆平整细腻
+      clearcoat: 1.0,           // 满级双层高透明度镜面清漆（Gloss Paint 传承）
+      clearcoatRoughness: 0.03, // 极平整的清漆表面，在摄影棚柔光条下反射出锐利高光
+      envIntensity: 1.25,       // 饱满的环境光感
+    },
+    {
+      // 阶段 1：后部空气动力学流动碳黑（Flowing Carbon Black #0A1220）
+      color: '#0A1220',
+      metalness: 0.18,          // 微带金属反光的碳纤维编织基底
+      roughness: 0.32,          // 较粗糙的下洗气流复合材料表面
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.06, // 略微柔和的高光
+      envIntensity: 1.05,
+    },
+  ],
+
+  // —— 虚拟摄影棚：牛津郡 Grove 试车场清冷天穹与白色长条柔光箱 ——
+  studio: {
+    sky: '#1E2D4A',             // 清冷英伦夜蓝天穹
+    horizon: '#0E1726',         // 地平线收束色
+    ground: '#050B14',          // 深邃吸光地表（营造底盘悬浮感）
+    strips: [
+      // 顶部超宽纯白主柔光箱（模拟主展厅穹顶天幕反射，勾勒车脊轮廓）
+      { azimuth: 0, elevation: 34, w: 22, h: 1.4, color: '#F4F7FA', intensity: 16 },
+      // 侧向 58° 结构高光切线（刻画侧箱进气道导流折角）
+      { azimuth: 58, elevation: 14, w: 1.5, h: 18, color: '#FFFFFF', intensity: 12 },
+      // 低位蓝光漫射带（模拟地表受光反射，增强鲜蓝层次）
+      { azimuth: -24, elevation: -18, w: 20, h: 0.4, color: '#4089E5', intensity: 7 },
+    ],
+  },
+
+  // —— 车身空气动力学微起伏：Grove 风洞低风阻导流槽与 Forward W 动量线 ——
+  surface: {
+    waves: [
+      [0, 0.94, 0.33, 0.05],
+      [0.55, 0.38, 0.25, -0.04],
+      [-0.8, 0.60, 0.12, 0.06],
+    ],
+    crease: {
+      dir: [0.38, 0.93],        // 侧向导流折痕方向
+      period: 8.2,
+      sharpness: 4.8,           // 锐利的侧箱起伏
+      height: 0.12,
+    },
+    parallax: 0.45,
+    sweep: [-0.12, 0.55],
+    pointer: [0.1, 0.05],
+  },
+
+  // —— 赛道贯穿线：结构羽白纯线，以冠军历史红（Heritage Red #D6293E）为笔尖端点 ——
+  line: {
+    color: '#F4F7FA',           // 主线条：结构羽白
+    tipColor: '#D6293E',        // 笔尖高光：致敬 9 次世界冠军的传统红
+    width: 2,
+    ghostOpacity: 0.15,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.05,
+    maxDpr: 1.5,
+  },
+
+  // —— 不支持 WebGL 时的纯 CSS 双层方向性受光物理回退 ——
+  fallback:
+    'radial-gradient(110% 70% at 24% 10%, rgba(64,137,229,0.35) 0%, transparent 58%),' +
+    'linear-gradient(142deg, #0858C9 0%, #06449D 38%, #0A1220 72%, #050B14 100%)',
+};
+
+// ------------------------------------------------------------------
+// 7. Oracle Red Bull Racing (红牛车队 / 2026 RB22)
+// ------------------------------------------------------------------
+export const RED_BULL = {
+  id: 'red-bull',
+  name: 'Oracle Red Bull Racing',
+  chassis: 'RB22 // FORD POWERTRAINS',
+
+  // —— 涂装阶段：2026 RB22 标志性哑光暗夜蓝向外露碳黑底盘流动 ——
+  livery: [
+    {
+      // 阶段 0：Matte Midnight Navy 哑光磨砂深蓝（#040D1A）
+      color: '#040D1A',
+      metalness: 0.10,          // 低金属度
+      roughness: 0.42,          // 高粗糙度底漆：吸光不反光的经典红牛磨砂质感
+      clearcoat: 0.20,          // 极低清漆层（Satin Matte finish）
+      clearcoatRoughness: 0.50, // 漫射清漆，彻底消除刺眼高光亮斑
+      envIntensity: 0.95,
+    },
+    {
+      // 阶段 1：后部空气动力学裸碳黑（#020509）
+      color: '#020509',
+      metalness: 0.15,
+      roughness: 0.38,
+      clearcoat: 0.25,
+      clearcoatRoughness: 0.45,
+      envIntensity: 0.85,
+    },
+  ],
+
+  // —— 虚拟摄影棚：米尔顿凯恩斯冠军工坊的暗夜冷调柔光 ——
+  studio: {
+    sky: '#0C182B',             // 暗夜冷海军蓝天幕
+    horizon: '#060F1C',
+    ground: '#020509',
+    strips: [
+      // 顶部主柔光箱（宽屏均匀柔和照射，呈现磨砂漆面弧度）
+      { azimuth: 0, elevation: 34, w: 24, h: 1.6, color: '#F5F7FA', intensity: 13 },
+      // 侧向公牛极速红光带（勾勒车侧肌肉线条）
+      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#EA1D2D', intensity: 10 },
+      // 低位能量荧光黄脉冲光晕（模拟 2026 电驱爆发指示）
+      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFEB00', intensity: 9 },
+    ],
+  },
+
+  // —— 侵略性风刀气动微起伏与向前俯冲刀锋切痕 ——
+  surface: {
+    waves: [
+      [0.0, 0.90, 0.35, 0.05],
+      [0.50, 0.32, 0.26, -0.04],
+      [-0.75, 0.55, 0.10, 0.06],
+    ],
+    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0.13 },
+    parallax: 0.44,
+    sweep: [-0.14, 0.56],
+    pointer: [0.11, 0.05],
+  },
+
+  // —— 贯穿赛道线：公牛极速红主线，配能量荧光黄（Electric Yellow）笔尖 ——
+  line: {
+    color: '#EA1D2D',           // 公牛极速红
+    tipColor: '#FFEB00',        // 能量荧光黄笔尖
+    width: 2.2,
+    ghostOpacity: 0.18,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.05,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(100% 60% at 20% 15%, rgba(24, 43, 69, 0.40) 0%, transparent 65%),' +
+    'linear-gradient(155deg, #040D1A 0%, #061122 35%, #03070E 75%, #020509 100%)',
+};
+
+// ------------------------------------------------------------------
+// 8. Audi F1 Team (奥迪厂队 / 2026 AU26)
+// ------------------------------------------------------------------
+export const AUDI = {
+  id: 'audi',
+  name: 'Audi F1 Team',
+  chassis: 'AU26 // VORSPRUNG 2026',
+
+  // —— 涂装阶段：包豪斯工业理性，航空冰钛银与玄武岩碳黑双拼 ——
+  livery: [
+    {
+      // 阶段 0：Titanium Ice Silver 冰钛冷银金属车漆（#D2D7DF）
+      color: '#D2D7DF',
+      metalness: 0.96,          // 纯粹航天钛金属底漆
+      roughness: 0.18,          // 极其平整细腻，反光锐利清澈
+      clearcoat: 1.0,           // 满级镜面清漆
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.30,
+    },
+    {
+      // 阶段 1：Basalt Carbon Black 玄武岩碳黑底盘（#0B0E12）
+      color: '#0B0E12',
+      metalness: 0.25,
+      roughness: 0.28,
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.06,
+      envIntensity: 1.10,
+    },
+  ],
+
+  // —— 虚拟摄影棚：因戈尔施塔特精密实验室的高亮冷白矩阵 ——
+  studio: {
+    sky: '#2A323D',             // 冷钛天顶
+    horizon: '#14181F',
+    ground: '#050608',
+    strips: [
+      // 顶部超高亮条纹（模拟风洞主天幕，反射出冷冽钛合金光刃）
+      { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
+      // 侧向 55° 精密工业切光
+      { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
+      // 低位奥迪运动高能猩红脉冲光（High-Voltage 350kW MGU-K 指示）
+      { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
+    ],
+  },
+
+  // —— 德意志精密模块化折痕与微米级公差导流面 ——
+  surface: {
+    waves: [
+      [0.0, 0.85, 0.32, 0.04],
+      [0.46, 0.34, 0.25, -0.03],
+      [-0.70, 0.52, 0.11, 0.05],
+    ],
+    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0.11 },
+    parallax: 0.45,
+    sweep: [-0.12, 0.52],
+    pointer: [0.09, 0.04],
+  },
+
+  // —— 贯穿赛道线：奥迪运动高能猩红（High-Voltage Red），纯白电弧笔尖 ——
+  line: {
+    color: '#F50537',           // 奥迪运动高能猩红
+    tipColor: '#FFFFFF',        // 纯白电弧笔尖
+    width: 2.2,
+    ghostOpacity: 0.18,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.08,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(110% 65% at 25% 10%, rgba(210, 215, 223, 0.28) 0%, transparent 60%),' +
+    'linear-gradient(160deg, #1A1F26 0%, #0E1216 38%, #050608 100%)',
+};
+
+// ------------------------------------------------------------------
+// 9. BWT Alpine F1 Team (阿尔派车队 / 2026 A526)
+// ------------------------------------------------------------------
+export const ALPINE = {
+  id: 'alpine',
+  name: 'BWT Alpine F1 Team',
+  chassis: 'A526 // ENSTONE AERO',
+
+  // —— 涂装阶段：法式经典高光金属蓝与暗影裸碳的现代交织 ——
+  livery: [
+    {
+      // 阶段 0：Alpine Metallic Blue 阿尔派高光金属蓝（#0078C1）
+      color: '#0078C1',
+      metalness: 0.85,          // 饱满金属漆
+      roughness: 0.20,          // 细腻光润
+      clearcoat: 1.0,           // 满级清漆，反射通透
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.25,
+    },
+    {
+      // 阶段 1：Shadow Carbon Black 侧箱暗影碳黑（#080C11）
+      color: '#080C11',
+      metalness: 0.20,
+      roughness: 0.32,
+      clearcoat: 0.90,
+      clearcoatRoughness: 0.08,
+      envIntensity: 1.05,
+    },
+  ],
+
+  // —— 虚拟摄影棚：恩斯通风洞天幕，辅以 BWT 电气亮粉底光 ——
+  studio: {
+    sky: '#0C223A',             // 深邃阿尔派天顶
+    horizon: '#061220',
+    ground: '#04070A',
+    strips: [
+      // 顶部大柔光箱
+      { azimuth: 0, elevation: 35, w: 22, h: 1.4, color: '#FFFFFF', intensity: 15 },
+      // 侧向水蓝高光条
+      { azimuth: 58, elevation: 10, w: 1.2, h: 18, color: '#2CE8FF', intensity: 10 },
+      // 低位 BWT 电气亮粉光晕（标志性蓝粉碰撞）
+      { azimuth: -12, elevation: -25, w: 22, h: 0.28, color: '#FD4BC7', intensity: 11 },
+    ],
+  },
+
+  // —— 流线型气动起伏与侧箱下洗通道 ——
+  surface: {
+    waves: [
+      [0.0, 0.88, 0.32, 0.04],
+      [0.48, 0.32, 0.25, -0.04],
+      [-0.72, 0.56, 0.11, 0.05],
+    ],
+    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0.12 },
+    parallax: 0.46,
+    sweep: [-0.12, 0.54],
+    pointer: [0.10, 0.05],
+  },
+
+  // —— 贯穿赛道线：BWT 电气亮粉（Electric Pink），水蓝电弧笔尖 ——
+  line: {
+    color: '#FD4BC7',           // BWT 电气亮粉
+    tipColor: '#2CE8FF',        // 水蓝电弧笔尖
+    width: 2.2,
+    ghostOpacity: 0.18,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.06,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(110% 70% at 20% 12%, rgba(0, 120, 193, 0.35) 0%, transparent 62%),' +
+    'linear-gradient(155deg, #004D7D 0%, #07192C 35%, #080C11 70%, #04070A 100%)',
+};
+
+// ------------------------------------------------------------------
+// 10. Visa Cash App RB (极速公牛 / 2026 VCARB 03)
+// ------------------------------------------------------------------
+export const RACING_BULLS = {
+  id: 'racing-bulls',
+  name: 'Visa Cash App RB',
+  chassis: 'VCARB 03 // FAENZA DYNAMICS',
+
+  // —— 涂装阶段：高光泽电镀金属宝蓝与极速白条纹的鲜明对冲 ——
+  livery: [
+    {
+      // 阶段 0：Electric Candy Royal Blue 电镀宝蓝（#1640D6）
+      color: '#1640D6',
+      metalness: 0.72,          // 金属漆与高透色漆层结合
+      roughness: 0.15,          // 极度平整，带来全场最耀眼的高光
+      clearcoat: 1.0,           // 满级 Candy 清漆
+      clearcoatRoughness: 0.02, // 镜面无暇
+      envIntensity: 1.35,
+    },
+    {
+      // 阶段 1：Faenza Nero Chassis 暗夜底盘碳黑（#070B14）
+      color: '#070B14',
+      metalness: 0.20,
+      roughness: 0.30,
+      clearcoat: 0.95,
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.10,
+    },
+  ],
+
+  // —— 虚拟摄影棚：明快耀眼的纯白天幕与公牛火红点缀 ——
+  studio: {
+    sky: '#182C5E',             // 明亮夜空蓝天幕
+    horizon: '#0C1632',
+    ground: '#070B14',
+    strips: [
+      // 顶部超宽白光条（呈现电光宝蓝的流线镜面）
+      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 17 },
+      // 侧向电光蓝反光带
+      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#4A7BFF', intensity: 13 },
+      // 低位公牛活力红微光带
+      { azimuth: -16, elevation: -20, w: 20, h: 0.25, color: '#E51937', intensity: 9 },
+    ],
+  },
+
+  // —— 意式灵动敏捷的空气动力学导流微波 ——
+  surface: {
+    waves: [
+      [0.0, 0.92, 0.34, 0.05],
+      [0.52, 0.35, 0.26, -0.04],
+      [-0.76, 0.58, 0.12, 0.06],
+    ],
+    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0.12 },
+    parallax: 0.45,
+    sweep: [-0.12, 0.55],
+    pointer: [0.10, 0.05],
+  },
+
+  // —— 贯穿赛道线：极速纯白条带主线，公牛火红（Toros Red）笔尖 ——
+  line: {
+    color: '#FFFFFF',           // 纯白速度主线
+    tipColor: '#E51937',        // 公牛火红点
+    width: 2.5,
+    ghostOpacity: 0.20,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.10,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(110% 68% at 22% 10%, rgba(74, 123, 255, 0.42) 0%, transparent 60%),' +
+    'linear-gradient(155deg, #1034B0 0%, #0A1C4D 38%, #070B14 100%)',
+};
+
+// ------------------------------------------------------------------
+// 11. MoneyGram Haas F1 Team (哈斯车队 / 2026 VF-26)
+// ------------------------------------------------------------------
+export const HAAS = {
+  id: 'haas',
+  name: 'MoneyGram Haas F1 Team',
+  chassis: 'VF-26 // AMERICAN CNC',
+
+  // —— 涂装阶段：轻量化机加工冷白与外露吸光裸碳黑的三元秩序 ——
+  livery: [
+    {
+      // 阶段 0：CNC Lightweight White 半哑冷白（#F8F9FA）
+      color: '#F8F9FA',
+      metalness: 0.15,
+      roughness: 0.28,          // 半哑光涂层，追求极致减重
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.10,
+      envIntensity: 1.20,
+    },
+    {
+      // 阶段 1：Raw Chassis Carbon 外露裸碳黑（#0F1012）
+      color: '#0F1012',
+      metalness: 0.25,
+      roughness: 0.36,
+      clearcoat: 0.80,
+      clearcoatRoughness: 0.12,
+      envIntensity: 0.95,
+    },
+  ],
+
+  // —— 虚拟摄影棚：北卡罗来纳坎纳波利斯工业车间的硬朗光感 ——
+  studio: {
+    sky: '#26292E',             // 冷灰机匣天顶
+    horizon: '#14161A',
+    ground: '#060708',
+    strips: [
+      // 顶部大功率白光天幕
+      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 15 },
+      // 侧向机加工合金冷光
+      { azimuth: 56, elevation: 12, w: 1.2, h: 16, color: '#A4ABB6', intensity: 8 },
+      // 低位 MoneyGram 速度红流光带
+      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#DA291C', intensity: 10 },
+    ],
+  },
+
+  // —— 美式机加工紧密公差切角与直角导流槽 ——
+  surface: {
+    waves: [
+      [0.0, 0.82, 0.30, 0.04],
+      [0.44, 0.30, 0.24, -0.03],
+      [-0.68, 0.50, 0.10, 0.04],
+    ],
+    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0.11 },
+    parallax: 0.42,
+    sweep: [-0.10, 0.50],
+    pointer: [0.08, 0.04],
+  },
+
+  // —— 贯穿赛道线：MoneyGram 速度红主线，纯白高亮笔尖 ——
+  line: {
+    color: '#DA291C',           // MoneyGram 速度红
+    tipColor: '#FFFFFF',        // 纯白高光点
+    width: 2.5,
+    ghostOpacity: 0.16,
+  },
+
+  render: {
+    toneMapping: 'neutral',
+    exposure: 1.05,
+    maxDpr: 1.5,
+  },
+
+  fallback:
+    'radial-gradient(110% 65% at 20% 12%, rgba(248, 249, 250, 0.22) 0%, transparent 60%),' +
+    'linear-gradient(160deg, #24272D 0%, #121417 38%, #060708 100%)',
+};
+
+// ------------------------------------------------------------------
+// 车队预设注册表（支持 2026 全赛季 11 支车队，kebab-case 与 snake_case 查找）
 // ------------------------------------------------------------------
 export const TEAM_PRESETS = {
   mercedes: MERCEDES,
@@ -954,6 +1431,14 @@ export const TEAM_PRESETS = {
   'aston-martin': ASTON_MARTIN,
   aston_martin: ASTON_MARTIN,
   cadillac: CADILLAC,
+  williams: WILLIAMS,
+  'red-bull': RED_BULL,
+  red_bull: RED_BULL,
+  audi: AUDI,
+  alpine: ALPINE,
+  'racing-bulls': RACING_BULLS,
+  racing_bulls: RACING_BULLS,
+  haas: HAAS,
 };
 // ===== assets/surface/teams.js 结束 =====
 
@@ -1232,11 +1717,12 @@ export class PaintSurface {
     this.stop();
     window.removeEventListener('resize', this._onResize);
     this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
-    this.mesh.geometry.dispose();
-    this.material.dispose();
-    this.envTarget.dispose();
-    this.renderer.dispose();
-    this.renderer.forceContextLoss();
+    this.mesh.geometry?.dispose();
+    this.material?.dispose();
+    this.envTarget?.dispose();
+    this.renderer?.dispose();
+    // 提示：切勿调用 this.renderer.forceContextLoss()，否则在 React StrictMode 两次挂载或组件热重载时，
+    // DOM 中的同一 canvas 元素的 WebGL 上下文会被永久置为失效，导致二次初始化崩溃。
   }
 
   /* ---------------- 初始化 ---------------- */

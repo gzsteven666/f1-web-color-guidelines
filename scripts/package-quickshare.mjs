@@ -28,12 +28,47 @@ for (const file of templateFiles) {
 console.log(`   ✓ 已同步 ${templateFiles.length} 份独立 HTML 模板到 showcase/public/templates/`);
 
 // 2. 构建 Showcase 应用 (带有 base: './' 相对路径)
-console.log('\n⚙️ 步骤 2/4: 执行 Showcase 生产构建 (Vite base: "./")...');
+console.log('\n⚙️ 步骤 2/5: 执行 Showcase 生产构建 (Vite base: "./")...');
 execSync('npm --prefix showcase run build', { stdio: 'inherit', cwd: ROOT_DIR });
 console.log('   ✓ Showcase 构建完成，资源已转换为相对寻址');
 
-// 3. 在 dist 中生成部署说明文档
-console.log('\n📝 步骤 3/4: 写入 QuickShare 部署说明文档...');
+// 3. 将 CSS 与 JS 内联到 index.html (彻底解决 QuickShare CSP sandbox: allow-scripts 下 Origin: null 导致的 CORS 拦截)
+console.log('\n💉 步骤 3/5: 将 CSS 和 JS 内联到 index.html (免疫 QuickShare CSP sandbox 跨域限制)...');
+const indexPath = path.join(DIST_DIR, 'index.html');
+let html = fs.readFileSync(indexPath, 'utf-8');
+
+// 内联 CSS
+const cssMatch = html.match(/<link rel="stylesheet"[^>]*href="\.?\/assets\/([^"]+)"[^>]*>/);
+if (cssMatch) {
+  const cssFile = path.join(DIST_DIR, 'assets', cssMatch[1]);
+  if (fs.existsSync(cssFile)) {
+    const cssContent = fs.readFileSync(cssFile, 'utf-8');
+    html = html.replace(cssMatch[0], () => `<style>\n${cssContent}\n</style>`);
+    console.log(`   ✓ 已内联样式表: ${cssMatch[1]}`);
+  }
+}
+
+// 移除原有的外部 script 并将完整 JS 脚本以 IIFE 方式内联到 </body> 之前
+const jsMatch = html.match(/<script type="module"[^>]*src="\.?\/assets\/([^"]+)"[^>]*><\/script>/);
+if (jsMatch) {
+  const jsFile = path.join(DIST_DIR, 'assets', jsMatch[1]);
+  if (fs.existsSync(jsFile)) {
+    let jsContent = fs.readFileSync(jsFile, 'utf-8');
+    // 防止 HTML 解析器误触闭合标签
+    jsContent = jsContent.replace(/<\/script/gi, '<\\/script');
+    html = html.replace(jsMatch[0], '');
+    const bodyCloseIdx = html.indexOf('</body>');
+    if (bodyCloseIdx !== -1) {
+      html = html.slice(0, bodyCloseIdx) + `  <script>\n(function(){\n${jsContent}\n})();\n  </script>\n` + html.slice(bodyCloseIdx);
+    }
+    console.log(`   ✓ 已完整内联 JS 逻辑: ${jsMatch[1]} (精确拼装无特殊字符丢失，置于 </body> 前)`);
+  }
+}
+
+fs.writeFileSync(indexPath, html, 'utf-8');
+
+// 4. 在 dist 中生成部署说明文档
+console.log('\n📝 步骤 4/5: 写入 QuickShare 部署说明文档...');
 const deployReadme = `========================================================================
 🏁 F1 2026 连续车身 PBR 材质与 5 大车队 React Bits 动态展厅
 ========================================================================
@@ -75,8 +110,8 @@ const deployReadme = `==========================================================
 fs.writeFileSync(path.join(DIST_DIR, 'QUICKSHARE_DEPLOY.txt'), deployReadme, 'utf-8');
 console.log('   ✓ QUICKSHARE_DEPLOY.txt 写入完成');
 
-// 4. 打包为 ZIP 压缩包 (调用 Python zipfile 标准库，无需额外 npm 依赖)
-console.log('\n🗜️ 步骤 4/4: 打包为 ZIP 压缩包...');
+// 5. 打包为 ZIP 压缩包 (调用 Python zipfile 标准库，无需额外 npm 依赖)
+console.log('\n🗜️ 步骤 5/5: 打包为 ZIP 压缩包...');
 const pythonCode = `
 import os, sys, zipfile
 

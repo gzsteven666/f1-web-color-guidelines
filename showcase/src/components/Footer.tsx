@@ -15,7 +15,7 @@ export const Footer: React.FC = () => {
   return (
     <footer
       data-line="30,20 50,70"
-      className="relative z-20 py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#050607]/90 backdrop-blur-xl"
+      className="relative z-20 py-12 sm:py-20 px-4 sm:px-6 lg:px-8 border-t border-white/5 bg-[#050607]/90 backdrop-blur-xl"
     >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="flex flex-col items-center md:items-start text-center md:text-left">

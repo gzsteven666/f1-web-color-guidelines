@@ -19,10 +19,10 @@ export const TelemetrySection: React.FC = () => {
     <section
       id="telemetry"
       data-line="88,18 72,75"
-      className="relative py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="relative py-16 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
     >
       {/* 标题说明 */}
-      <div className="flex flex-col mb-12">
+      <div className="flex flex-col mb-8 sm:mb-12">
         <div className="flex items-center gap-2 mb-2">
           <Activity
             className="w-4 h-4 animate-pulse transition-colors duration-500"
@@ -40,16 +40,16 @@ export const TelemetrySection: React.FC = () => {
             />
           </span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
           赛道级遥测指标与数字呈现
         </h2>
-        <p className="text-white/60 text-sm sm:text-base max-w-2xl mt-2 font-light">
+        <p className="text-white/60 text-xs sm:text-base max-w-2xl mt-2 font-light">
           集成 React Bits CountUp 动态数值滚轮，配合真实 F1 比赛调校参数，展示 {currentTeam.name} 动力单元与车组极限数据。
         </p>
       </div>
 
-      {/* 4 个核心遥测指标卡片 */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* 4 个核心遥测指标卡片 - 移动端 1 列，平板 2 列，桌面 4 列 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {/* 卡片 1: 进站时间 */}
         <div className="relative group rounded-md p-6 bg-[#121518]/70 backdrop-blur-md border border-white/10 hover:border-white/30 transition-all shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
           <div className="flex items-center justify-between mb-4">
@@ -189,23 +189,23 @@ export const TelemetrySection: React.FC = () => {
         </div>
       </div>
 
-      {/* 动力系统动态监测条 */}
-      <div className="mt-8 p-6 rounded-md bg-[#121518]/50 backdrop-blur-sm border border-white/5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3">
+      {/* 动力系统动态监测条 - 移动端换行自适应 */}
+      <div className="mt-8 p-4 sm:p-6 rounded-md bg-[#121518]/50 backdrop-blur-sm border border-white/5">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 mb-4">
+          <div className="flex items-center gap-2.5 sm:gap-3">
             <Cpu
-              className="w-4 h-4 transition-colors duration-500"
+              className="w-4 h-4 shrink-0 transition-colors duration-500"
               style={{ color: currentTeam.brandAccent }}
             />
-            <span className="text-xs font-mono tracking-widest text-white uppercase font-medium">
+            <span className="text-[11px] sm:text-xs font-mono tracking-widest text-white uppercase font-medium">
               ERS BATTERY STATE & ACTIVE HARVESTING
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono text-white/50">
-            <span>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[11px] sm:text-xs font-mono text-white/50">
+            <span className="bg-white/5 px-2 py-0.5 rounded">
               SOC: <strong className="text-white">{telem.ersStatus.soc}</strong>
             </span>
-            <span>
+            <span className="bg-white/5 px-2 py-0.5 rounded">
               HARVEST:{' '}
               <strong
                 className="transition-colors duration-500"
@@ -214,7 +214,7 @@ export const TelemetrySection: React.FC = () => {
                 {telem.ersStatus.harvest}
               </strong>
             </span>
-            <span>
+            <span className="bg-white/5 px-2 py-0.5 rounded">
               THERMAL:{' '}
               <strong
                 className="transition-colors duration-500"

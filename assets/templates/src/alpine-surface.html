@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BWT Alpine F1 Team 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  BWT Alpine F1 Team 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  依据 2026 规则赛车 A526 官方设计语汇与 references/alpine.md：
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
+    高饱和度阿尔派金属蓝（Alpine Metallic Blue）与环境反射贯穿整屏
+  - 蓝向黑流动：首屏阿尔派金属蓝车身，经过 [data-seam] 过渡区后
+    平滑流向车身后段的暗影碳黑底盘（Shadow Carbon Black）
+  - 蓝粉气动碰撞：BWT 标志性电气亮粉（Electric BWT Pink）形成高张力气动刀锋
+  - 贯穿线：BWT 亮粉涂装线配水蓝电弧笔尖（racing-line.js）贯穿整页
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 阿尔派金属蓝 × 暗影碳黑 × BWT 亮粉 × 冰白
+     ========================================================== */
+  :root {
+    --void:            #04070A;  /* 深渊夜蓝黑：终极暗部画布 */
+    --carbon:          #080C11;  /* 暗影碳黑：底板结构、容器底色 */
+    --card:            #0D1622;  /* 二级卡片背景 */
+    --blue:            #0078C1;  /* A526 阿尔派金属蓝（Metalness 0.85） */
+    --cyan:            #2CE8FF;  /* 水蓝受光亮带：微光折射、笔尖高光 */
+    --pink:            #FD4BC7;  /* BWT 电气亮粉：主识别、CTA、贯穿线 */
+    --pink-hover:      #FF69D2;  /* 亮粉悬浮态 */
+    --white:           #F6F8FB;  /* 气动冰白：高对比文字、标尺 */
+    --text-1:          #F6F8FB;
+    --text-2:          #A5B6CC;
+    --text-3:          #687E98;
+    --hairline:        rgba(246, 248, 251, 0.10);
+    --hairline-strong: rgba(253, 75, 199, 0.45);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-color: #182F4D var(--void); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: #182F4D; border-radius: 4px; border: 2px solid var(--void); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
+  ::selection { background: var(--pink); color: #FFFFFF; }
+
+  body {
+    background: var(--void);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  #webgl-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 导航栏 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    background: rgba(4, 7, 10, 0.85);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-logo::before {
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    background: var(--pink);
+    box-shadow: 0 0 10px var(--pink);
+  }
+  .nav-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    border: 1px solid rgba(44, 232, 255, 0.3);
+    padding: 4px 10px;
+    border-radius: var(--r);
+    background: rgba(44, 232, 255, 0.05);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 0 64px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--pink);
+    background: rgba(253, 75, 199, 0.08);
+    border: 1px solid rgba(253, 75, 199, 0.25);
+    padding: 6px 14px;
+    border-radius: var(--r);
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  h1 span.accent {
+    color: var(--pink);
+    text-shadow: 0 0 30px rgba(253, 75, 199, 0.40);
+  }
+  .hero-p {
+    max-width: 620px;
+    font-size: 17px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+  }
+  .actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--r);
+    transition: all 0.25s var(--ease);
+  }
+  .btn-primary {
+    background: var(--pink);
+    color: #FFFFFF;
+    border: 1px solid var(--pink);
+    box-shadow: 0 0 20px rgba(253, 75, 199, 0.4);
+  }
+  .btn-primary:hover {
+    background: var(--pink-hover);
+    box-shadow: 0 0 30px rgba(253, 75, 199, 0.6);
+  }
+  .btn-ghost {
+    background: rgba(0, 120, 193, 0.08);
+    color: var(--white);
+    border: 1px solid var(--hairline);
+  }
+  .btn-ghost:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+
+  /* 涂装接缝区 */
+  .seam-banner {
+    padding: 32px 0;
+    border-top: 1px dashed rgba(253, 75, 199, 0.3);
+    border-bottom: 1px dashed rgba(253, 75, 199, 0.3);
+    background: rgba(8, 12, 17, 0.5);
+    margin: 48px 0;
+  }
+  .seam-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--pink);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seam-meta::before {
+    content: "⚡";
+    color: var(--cyan);
+  }
+  .seam-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-top: 6px;
+  }
+
+  /* Section */
+  section {
+    padding: 96px 0;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--pink);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+
+  /* 卡片网格 */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: rgba(13, 22, 34, 0.7);
+    border: 1px solid var(--hairline);
+    padding: 32px;
+    border-radius: var(--r);
+    backdrop-filter: blur(16px);
+    transition: all 0.3s var(--ease);
+  }
+  .card:hover {
+    border-color: rgba(253, 75, 199, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(4, 7, 10, 0.8);
+  }
+  .card-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cyan);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* 遥测数据条 */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .stat-box {
+    background: rgba(8, 12, 17, 0.85);
+    border: 1px solid var(--hairline);
+    padding: 20px 24px;
+    border-radius: var(--r);
+  }
+  .stat-val {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-val span.unit {
+    font-size: 14px;
+    color: var(--pink);
+    margin-left: 4px;
+  }
+  .stat-lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--hairline);
+    padding: 48px 0;
+    background: rgba(4, 7, 10, 0.95);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* 进场动效 */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .js .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="webgl-bg"></canvas>
+
+<header>
+  <div class="wrap nav-inner">
+    <div class="nav-logo">
+      <span>BWT Alpine F1 Team</span>
+    </div>
+    <div class="nav-tag">2026 A526 // ENSTONE AERO</div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" data-line="18,15 45,50 82,85">
+    <div class="wrap">
+      <div class="badge reveal">
+        <span>CHASSIS A526 // ENSTONE & VIRY-CHÂTILLON</span>
+      </div>
+      <h1 class="reveal" style="--d: 80ms">
+        Aerodynamic<br>
+        <span class="accent">Blue & Pink</span> 2026
+      </h1>
+      <p class="hero-p reveal" style="--d: 160ms">
+        法式赛车浪漫碰撞现代潮流电气。以高光泽阿尔派皇家金属蓝为主体，BWT 标志性电气亮粉如气流刻刀贯穿侧箱下洗通道，暗影碳黑稳稳压牢底盘。
+      </p>
+      <div class="actions reveal" style="--d: 240ms">
+        <a href="#engineering" class="btn btn-primary">探索气动工程</a>
+        <a href="#powertrain" class="btn btn-ghost">法国赛车传奇</a>
+      </div>
+
+      <div class="stats-bar reveal" style="--d: 320ms">
+        <div class="stat-box">
+          <div class="stat-val">2.10<span class="unit">s</span></div>
+          <div class="stat-lbl">恩斯通进站效率指数</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">1040<span class="unit">bhp</span></div>
+          <div class="stat-lbl">维利-沙蒂永动力单元</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">347<span class="unit">km/h</span></div>
+          <div class="stat-lbl">低阻巡航尾速</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">2<span class="unit">Titles</span></div>
+          <div class="stat-lbl">恩斯通世界冠军传承</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装插值接缝区 -->
+  <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
+    <div class="wrap">
+      <div class="seam-meta">Surface Seam // Transition Zone</div>
+      <div class="seam-title">ALPINE METALLIC BLUE ➔ SHADOW CARBON BLACK</div>
+      <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
+        滚动浏览，见证高光阿尔派皇家蓝向暗影底盘碳黑的流体交融，BWT 亮粉线勾勒气动通道。
+      </p>
+    </div>
+  </div>
+
+  <!-- 工程架构 -->
+  <section id="engineering" data-line="20,12 55,46 78,88">
+    <div class="wrap">
+      <div class="section-tag reveal">Aerodynamic Philosophy</div>
+      <h2 class="section-title reveal">2026 规则恩斯通流体动力学</h2>
+      <div class="grid-3">
+        <div class="card reveal" style="--d: 80ms">
+          <div class="card-code">// 01 · CANDY METALLIC</div>
+          <div class="card-title">阿尔派皇家金属漆</div>
+          <div class="card-desc">
+            金属度 0.85，双层清漆粗糙度 0.05，让阿尔派蓝在强光下呈现通透深邃的湖蓝色泽，展现经典高光法系质感。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 160ms">
+          <div class="card-code">// 02 · ELECTRIC PINK</div>
+          <div class="card-title">BWT 电气亮粉动量</div>
+          <div class="card-desc">
+            高饱和电气亮粉（#FD4BC7）作为赛道贯穿线主色，水蓝电弧高亮笔尖为界面注入极速动感与潮流电气张力。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 240ms">
+          <div class="card-code">// 03 · FLUID DOWNWASH</div>
+          <div class="card-title">下洗气流导向槽</div>
+          <div class="card-desc">
+            侧箱表面呈现极具流体感的气流引导凹槽（Sharpness 4.4），紧凑下沉引导气流高速冲刷尾翼下部。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 动力总成 -->
+  <section id="powertrain" data-line="78,14 48,52 18,92">
+    <div class="wrap">
+      <div class="section-tag reveal">French Racing Pedigree</div>
+      <h2 class="section-title reveal">轻量化与敏捷性的纯正法系传承</h2>
+      <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
+        源自阿尔卑斯山路的敏捷与轻量哲学，与现代一级方程式尖端科技融为一体。高抗扭单体壳搭配优化气动平衡，让每一寸车身都能高效劈开风阻。
+      </p>
+      <div class="actions reveal" style="--d: 80ms">
+        <a href="#" class="btn btn-primary">返回顶部 ↑</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>BWT Alpine F1 Team // A526 Continuous Surface UI</span>
+    <span>Based on FIA 2026 Technical Regulations</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { ALPINE } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  mountSurfacePage({
+    preset: ALPINE,
+    canvasId: 'webgl-bg',
+  });
+</script>
+</body>
+</html>

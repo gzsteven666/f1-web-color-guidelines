@@ -64,6 +64,7 @@ export declare const FERRARI: TeamPreset;
 export declare const MCLAREN: TeamPreset;
 export declare const ASTON_MARTIN: TeamPreset;
 export declare const CADILLAC: TeamPreset;
+export declare const WILLIAMS: TeamPreset;
 
 export declare const TEAM_PRESETS: {
   mercedes: TeamPreset;
@@ -72,6 +73,7 @@ export declare const TEAM_PRESETS: {
   'aston-martin': TeamPreset;
   aston_martin: TeamPreset;
   cadillac: TeamPreset;
+  williams: TeamPreset;
   [key: string]: TeamPreset;
 };
 

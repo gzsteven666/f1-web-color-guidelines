@@ -271,11 +271,12 @@ export class PaintSurface {
     this.stop();
     window.removeEventListener('resize', this._onResize);
     this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
-    this.mesh.geometry.dispose();
-    this.material.dispose();
-    this.envTarget.dispose();
-    this.renderer.dispose();
-    this.renderer.forceContextLoss();
+    this.mesh.geometry?.dispose();
+    this.material?.dispose();
+    this.envTarget?.dispose();
+    this.renderer?.dispose();
+    // 提示：切勿调用 this.renderer.forceContextLoss()，否则在 React StrictMode 两次挂载或组件热重载时，
+    // DOM 中的同一 canvas 元素的 WebGL 上下文会被永久置为失效，导致二次初始化崩溃。
   }
 
   /* ---------------- 初始化 ---------------- */

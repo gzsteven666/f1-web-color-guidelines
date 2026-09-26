@@ -29,6 +29,7 @@
 * **Anthracite / 主深灰**：`#1E1F22`
 * **深碳黑 / Carbon Black**：`#0F1012`
 * **冷青蓝点缀 / Teal Accent**：`#4FD5D6`
+* **轮毂 Chrome 液态铬与微反光 / Chrome Wheel Rim**：`#E2E8F0`（轮毂罩 Google Chrome 合作标志性四色微环：红 `#EA4335`、黄 `#FBBC05`、绿 `#34A853`、蓝 `#4285F4`，以及高反光液态铬包边）
 * **白色 / Signal White**：`#FFFFFF`
 
 网页复现上，最重要的是抓住 **papaya + anthracite** 这组关系，而不是把页面做成单纯橙色科技风。官方 2026 说明仍然明确写到这套设计继续沿用 iconic papaya colour palette，并结合 striking anthracite 与 small hints of teal。([mclaren.com][1])
@@ -98,6 +99,7 @@
 * 不要把 Papaya 做成整页大面积底色
 * 不要把页面做成廉价橙黑电竞风
 * 冷青蓝 / Teal 总面积建议 **不超过 5%**
+* 轮毂 Chrome 液态铬与微四色环面积建议 **严格控制在 1% 以内**，只用于轮毂罩轮廓、极细机械反光与技术微标，严禁大面积铺底反客为主
 * 页面必须保持“橙色是识别、深灰是骨架、冷色是辅助”的关系
 * 不要把迈凯伦做成普通互联网橙色品牌
 * 不要让橙色失去赛车涂装那种高能见度和速度感

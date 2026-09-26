@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlassian Williams F1 Team 配色 — Editorial 基准模板</title>
+<!--
+  ============================================================
+  Atlassian Williams F1 Team 配色 · "Editorial" 基准模板
+  ============================================================
+  依据 2026 规则赛车 FW48 官方设计语汇与 references/williams.md：
+  - 纸面由 FW48 结构羽白 #F4F7FA 派生的清爽工程纸面
+  - 深海夜蓝 #050B14 作为正文"墨色"：标题、边框、骨架
+  - FW48 鲜蓝 #0858C9 是绝对主识别：主按钮、巨字点睛、横带受光
+  - 冠军传统红 #D6293E 仅在蓝黑交接处作为极细双轨描边（< 1% 面积）
+  - 车漆横带 = 碳黑底 + 鲜蓝镜面受光 + 纯白结构切面
+  - 动效等级 L1（稳重编辑特刊）：优雅的入场动效、微悬停与高精度排版
+  ============================================================
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 结构羽白纸面 × 鲜蓝识别 × 碳黑墨色
+     ========================================================== */
+  :root {
+    /* 纸面层级：源自 FW48 结构羽白的清爽浅底 */
+    --paper:      #F4F7FA;
+    --fog:        #EBF1F8;
+    --mist:       #DDE6F2;
+    --hairline:   #C8D7EA;
+
+    /* 品牌核心 */
+    --ink:        #050B14;  /* 深海夜蓝：正文与"墨色" */
+    --deep:       #0A1220;  /* 流动碳黑：车漆场底色 */
+    --accent:     #0858C9;  /* FW48 鲜蓝：绝对主识别 */
+    --accent-hi:  #4089E5;  /* 受光鲜蓝：hover 与高光 */
+    --red:        #D6293E;  /* 冠军传统红：双轨描边与临界点睛（< 1%） */
+
+    --wash:       #DCE8FA;  /* 鲜蓝水洗淡色气泡 */
+    --wash-ink:   #06449D;
+
+    --muted:      #485D78;
+    --ghost:      #7E94B0;
+
+    --font-serif: "Source Serif 4", "Georgia", ui-serif, serif;
+    --font-sans:  "Archivo", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:  "IBM Plex Mono", "Consolas", monospace;
+
+    --r-card: 20px;
+    --r-artifact: 16px;
+    --r-pill: 9999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: #B5C7DD var(--paper); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb { background: #B5C7DD; border-radius: 5px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  ::selection { background: var(--accent); color: #FFFFFF; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  .ghost-tag { font-size: 13px; font-family: var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ghost); }
+
+  .reveal { opacity: 0; transform: translateY(8px); transition: opacity 700ms ease, transform 700ms ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ==========================================================
+     2. 导航
+     ========================================================== */
+  nav .wrap { display: flex; align-items: center; gap: 32px; height: 76px; }
+  .nav-logo { font-weight: 700; font-size: 18px; color: var(--ink); letter-spacing: -0.02em; display: inline-flex; align-items: center; gap: 8px; }
+  .nav-badge { font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; background: var(--wash); color: var(--wash-ink); border-radius: 4px; }
+  .nav-links { display: flex; gap: 28px; margin-left: 24px; }
+  .nav-links a { font-size: 15px; text-decoration: none; color: var(--ink); transition: color 180ms ease; }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     3. 按钮
+     ========================================================== */
+  .pill {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 15px; font-weight: 500;
+    padding: 10px 22px;
+    border-radius: var(--r-pill);
+    cursor: pointer;
+    border: 1px solid transparent;
+    text-decoration: none;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+  .pill-filled { background: var(--accent); color: #FFFFFF; }
+  .pill-filled:hover { background: var(--accent-hi); }
+  .pill-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .pill-ghost:hover { background: rgba(8, 88, 201, 0.08); border-color: var(--accent); color: var(--accent); }
+  .pill-sm { font-size: 14px; padding: 7px 18px; }
+
+  .arrow-link { font-size: 16px; font-weight: 500; color: var(--accent); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+  .arrow-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ==========================================================
+     4. Hero —— 巨字排版 + 鲜蓝/碳黑车漆场
+     ========================================================== */
+  .hero { padding: 48px 0 110px; position: relative; overflow: hidden; }
+  .hero::before {
+    content: "";
+    position: absolute;
+    top: auto; right: 0; bottom: 0;
+    height: 48%;
+    width: 56%;
+    border-top-left-radius: 140px;
+    background:
+      radial-gradient(80% 70% at 20% 0%, rgba(64, 137, 229, 0.35) 0%, transparent 60%),
+      linear-gradient(135deg, #050B14 0%, #0A1220 36%, #0858C9 84%, #4089E5 100%);
+    pointer-events: none;
+  }
+  .hero-glow {
+    position: absolute;
+    top: auto; right: 0; bottom: 0;
+    height: 48%;
+    width: 56%;
+    border-top-left-radius: 140px;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hero-glow::before {
+    content: "";
+    position: absolute;
+    width: 130%; height: 130%;
+    top: -30%; left: -20%;
+    background: radial-gradient(45% 40% at 50% 50%, rgba(64, 137, 229, 0.32) 0%, transparent 70%);
+    animation: glowDrift 14s ease-in-out infinite alternate;
+  }
+  @keyframes glowDrift {
+    from { transform: translate(0, 0); }
+    to   { transform: translate(16%, 20%); }
+  }
+  .hero-grid {
+    position: relative; z-index: 1;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .hero .ghost-tag { display: block; margin-bottom: 20px; }
+  .hero-display {
+    position: relative; z-index: 1;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(64px, 14vw, 190px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    white-space: nowrap;
+    margin: 8px 0 44px;
+  }
+  .hero-display em { font-style: italic; color: var(--accent); }
+  .hero-display .l2 { display: block; padding-left: 8vw; }
+  .hero p {
+    font-size: 20px; line-height: 1.6;
+    color: var(--muted);
+    max-width: 480px;
+    margin-bottom: 32px;
+  }
+
+  /* ==========================================================
+     5. 结构卡片与性能指标
+     ========================================================== */
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 4.4vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    margin: 14px 0 48px;
+    max-width: 820px;
+  }
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 80px;
+  }
+  .card {
+    background: #FFFFFF;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-card);
+    padding: 36px 30px;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(5, 11, 20, 0.04);
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 30px; right: 30px; height: 3px;
+    background: var(--accent);
+    border-radius: 0 0 2px 2px;
+  }
+  .card-tag { font-family: var(--font-mono); font-size: 11px; color: var(--wash-ink); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 14px; display: block; }
+  .card h3 { font-size: 24px; font-weight: 600; margin-bottom: 12px; color: var(--ink); }
+  .card p { font-size: 15px; color: var(--muted); line-height: 1.6; }
+
+  /* 核心标识：双轨冠军历史描边 */
+  .keyline-box {
+    margin: 60px 0;
+    padding: 24px 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .williams-keyline {
+    position: relative;
+    height: 2px;
+    background: #050B14;
+    box-shadow: 0 2px 0 0 var(--red);
+    width: 240px;
+  }
+
+  /* 车漆横带 */
+  .paint-strip {
+    background: linear-gradient(135deg, #050B14 0%, #0A1220 40%, #0858C9 85%, #4089E5 100%);
+    color: #FFFFFF;
+    padding: 80px 0;
+    border-radius: var(--r-card);
+    margin: 80px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .paint-strip .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 48px; align-items: center; }
+  .paint-strip h2 { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 52px); line-height: 1.15; margin-bottom: 20px; }
+  .paint-strip p { font-size: 18px; color: #DCE6F5; line-height: 1.6; }
+  .paint-strip .stat-big { font-family: var(--font-mono); font-size: clamp(64px, 8vw, 110px); font-weight: 300; line-height: 1; color: #FFFFFF; }
+  .paint-strip .stat-sub { font-family: var(--font-mono); font-size: 13px; color: var(--accent-hi); letter-spacing: 0.12em; text-transform: uppercase; margin-top: 8px; }
+
+  /* 引言 */
+  .quote-section { padding: 90px 0 120px; text-align: center; }
+  .quote-section blockquote {
+    font-family: var(--font-serif);
+    font-size: clamp(26px, 3.5vw, 42px);
+    line-height: 1.35;
+    font-style: italic;
+    color: var(--ink);
+    max-width: 860px;
+    margin: 0 auto 28px;
+  }
+  .quote-section cite {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ghost);
+    font-style: normal;
+  }
+
+  footer { padding: 48px 0; border-top: 1px solid var(--hairline); color: var(--muted); font-size: 14px; }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; }
+
+  @media (max-width: 860px) {
+    .hero-grid, .card-grid, .paint-strip .wrap { grid-template-columns: 1fr; }
+    .hero::before { width: 100%; height: 35%; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="nav-logo" href="#top">
+      WILLIAMS <span class="nav-badge">FW48 // 2026</span>
+    </a>
+    <div class="nav-links">
+      <a href="#chassis">底盘工程</a>
+      <a href="#heritage">夺冠底蕴</a>
+      <a href="#aerodynamics">空气动力</a>
+    </div>
+    <div class="nav-cta">
+      <a class="pill pill-ghost pill-sm" href="#heritage">历史档案</a>
+      <a class="pill pill-filled pill-sm" href="#contact">获取白皮书</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="wrap">
+      <span class="ghost-tag">ATLASSIAN WILLIAMS F1 TEAM // GROVE EDITORIAL</span>
+      <h1 class="hero-display">
+        Forward in<br>
+        <span class="l2"><em>Vibrant Blue.</em></span>
+      </h1>
+      <div class="hero-grid">
+        <div>
+          <p>
+            以澄澈明亮的高光泽鲜蓝车身，承载九夺世界冠军的辉煌传统。在 2026 规则重构之际，牛津郡格罗夫工程中心将纯粹空气动力学与结构羽白切面深度交融。
+          </p>
+          <a class="arrow-link" href="#chassis">阅读 FW48 底盘技术手记 →</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero-glow" aria-hidden="true"></div>
+  </section>
+
+  <!-- 3列工程架构 -->
+  <section class="wrap" id="chassis">
+    <span class="ghost-tag">01 / ENGINEERING SPECIFICATION</span>
+    <h2 class="section-title">在严谨公差中，<br>重塑轻量化赛车结构秩序。</h2>
+
+    <div class="card-grid">
+      <article class="card reveal">
+        <span class="card-tag">AERODYNAMICS</span>
+        <h3>主动双模空动</h3>
+        <p>低阻 X-Mode 与高下压力 Z-Mode 毫秒级智能重构，结构羽白导流翼片在直道最大化极速潜力。</p>
+      </article>
+
+      <article class="card reveal" style="transition-delay: 80ms">
+        <span class="card-tag">COMPOSITES</span>
+        <h3>Grove 碳纤座舱</h3>
+        <p>采用高模量一体压制成型复合单体壳，满足 2026 严苛侧撞规程的同时实现底盘重心极限下移。</p>
+      </article>
+
+      <article class="card reveal" style="transition-delay: 160ms">
+        <span class="card-tag">POWERTRAIN</span>
+        <h3>AMG 混动中枢</h3>
+        <p>350kW 动力电池与智能动能回收深度耦合，以充沛的电气化扭矩驱动每一次出弯加速。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- 蓝黑双轨冠军描边 -->
+  <div class="wrap">
+    <div class="keyline-box">
+      <div>
+        <span class="ghost-tag">CHAMPIONSHIP HERITAGE</span>
+        <p style="font-size: 14px; color: var(--muted); margin-top: 4px;">蓝黑交界处的红白双轨细线，是仅此一笔的冠军荣誉铭刻。</p>
+      </div>
+      <div class="williams-keyline" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <!-- 车漆横带 -->
+  <section class="wrap" id="aerodynamics">
+    <div class="paint-strip">
+      <div class="wrap">
+        <div>
+          <span class="ghost-tag" style="color: var(--accent-hi)">LIVERY MORPHOLOGY</span>
+          <h2>高光泽鲜蓝，<br>流向空气动力学碳黑。</h2>
+          <p>
+            前段鲜蓝以高饱和色料与高透清漆凝聚视觉焦点；侧箱下洗气流区向后收敛为流动碳黑，纯白切面展开结构空间，剔除一切多余装饰。
+          </p>
+        </div>
+        <div>
+          <div class="stat-big num">9</div>
+          <div class="stat-sub">Constructors' World Championships</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 引言 -->
+  <section class="quote-section" id="heritage">
+    <div class="wrap">
+      <blockquote class="reveal">
+        “赛车工程从不在过去的荣耀上止步。FW48 的每一次曲面起伏与涂装流动，都指向同一个方向：更快地向前。”
+      </blockquote>
+      <cite class="reveal">Sir Frank Williams Legacy & Grove Engineering Philosophy</cite>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Atlassian Williams F1 Team · 2026 FW48 风格特刊</span>
+    <span class="num">OXFORDSHIRE // GROVE HQ</span>
+  </div>
+</footer>
+
+<script>
+  // 简易淡入触发
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('in');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

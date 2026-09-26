@@ -26,11 +26,11 @@ export const DesignTokensSection: React.FC = () => {
       id="tokens"
       data-seam="true"
       data-line="28,25 50,75"
-      className="relative py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="relative py-16 sm:py-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
     >
-      {/* 过渡区提示横幅 */}
+      {/* 过渡区提示横幅 - 移动端自适应紧凑排版 */}
       <div
-        className="flex items-center justify-between p-4 rounded bg-gradient-to-r from-white/5 to-transparent border border-white/10 mb-12 transition-all duration-500"
+        className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded bg-gradient-to-r from-white/5 to-transparent border border-white/10 mb-8 sm:mb-12 transition-all duration-500 gap-3"
         style={{
           borderLeftColor: currentTeam.brandAccent,
           borderLeftWidth: '3px',
@@ -38,7 +38,7 @@ export const DesignTokensSection: React.FC = () => {
       >
         <div className="flex items-center gap-3">
           <Layers
-            className="w-5 h-5 transition-colors duration-500"
+            className="w-5 h-5 shrink-0 transition-colors duration-500"
             style={{ color: currentTeam.brandBright }}
           />
           <div>
@@ -55,7 +55,7 @@ export const DesignTokensSection: React.FC = () => {
           </div>
         </div>
         <span
-          className="hidden sm:inline-block px-3 py-1 rounded bg-black/40 text-[11px] font-mono border transition-colors duration-500"
+          className="self-start sm:self-center px-3 py-1 rounded bg-black/40 text-[11px] font-mono border transition-colors duration-500 shrink-0"
           style={{
             color: currentTeam.brandAccent,
             borderColor: `${currentTeam.brandAccent}40`,
@@ -66,7 +66,7 @@ export const DesignTokensSection: React.FC = () => {
       </div>
 
       {/* 标题 */}
-      <div className="mb-12">
+      <div className="mb-8 sm:mb-12">
         <div className="flex items-center gap-2 mb-2">
           <Palette
             className="w-4 h-4 transition-colors duration-500"
@@ -79,16 +79,16 @@ export const DesignTokensSection: React.FC = () => {
             {currentTeam.name.toUpperCase()} COLOR SYSTEM
           </span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
-          官方 2026 设计令牌规范
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
+          2026 视觉复现令牌
         </h2>
-        <p className="text-white/60 text-sm sm:text-base max-w-2xl mt-2 font-light">
-          点击任意色卡快速复制 Hex 与语义定义，完美映射至 Tailwind CSS 与三维材质参数。
+        <p className="text-white/60 text-xs sm:text-base max-w-2xl mt-2 font-light">
+          点击色卡复制网页复现 HEX 与语义定义。除另有注明，数值是设计建议而非车队官方品牌 token。
         </p>
       </div>
 
-      {/* 令牌色卡网格 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* 令牌色卡网格 - 手机端 1 列，小平板 2 列，桌面 4 列 */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {currentTeam.tokens.map((token) => (
           <div
             key={token.hex}
@@ -99,7 +99,7 @@ export const DesignTokensSection: React.FC = () => {
             <div className="relative w-full h-28 rounded-md overflow-hidden mb-5 border border-white/10 flex items-end p-3 shadow-inner">
               <div
                 className="absolute inset-0"
-                style={{ backgroundColor: token.bgStyle || token.hex }}
+                style={{ background: token.bgStyle || token.hex }}
               />
               <div className="relative z-10 flex items-center justify-between w-full">
                 <span className="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-black/60 text-white backdrop-blur-sm">

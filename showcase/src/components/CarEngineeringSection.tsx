@@ -21,9 +21,9 @@ export const CarEngineeringSection: React.FC = () => {
     <section
       id="engineering"
       data-line="75,20 30,80"
-      className="relative py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
+      className="relative py-16 sm:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto"
     >
-      <div className="flex flex-col mb-12">
+      <div className="flex flex-col mb-8 sm:mb-12">
         <div className="flex items-center gap-2 mb-2">
           <Cpu
             className="w-4 h-4 transition-colors duration-500"
@@ -40,16 +40,16 @@ export const CarEngineeringSection: React.FC = () => {
             />
           </span>
         </div>
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
+        <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight uppercase">
           连续车身渲染引擎原理
         </h2>
-        <p className="text-white/60 text-sm sm:text-base max-w-2xl mt-2 font-light">
+        <p className="text-white/60 text-xs sm:text-base max-w-2xl mt-2 font-light">
           三维汽车漆面由底漆层（Basecoat）与双层清漆（Clearcoat）构成。通过在 Three.js 编译期注入 GLSL，计算解析曲面法线，并以 PMREM 预过滤环境贴图提供无走样的柔光高光。
         </p>
       </div>
 
-      {/* 3 个技术支柱卡片 */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      {/* 3 个技术支柱卡片 - 移动端自适应 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
         {/* 卡片 1: 解析法线 */}
         <div className="p-6 rounded-lg bg-[#121518]/70 backdrop-blur-md border border-white/10 hover:border-white/30 transition-all">
           <div
@@ -122,25 +122,25 @@ export const CarEngineeringSection: React.FC = () => {
 
       {/* 实时着色器与材质配置卡片 */}
       <div className="rounded-lg bg-[#0d0f11] border border-white/10 overflow-hidden shadow-2xl">
-        <div className="flex items-center justify-between px-6 py-3 bg-white/5 border-b border-white/5 flex-wrap gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-3 bg-white/5 border-b border-white/5 gap-3">
           <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-red-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-yellow-500/80 inline-block" />
-            <span className="w-3 h-3 rounded-full bg-green-500/80 inline-block" />
-            <span className="ml-3 font-mono text-xs text-white/60">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-green-500/80 inline-block" />
+            <span className="ml-2 font-mono text-[11px] sm:text-xs text-white/60 truncate">
               assets/surface/teams.js ➔ {currentTeam.id.toUpperCase()}
             </span>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono">
+          <div className="flex items-center gap-1.5 overflow-x-auto text-[11px] sm:text-xs font-mono scrollbar-none pb-1 sm:pb-0">
             <button
               onClick={() => setActiveTab('pbr')}
-              className="px-3 py-1 rounded transition-all font-medium"
+              className="px-2.5 sm:px-3 py-1 rounded transition-all font-medium shrink-0"
               style={
                 activeTab === 'pbr'
                   ? {
                       backgroundColor: currentTeam.brandAccent,
-                      color: currentTeam.id === 'cadillac' ? '#000000' : '#000000',
+                      color: ['aston-martin', 'mclaren', 'cadillac'].includes(currentTeam.id) ? '#000000' : '#FFFFFF',
                       fontWeight: 600,
                     }
                   : { color: 'rgba(255,255,255,0.6)' }
@@ -150,12 +150,12 @@ export const CarEngineeringSection: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('normals')}
-              className="px-3 py-1 rounded transition-all font-medium"
+              className="px-2.5 sm:px-3 py-1 rounded transition-all font-medium shrink-0"
               style={
                 activeTab === 'normals'
                   ? {
                       backgroundColor: currentTeam.brandAccent,
-                      color: currentTeam.id === 'cadillac' ? '#000000' : '#000000',
+                      color: ['aston-martin', 'mclaren', 'cadillac'].includes(currentTeam.id) ? '#000000' : '#FFFFFF',
                       fontWeight: 600,
                     }
                   : { color: 'rgba(255,255,255,0.6)' }
@@ -165,12 +165,12 @@ export const CarEngineeringSection: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveTab('studio')}
-              className="px-3 py-1 rounded transition-all font-medium"
+              className="px-2.5 sm:px-3 py-1 rounded transition-all font-medium shrink-0"
               style={
                 activeTab === 'studio'
                   ? {
                       backgroundColor: currentTeam.brandAccent,
-                      color: currentTeam.id === 'cadillac' ? '#000000' : '#000000',
+                      color: ['aston-martin', 'mclaren', 'cadillac'].includes(currentTeam.id) ? '#000000' : '#FFFFFF',
                       fontWeight: 600,
                     }
                   : { color: 'rgba(255,255,255,0.6)' }
@@ -181,7 +181,7 @@ export const CarEngineeringSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6 font-mono text-xs sm:text-sm text-white/80 overflow-x-auto leading-relaxed bg-[#090A0B]/90">
+        <div className="p-4 sm:p-6 font-mono text-xs sm:text-sm text-white/80 overflow-x-auto leading-relaxed bg-[#090A0B]/90">
           {activeTab === 'pbr' && (
             <pre>
               <code>{`// ${currentTeam.name} 物理车漆配置 (MeshPhysicalMaterial)

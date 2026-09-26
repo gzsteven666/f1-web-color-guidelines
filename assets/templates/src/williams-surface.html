@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlassian Williams F1 Team 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Atlassian Williams F1 Team 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  依据 2026 规则赛车 FW48 官方设计语汇与 references/williams.md：
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
+    高光泽鲜蓝（Vibrant Gloss Blue）与环境反射贯穿整屏
+  - 蓝向黑流动：首屏高光泽鲜蓝车头，经过 [data-seam] 过渡区后
+    平滑流向车身后段的空气动力学流动碳黑（Flowing Carbon Black）
+  - 结构切面白：以纯净利落的白色切面承托关键信息，拉开界面呼吸感
+  - 双轨冠军描边：在蓝黑交界处点缀一条极细的红白双轨冠军描边
+    （White 2px + Heritage Red 2px），致敬 9 次车队世界冠军荣耀
+  - 贯穿线：结构羽白涂装线配传统红笔尖（racing-line.js）贯穿整页
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  // 有 JS 时才启用"进场前隐藏"的样式；JS 失败时内容保持可见
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<!--
+  依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
+-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 鲜蓝车漆 × 流动碳黑 × 结构羽白 × 冠军红
+     ========================================================== */
+  :root {
+    /* 品牌核心（references/williams.md） */
+    --navy:            #050B14;  /* 深海夜蓝底色：页面底色、吸光暗部 */
+    --carbon:          #0A1220;  /* 流动碳黑：后段下洗结构、底盘体积 */
+    --blue:            #0858C9;  /* FW48 鲜蓝主漆：主识别、CTA、镜面高光 */
+    --blue-hi:         #4089E5;  /* 受光鲜蓝：高光漫射、活动焦点 */
+    --blue-spec:       #7CB2F1;  /* 微光折射蓝：次级曲线、弱提示 */
+    --white:           #F4F7FA;  /* 结构羽白：切面留白、主文字、涂装线 */
+    --red:             #D6293E;  /* 冠军传统红：极细双轨描边、笔尖指示（< 1%） */
+
+    /* 文字层次：浮在车漆上的冷色系 */
+    --text-1:          #F4F7FA;
+    --text-2:          #C3D0E1;
+    --text-3:          #8A9EB8;
+    --hairline:        rgba(244, 247, 250, 0.14);
+    --hairline-strong: rgba(244, 247, 250, 0.30);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;                           /* 英国赛车精密机械公差：硬朗干练微圆角 */
+    --ease: cubic-bezier(0.2, 0, 0, 1); /* 快出缓入：顶级方程式空气动力学流动 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scrollbar-color: #1A283D var(--navy); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: #1A283D; border-radius: 4px; border: 2px solid var(--navy); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+  ::selection { background: var(--blue); color: #FFFFFF; }
+  :focus-visible { outline: 2px solid var(--blue-hi); outline-offset: 3px; border-radius: 2px; }
+
+  /* Lenis 平滑滚动样式 */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
+
+  body {
+    position: relative;
+    background: var(--navy);
+    background-attachment: fixed;
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+
+  /* ==========================================================
+     2. 车身图层 —— 车漆层 / 可读性压光 / 涂装线 / 内容
+     ========================================================== */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(5, 11, 20, 0.68) 0%, rgba(5, 11, 20, 0.32) 44%, rgba(5, 11, 20, 0) 74%),
+      linear-gradient(180deg, rgba(5, 11, 20, 0.55) 0%, rgba(5, 11, 20, 0.14) 14%, rgba(5, 11, 20, 0) 80%, rgba(5, 11, 20, 0.45) 100%);
+  }
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* ==========================================================
+     3. 导航栏 —— 驾驶舱遥测风格，极简透气
+     ========================================================== */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, rgba(5, 11, 20, 0.76) 0%, rgba(5, 11, 20, 0) 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 19px; letter-spacing: -0.02em;
+    color: var(--text-1); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .nav-badge {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+    color: var(--blue-hi); padding: 2px 8px; border: 1px solid rgba(64, 137, 229, 0.3);
+    border-radius: var(--r); background: rgba(8, 88, 201, 0.12);
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: var(--text-2); text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--blue); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     4. 按钮 —— 高光泽鲜蓝主识别与深色次级边框
+     ========================================================== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 20px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease), box-shadow 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary {
+    background: var(--blue); color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+  .btn-primary:hover {
+    background: #0747A6;
+    box-shadow: 0 4px 18px rgba(8, 88, 201, 0.45);
+  }
+  .btn-primary:active { background: #053682; }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn-ghost {
+    background: rgba(10, 18, 32, 0.6);
+    color: var(--text-2);
+    border-color: var(--hairline-strong);
+  }
+  .btn-ghost:hover {
+    background: rgba(8, 88, 201, 0.15);
+    border-color: var(--blue-hi);
+    color: var(--text-1);
+  }
+
+  /* ==========================================================
+     5. Hero —— 前段鲜蓝：巨字 + 逐行升起 + 英国工程遥测
+     ========================================================== */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(54px, 10.2vw, 160px);
+    line-height: 0.93;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 6vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  /* 鲜蓝高光泽立体渐变字面 */
+  .radiant-text {
+    font-style: normal;
+    background: linear-gradient(180deg, #FFFFFF 0%, #D8E7FA 30%, #4089E5 65%, #0858C9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  /* 遥测读数 HUD */
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--blue-hi); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--blue-spec); font-weight: 500; }
+
+  /* ==========================================================
+     6. 区块通用
+     ========================================================== */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  /* hover：一道鲜蓝流线自左扫过 */
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--blue) 0%, rgba(8, 88, 201, 0) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--blue-hi); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 600; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--blue-hi); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     7. 过渡区（Seam）：鲜蓝交接给流动碳黑，双轨冠军描边
+     ========================================================== */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 480px; color: var(--text-2); }
+
+  /* 核心标识：双轨冠军历史描边（白 2px + 红 2px） */
+  .williams-keyline {
+    position: relative;
+    height: 2px;
+    background: var(--white);
+    box-shadow: 0 2px 0 0 var(--red);
+    margin: 48px 0;
+    width: min(440px, 100%);
+  }
+
+  .tone-meter {
+    display: flex; align-items: center; gap: 14px;
+    margin-top: 48px;
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3);
+  }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: calc(var(--surface-tone, 0) * 100%);
+    background: var(--blue-hi);
+    box-shadow: 0 0 8px var(--blue);
+  }
+
+  /* ==========================================================
+     8. 深度工程呈现与性能指标
+     ========================================================== */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; border-top: 1px solid var(--hairline-strong);
+    padding-top: 56px;
+  }
+  .feature-col h3 { font-family: var(--font-display); font-weight: 600; font-size: 22px; margin-bottom: 14px; color: var(--text-1); }
+  .feature-col p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+  .feature-col .tag { font-family: var(--font-mono); font-size: 11px; color: var(--blue-spec); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
+
+  /* 统计数字行 */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 80px;
+    padding-top: 48px; border-top: 1px solid var(--hairline);
+  }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--text-1); }
+  .stat .unit { font-family: var(--font-mono); font-size: 20px; color: var(--blue-hi); margin-left: 4px; }
+  .stat .label { font-size: 14px; color: var(--text-3); margin-top: 10px; }
+
+  /* 引言 */
+  .quote { padding: 120px 0; }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    max-width: 880px;
+  }
+  .quote cite { display: block; font-family: var(--font-mono); font-size: 12px; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 28px; }
+
+  /* CTA */
+  .cta .wrap { border-top: 1px solid var(--hairline-strong); padding-top: 96px; }
+
+  /* 页脚 */
+  footer { padding: 48px 0; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: center; }
+  footer .note { font-family: var(--font-mono); font-size: 12px; color: var(--text-3); }
+
+  @media (max-width: 860px) {
+    .hero-foot { grid-template-columns: 1fr; gap: 32px; }
+    .telemetry { grid-template-columns: 1fr; gap: 16px; }
+    .readout { border-left: none; padding-left: 0; }
+    .feature-grid, .stats { grid-template-columns: 1fr; }
+    .index-row { grid-template-columns: 48px 1fr 32px; }
+    .index-row p { grid-column: 2 / -1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 连续车漆 Canvas（WebGL PBR 着色器） -->
+<canvas id="paint" aria-hidden="true"></canvas>
+
+<!-- 可读性遮光层与噪点微肌理 -->
+<div class="paint-shade" aria-hidden="true"></div>
+
+<!-- 赛道贯穿线 SVG -->
+<svg id="racing-line" aria-hidden="true"></svg>
+
+<!-- 导航栏 -->
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="#home">
+      WILLIAMS <span class="nav-badge">FW48 // 2026</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#chassis" aria-current="page">底盘架构</a>
+      <a href="#seam">涂装演进</a>
+      <a href="#performance">遥测指标</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost" href="#performance">技术文档</a>
+      <a class="btn btn-sm btn-primary" href="#cta">配置座舱</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- 首屏：高光泽鲜蓝主车漆 -->
+  <section id="home" class="hero" data-line="18,12 36,44 68,52 82,90">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="GROVE ENGINEERING CAMPUS // CHASSIS FW48">
+        GROVE ENGINEERING CAMPUS // CHASSIS FW48
+      </p>
+
+      <h1 class="hero-title">
+        <span class="line"><span>FORWARD IN</span></span>
+        <span class="line l2"><span class="radiant-text">VIBRANT BLUE.</span></span>
+      </h1>
+
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p class="reveal" style="--d: 80ms">
+            以鲜亮高光泽主蓝奠定纯正英国赛车身份，向后收束进空气动力学碳黑。结构羽白切面拉开几何呼吸空间，在蓝黑交接处留下一道极其克制的红白双轨冠军描边。
+          </p>
+          <div class="actions reveal" style="--d: 140ms">
+            <a class="btn btn-primary" href="#chassis">探索 FW48 架构 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#seam">查看过渡色带</a>
+          </div>
+        </div>
+
+        <!-- 遥测读数 HUD -->
+        <dl class="telemetry reveal" style="--d: 200ms">
+          <div class="readout">
+            <dt>CONSTRUCTORS</dt>
+            <dd><span class="value num" data-count="9">9</span><span class="unit">TITLES</span></dd>
+            <p class="delta">历史总冠军 <b>2ND ALL-TIME</b></p>
+          </div>
+          <div class="readout">
+            <dt>2026 MGU-K</dt>
+            <dd><span class="value num" data-count="350">350</span><span class="unit">kW</span></dd>
+            <p class="delta">电机输出 <b>FIA MANDATE</b></p>
+          </div>
+          <div class="readout">
+            <dt>ACTIVE AERO</dt>
+            <dd><span class="value num" data-count="345">345</span><span class="unit">km/h</span></dd>
+            <p class="delta">极速下洗 <b>X-MODE ACTIVE</b></p>
+          </div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- 工程模块索引 -->
+  <section id="chassis" data-line="82,10 65,35 30,75 14,92">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="AERODYNAMIC ARCHITECTURE">AERODYNAMIC ARCHITECTURE</p>
+      <h2 class="section-title reveal">牛津郡格罗夫研发中心<br>尖端方程式工程秩序</h2>
+
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>高光泽鲜蓝车头漆面</h3>
+          <p>满级高透双层清漆（Clearcoat 1.0）包裹饱和蓝色底漆，在摄影棚柔光条下反射出纯正赛车光泽。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 60ms" href="#">
+          <span class="no">02</span>
+          <h3>侧箱与翼片结构羽白</h3>
+          <p>突破性的几何白色切面布置于前翼端板与侧箱进气道边缘，拉开鲜明的空间反差，摒弃数字沉闷感。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 120ms" href="#">
+          <span class="no">03</span>
+          <h3>双轨红白冠军传统描边</h3>
+          <p>沿蓝黑交界走过的极细红白双轨细线，克制而庄严地铭刻 9 座车队世界冠军的历史勋印。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装缝合区 (Seam)：鲜蓝平滑过渡至流动碳黑 -->
+  <section id="seam" class="seam" data-seam data-line="14,18 42,48 76,82">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="LIVERY TRANSITION SEAM">LIVERY TRANSITION SEAM</p>
+      <h2 class="seam-title reveal">从高光泽鲜蓝，<br>流向空气动力学碳黑。</h2>
+      <div class="williams-keyline reveal" aria-hidden="true"></div>
+      <p class="reveal" style="--d: 80ms">
+        随视口向下滚动，PBR 材质在全屏 Mesh 上插值流动，色相平滑由 FW48 鲜蓝过渡至车尾深邃的流动碳黑与扩散器结构。
+      </p>
+      <div class="tone-meter reveal" style="--d: 140ms">
+        <span>VIBRANT GLOSS BLUE</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>FLOWING CARBON BLACK</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 性能数据与统计 -->
+  <section id="performance" data-line="76,14 45,60 20,88">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="RACING TELEMETRY & HERITAGE">RACING TELEMETRY & HERITAGE</p>
+      <h2 class="section-title reveal">严谨公差验证的纯粹赛车性能</h2>
+
+      <div class="feature-grid">
+        <div class="feature-col reveal">
+          <span class="tag">COMPOSITES</span>
+          <h3>高模量碳纤座舱</h3>
+          <p>Grove 复合材料中心自主压制的一体成型单体壳，在满足 2026 严苛侧撞标准下达成极致轻量化。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 80ms">
+          <span class="tag">POWERTRAIN</span>
+          <h3>AMG 2026 动力单元</h3>
+          <p>深度整合的 1.6L 涡轮增压引擎与 350kW 双逆变器动能回收，实现全油门线性扭矩输出。</p>
+        </div>
+        <div class="feature-col reveal" style="--d: 160ms">
+          <span class="tag">ACTIVE AERO</span>
+          <h3>主动双模空气动力</h3>
+          <p>翼片伺服系统毫秒级切换低阻 X-Mode 与高下压力 Z-Mode，重塑直道极速与弯道机械抓地力。</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value num" data-count="9">9</span><span class="unit">x</span></div>
+          <p class="label">F1 车队世界冠军</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value num" data-count="114">114</span><span class="unit">GP</span></div>
+          <p class="label">一级方程式大奖赛胜利</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value num" data-count="350">350</span><span class="unit">kW</span></div>
+          <p class="label">2026 规则混合动力瞬时功率</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 车队工程师格言 -->
+  <section class="quote" data-line="20,10 50,50 80,90">
+    <div class="wrap">
+      <blockquote class="reveal">
+        “一级方程式的灵魂在于始终向前。FW48 将我们九夺世界冠军的赛车血统，以最锋利澄澈的姿态带入全新的空气动力学时代。”
+      </blockquote>
+      <cite class="reveal" style="--d: 80ms">Williams Racing Engineering Heritage // Grove, Oxfordshire</cite>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section id="cta" class="cta" data-line="80,10 50,45 18,85">
+    <div class="wrap">
+      <h2 class="section-title reveal">体验 2026 连续车身，<br>感受纯正英伦赛车工程美学。</h2>
+      <div class="actions reveal" style="--d: 80ms">
+        <a class="btn btn-primary" href="#home">回到顶部 <span class="arr" aria-hidden="true">↑</span></a>
+        <a class="btn btn-ghost" href="#chassis">查看底盘规范</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer data-line="18,0 80,0">
+  <div class="wrap">
+    <span class="nav-logo">Atlassian Williams F1 Team</span>
+    <span class="note">FW48 Vibrant Gloss Blue 配色转译示例 · 色号为网页复现建议值</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { WILLIAMS } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  /* ==========================================================
+     页面脚本：连续车身 + 进场动效
+     ========================================================== */
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.body.style.backgroundImage = WILLIAMS.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('paint'),
+    svg: document.getElementById('racing-line'),
+    preset: WILLIAMS,
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+
+  window.__surface = page;
+
+  // 滚动触发 reveal 与数字递增
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
+    }
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  function countUp(el) {
+    if (reducedMotion) return;
+    const target = parseFloat(el.getAttribute('data-count'));
+    const duration = 1200;
+    const start = performance.now();
+    const isFloat = String(target).includes('.');
+    function frame(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      const cur = target * ease;
+      el.textContent = isFloat ? cur.toFixed(1) : Math.round(cur);
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function decrypt(el) {
+    if (reducedMotion) return;
+    const raw = el.getAttribute('data-decrypt');
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_/';
+    let iter = 0;
+    const max = 8;
+    const timer = setInterval(() => {
+      el.textContent = raw.split('').map((c, i) => {
+        if (c === ' ' || c === '/') return c;
+        if (iter > max * (i / raw.length)) return c;
+        return chars[Math.floor(Math.random() * chars.length)];
+      }).join('');
+      iter += 1;
+      if (iter > max + 2) {
+        clearInterval(timer);
+        el.textContent = raw;
+      }
+    }, 30);
+  }
+</script>
+
+</body>
+</html>

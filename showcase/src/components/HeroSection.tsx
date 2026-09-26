@@ -68,14 +68,14 @@ export const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* 交互按钮组与特性标签 */}
-      <div className="flex flex-wrap items-center gap-4 mt-8">
+      {/* 交互按钮组与特性标签 - 移动端全宽触控友好 */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-8">
         <a
           href="#tokens"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-sm text-[#050607] font-mono text-sm font-semibold tracking-wider transition-all duration-300"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-sm font-mono text-sm font-semibold tracking-wider transition-all duration-300 text-center"
           style={{
             backgroundColor: currentTeam.brandAccent,
-            color: currentTeam.id === 'cadillac' ? '#000000' : '#050607',
+            color: ['aston-martin', 'mclaren', 'cadillac'].includes(currentTeam.id) ? '#050607' : '#FFFFFF',
             boxShadow: `0 0 25px ${currentTeam.brandTextGlow}`,
           }}
         >
@@ -85,13 +85,13 @@ export const HeroSection: React.FC = () => {
 
         <a
           href="#telemetry"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-sm bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 font-mono text-sm tracking-wider transition-all"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-sm bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 font-mono text-sm tracking-wider transition-all text-center"
         >
           <Sliders
             className="w-4 h-4 transition-colors duration-500"
             style={{ color: currentTeam.brandAccent }}
           />
-          <span>实时遥测指标</span>
+          <span>遥测示例</span>
         </a>
       </div>
 

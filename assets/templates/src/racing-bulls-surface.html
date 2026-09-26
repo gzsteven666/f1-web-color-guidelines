@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Visa Cash App RB 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Visa Cash App RB 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  依据 2026 规则赛车 VCARB 03 官方设计语汇与 references/racing-bulls.md：
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
+    高闪耀电镀宝蓝（Candy Royal Blue）与镜面反射贯穿整屏
+  - 宝蓝向黑流动：首屏电镀宝蓝车身，经过 [data-seam] 过渡区后
+    平滑流向车身后段的法恩莎暗夜底盘黑（Faenza Nero Chassis）
+  - 极速纯白条带：纯白速度条纹横贯全屏，形成高反差动态切割
+  - 贯穿线：极速纯白涂装线配公牛火红笔尖（racing-line.js）贯穿整页
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 电镀宝蓝 × 极速纯白 × 公牛红 × 暗夜底盘
+     ========================================================== */
+  :root {
+    --void:            #070B14;  /* 法恩莎暗夜底色：页面深色基底 */
+    --carbon:          #0C162A;  /* 底盘碳黑暗蓝：一级容器 */
+    --card:            #12203E;  /* 二级卡片背景 */
+    --blue:            #1640D6;  /* VCARB 03 电镀宝蓝车漆（Metalness 0.72） */
+    --blue-spec:       #4A7BFF;  /* 电光宝蓝高光漫射 */
+    --white:           #FFFFFF;  /* 极速纯白条带：主文字、贯穿线 */
+    --red:             #E51937;  /* 公牛活力红：笔尖光爆、点睛指示 */
+    --text-1:          #FFFFFF;
+    --text-2:          #BACAE6;
+    --text-3:          #7C92BA;
+    --hairline:        rgba(255, 255, 255, 0.14);
+    --hairline-strong: rgba(22, 64, 214, 0.60);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-color: #243866 var(--void); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: #243866; border-radius: 4px; border: 2px solid var(--void); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--blue); }
+  ::selection { background: var(--blue); color: #FFFFFF; }
+
+  body {
+    background: var(--void);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  #webgl-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 导航栏 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    background: rgba(7, 11, 20, 0.85);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-logo::before {
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    background: var(--blue);
+    box-shadow: 0 0 10px var(--blue-spec);
+  }
+  .nav-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 10px;
+    border-radius: var(--r);
+    background: rgba(22, 64, 214, 0.2);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 0 64px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--blue-spec);
+    background: rgba(22, 64, 214, 0.15);
+    border: 1px solid rgba(74, 123, 255, 0.35);
+    padding: 6px 14px;
+    border-radius: var(--r);
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  h1 span.accent {
+    color: var(--blue-spec);
+    text-shadow: 0 0 30px rgba(22, 64, 214, 0.60);
+  }
+  .hero-p {
+    max-width: 620px;
+    font-size: 17px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+  }
+  .actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--r);
+    transition: all 0.25s var(--ease);
+  }
+  .btn-primary {
+    background: var(--white);
+    color: var(--void);
+    border: 1px solid var(--white);
+    font-weight: 700;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+  }
+  .btn-primary:hover {
+    background: var(--blue);
+    color: #FFFFFF;
+    border-color: var(--blue);
+    box-shadow: 0 0 30px rgba(22, 64, 214, 0.6);
+  }
+  .btn-ghost {
+    background: rgba(22, 64, 214, 0.12);
+    color: var(--white);
+    border: 1px solid var(--hairline);
+  }
+  .btn-ghost:hover {
+    border-color: var(--blue-spec);
+    color: var(--blue-spec);
+  }
+
+  /* 涂装接缝区 */
+  .seam-banner {
+    padding: 32px 0;
+    border-top: 1px dashed rgba(74, 123, 255, 0.3);
+    border-bottom: 1px dashed rgba(74, 123, 255, 0.3);
+    background: rgba(12, 22, 42, 0.5);
+    margin: 48px 0;
+  }
+  .seam-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--blue-spec);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seam-meta::before {
+    content: "⚡";
+    color: var(--red);
+  }
+  .seam-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-top: 6px;
+  }
+
+  /* Section */
+  section {
+    padding: 96px 0;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--blue-spec);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+
+  /* 卡片网格 */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: rgba(18, 32, 62, 0.7);
+    border: 1px solid var(--hairline);
+    padding: 32px;
+    border-radius: var(--r);
+    backdrop-filter: blur(16px);
+    transition: all 0.3s var(--ease);
+  }
+  .card:hover {
+    border-color: rgba(74, 123, 255, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(7, 11, 20, 0.8);
+  }
+  .card-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* 遥测数据条 */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .stat-box {
+    background: rgba(12, 22, 42, 0.85);
+    border: 1px solid var(--hairline);
+    padding: 20px 24px;
+    border-radius: var(--r);
+  }
+  .stat-val {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-val span.unit {
+    font-size: 14px;
+    color: var(--blue-spec);
+    margin-left: 4px;
+  }
+  .stat-lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--hairline);
+    padding: 48px 0;
+    background: rgba(7, 11, 20, 0.95);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* 进场动效 */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .js .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="webgl-bg"></canvas>
+
+<header>
+  <div class="wrap nav-inner">
+    <div class="nav-logo">
+      <span>Visa Cash App RB</span>
+    </div>
+    <div class="nav-tag">2026 VCARB 03 // FAENZA DYNAMICS</div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" data-line="18,15 45,50 82,85">
+    <div class="wrap">
+      <div class="badge reveal">
+        <span>CHASSIS VCARB 03 // FAENZA RACING CAMPUS</span>
+      </div>
+      <h1 class="reveal" style="--d: 80ms">
+        Dynamic Candy<br>
+        <span class="accent">Royal Blue</span> 2026
+      </h1>
+      <p class="hero-p reveal" style="--d: 160ms">
+        告别平淡灰暗，拥抱法恩莎意式灵动与高闪耀电镀宝蓝。大面积极速纯白条纹横贯车身形成高频视觉律动，公牛活力红点亮终极动能。
+      </p>
+      <div class="actions reveal" style="--d: 240ms">
+        <a href="#engineering" class="btn btn-primary">探索意式气动</a>
+        <a href="#powertrain" class="btn btn-ghost">本田动力总成</a>
+      </div>
+
+      <div class="stats-bar reveal" style="--d: 320ms">
+        <div class="stat-box">
+          <div class="stat-val">1.98<span class="unit">s</span></div>
+          <div class="stat-lbl">法恩莎快速进站指标</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">1050<span class="unit">bhp</span></div>
+          <div class="stat-lbl">Honda RBPT 综合输出</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">351<span class="unit">km/h</span></div>
+          <div class="stat-lbl">蒙扎大直道极速</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">100<span class="unit">%</span></div>
+          <div class="stat-lbl">可持续先进燃料驱动</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装插值接缝区 -->
+  <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
+    <div class="wrap">
+      <div class="seam-meta">Surface Seam // Transition Zone</div>
+      <div class="seam-title">CANDY ROYAL BLUE ➔ FAENZA NERO CHASSIS</div>
+      <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
+        滚动穿过车侧，观察高闪耀电光宝蓝向暗夜碳底的跳跃过渡，纯白极速拉花与公牛红点瞬息呼应。
+      </p>
+    </div>
+  </div>
+
+  <!-- 工程架构 -->
+  <section id="engineering" data-line="20,12 55,46 78,88">
+    <div class="wrap">
+      <div class="section-tag reveal">Faenza Aerodynamics</div>
+      <h2 class="section-title reveal">2026 规则灵动敏捷几何</h2>
+      <div class="grid-3">
+        <div class="card reveal" style="--d: 80ms">
+          <div class="card-code">// 01 · CANDY COAT</div>
+          <div class="card-title">电镀高光宝蓝漆面</div>
+          <div class="card-desc">
+            清漆粗糙度仅 0.02，金属度 0.72，成就全围场最具镜面反差效果的电光宝蓝车身，反光锐利明亮。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 160ms">
+          <div class="card-code">// 02 · VELOCITY STRIPE</div>
+          <div class="card-title">极速纯白条纹拉花</div>
+          <div class="card-desc">
+            纯白涂装线贯穿车身，形成明快的高频反差，笔尖搭配公牛火红（#E51937），尽显意式赛车激情。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 240ms">
+          <div class="card-code">// 03 · AGILE CREASE</div>
+          <div class="card-title">敏捷侧箱气动槽</div>
+          <div class="card-desc">
+            针对 2026 规程紧凑设计的侧箱起伏（Sharpness 4.8），有效引导气流贴合车身流向后方。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 动力总成 -->
+  <section id="powertrain" data-line="78,14 48,52 18,92">
+    <div class="wrap">
+      <div class="section-tag reveal">Honda RBPT Unit</div>
+      <h2 class="section-title reveal">精悍强大的混动心脏</h2>
+      <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
+        采用 Honda RBPT 混合动力总成，紧凑的封装结构赋予底盘极致灵活的动态响应与高速变向能力。
+      </p>
+      <div class="actions reveal" style="--d: 80ms">
+        <a href="#" class="btn btn-primary">返回顶部 ↑</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>Visa Cash App RB // VCARB 03 Continuous Surface UI</span>
+    <span>Based on FIA 2026 Technical Regulations</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { RACING_BULLS } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  mountSurfacePage({
+    preset: RACING_BULLS,
+    canvasId: 'webgl-bg',
+  });
+</script>
+</body>
+</html>

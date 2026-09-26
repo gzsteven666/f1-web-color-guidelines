@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Red Bull Racing 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  Oracle Red Bull Racing 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  依据 2026 规则赛车 RB22 官方设计语汇与 references/red-bull.md：
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
+    哑光暗夜蓝（Matte Midnight Navy）与非反射磨砂清漆贯穿整屏
+  - 蓝向黑流动：首屏哑光暗夜蓝车身，经过 [data-seam] 过渡区后
+    平滑流向车身后段的空气动力学裸碳黑（Raw Chassis Carbon）
+  - 侵略性动能：公牛极速红（Bull Racing Red）贯穿全场构筑速度张力
+  - 能量爆点：能量荧光黄（Electric Energy Yellow）作为贯穿线发光笔尖
+  - 贯穿线：极速红赛道涂装线配荧光黄笔尖（racing-line.js）穿透页面各段落
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 哑光暗夜蓝 × 裸碳黑 × 公牛极速红 × 能量黄
+     ========================================================== */
+  :root {
+    --navy:            #020509;  /* 虚空暗夜黑：页面终极底色 */
+    --navy-base:       #040D1A;  /* RB22 哑光深蓝主车漆 */
+    --carbon:          #081426;  /* 容器面板底色 */
+    --card:            #0E1E34;  /* 二级卡片背景 */
+    --red:             #EA1D2D;  /* 公牛极速红：主识别、CTA、贯穿线 */
+    --red-hover:       #FF3B4B;  /* 悬浮微亮红 */
+    --yellow:          #FFEB00;  /* 能量荧光黄：笔尖指示、高能脉冲 (<2%) */
+    --white:           #F5F7FA;  /* 工程纯白：高对比文字、标尺 */
+    --text-1:          #F5F7FA;
+    --text-2:          #A4B3C6;
+    --text-3:          #687B92;
+    --hairline:        rgba(245, 247, 250, 0.10);
+    --hairline-strong: rgba(234, 29, 45, 0.45);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-color: #1A2C46 var(--navy); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: #1A2C46; border-radius: 4px; border: 2px solid var(--navy); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+  ::selection { background: var(--red); color: #FFFFFF; }
+
+  body {
+    background: var(--navy);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  #webgl-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 导航栏 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    background: rgba(2, 5, 9, 0.85);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-logo::before {
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    background: var(--red);
+    box-shadow: 0 0 10px var(--red);
+  }
+  .nav-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--yellow);
+    border: 1px solid rgba(255, 235, 0, 0.3);
+    padding: 4px 10px;
+    border-radius: var(--r);
+    background: rgba(255, 235, 0, 0.05);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 0 64px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--yellow);
+    background: rgba(255, 235, 0, 0.08);
+    border: 1px solid rgba(255, 235, 0, 0.25);
+    padding: 6px 14px;
+    border-radius: var(--r);
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  h1 span.accent {
+    color: var(--red);
+    text-shadow: 0 0 30px rgba(234, 29, 45, 0.35);
+  }
+  .hero-p {
+    max-width: 620px;
+    font-size: 17px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+  }
+  .actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--r);
+    transition: all 0.25s var(--ease);
+  }
+  .btn-primary {
+    background: var(--red);
+    color: #FFFFFF;
+    border: 1px solid var(--red);
+    box-shadow: 0 0 20px rgba(234, 29, 45, 0.4);
+  }
+  .btn-primary:hover {
+    background: var(--red-hover);
+    box-shadow: 0 0 30px rgba(234, 29, 45, 0.6);
+  }
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--white);
+    border: 1px solid var(--hairline);
+  }
+  .btn-ghost:hover {
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  /* 涂装接缝区 */
+  .seam-banner {
+    padding: 32px 0;
+    border-top: 1px dashed rgba(234, 29, 45, 0.3);
+    border-bottom: 1px dashed rgba(234, 29, 45, 0.3);
+    background: rgba(4, 13, 26, 0.4);
+    margin: 48px 0;
+  }
+  .seam-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seam-meta::before {
+    content: "⚡";
+    color: var(--yellow);
+  }
+  .seam-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-top: 6px;
+  }
+
+  /* Section */
+  section {
+    padding: 96px 0;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+
+  /* 卡片网格 */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: rgba(14, 30, 52, 0.65);
+    border: 1px solid var(--hairline);
+    padding: 32px;
+    border-radius: var(--r);
+    backdrop-filter: blur(16px);
+    transition: all 0.3s var(--ease);
+  }
+  .card:hover {
+    border-color: rgba(234, 29, 45, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(2, 5, 9, 0.8);
+  }
+  .card-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--yellow);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* 遥测数据条 */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .stat-box {
+    background: rgba(8, 20, 38, 0.8);
+    border: 1px solid var(--hairline);
+    padding: 20px 24px;
+    border-radius: var(--r);
+  }
+  .stat-val {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-val span.unit {
+    font-size: 14px;
+    color: var(--red);
+    margin-left: 4px;
+  }
+  .stat-lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--hairline);
+    padding: 48px 0;
+    background: rgba(2, 5, 9, 0.95);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* 进场动效 */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .js .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="webgl-bg"></canvas>
+
+<header>
+  <div class="wrap nav-inner">
+    <div class="nav-logo">
+      <span>Oracle Red Bull Racing</span>
+    </div>
+    <div class="nav-tag">2026 RB22 // FORD POWERTRAINS</div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" data-line="18,15 45,50 82,85">
+    <div class="wrap">
+      <div class="badge reveal">
+        <span>CHASSIS RB22 // MILTON KEYNES TECH CAMPUS</span>
+      </div>
+      <h1 class="reveal" style="--d: 80ms">
+        Aggressive<br>
+        <span class="accent">Matte Navy</span> 2026
+      </h1>
+      <p class="hero-p reveal" style="--d: 160ms">
+        不堆砌浮夸亮面反射，让米尔顿凯恩斯冠军工坊的极致哑光深蓝包裹视口。从首屏吸光沉静的哑光车身，向后收束进空气动力学裸碳底盘；公牛极速红拉破空间，能量荧光黄点亮高能脉冲。
+      </p>
+      <div class="actions reveal" style="--d: 240ms">
+        <a href="#powertrain" class="btn btn-primary">探索动力单元</a>
+        <a href="#engineering" class="btn btn-ghost">底盘气动工程</a>
+      </div>
+
+      <div class="stats-bar reveal" style="--d: 320ms">
+        <div class="stat-box">
+          <div class="stat-val">1.82<span class="unit">s</span></div>
+          <div class="stat-lbl">DHL 最快进站基准时间</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">1060<span class="unit">bhp</span></div>
+          <div class="stat-lbl">Red Bull Ford 综合输出</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">355<span class="unit">km/h</span></div>
+          <div class="stat-lbl">极速尾速 (Active Aero)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">6<span class="unit">Titles</span></div>
+          <div class="stat-lbl">车队世界冠军霸权</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装插值接缝区 -->
+  <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
+    <div class="wrap">
+      <div class="seam-meta">Surface Seam // Transition Zone</div>
+      <div class="seam-title">MATTE MIDNIGHT NAVY ➔ RAW CHASSIS CARBON</div>
+      <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
+        视口滚动经过此区域时，背景车身材质插值渐变，观察哑光暗夜蓝向车尾纯粹吸光裸碳黑的流动转换。
+      </p>
+    </div>
+  </div>
+
+  <!-- 工程架构 -->
+  <section id="engineering" data-line="20,12 55,46 78,88">
+    <div class="wrap">
+      <div class="section-tag reveal">Aerodynamic Architecture</div>
+      <h2 class="section-title reveal">2026 规则米尔顿凯恩斯气动刀锋</h2>
+      <div class="grid-3">
+        <div class="card reveal" style="--d: 80ms">
+          <div class="card-code">// 01 · NON-REFLECTIVE</div>
+          <div class="card-title">Satin Matte 车漆质感</div>
+          <div class="card-desc">
+            清漆粗糙度高达 0.50，底漆粗糙度 0.42，还原红牛享誉围场的高级哑光非反射质感，强光下无眩光刺眼亮斑。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 160ms">
+          <div class="card-code">// 02 · ENERGY LINE</div>
+          <div class="card-title">红黄双色能量脉冲</div>
+          <div class="card-desc">
+            公牛极速红（#EA1D2D）作为贯穿全场的核心动能线，鼻锥与关键节点辅以能量荧光黄（#FFEB00）脉冲点睛。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 240ms">
+          <div class="card-code">// 03 · DOWNWASH</div>
+          <div class="card-title">下洗式风刀切面</div>
+          <div class="card-desc">
+            侧箱进气口呈现极具侵略性的风刀切面（Sharpness 5.2），引导气流精准吹向前翼与后扩散器。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 动力总成 -->
+  <section id="powertrain" data-line="78,14 48,52 18,92">
+    <div class="wrap">
+      <div class="section-tag reveal">Powertrain Era</div>
+      <h2 class="section-title reveal">Red Bull Ford Powertrains 新动力纪元</h2>
+      <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
+        2026 年是红牛独立自主研发动力单元的里程碑。350kW 高性能电机与 100% 可持续环保燃料内燃机对半平分动力，成就赛道最纯粹的力量之源。
+      </p>
+      <div class="actions reveal" style="--d: 80ms">
+        <a href="#" class="btn btn-primary">返回顶部 ↑</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>Oracle Red Bull Racing // RB22 Continuous Surface UI</span>
+    <span>Based on FIA 2026 Technical Regulations</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { RED_BULL } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  mountSurfacePage({
+    preset: RED_BULL,
+    canvasId: 'webgl-bg',
+  });
+</script>
+</body>
+</html>

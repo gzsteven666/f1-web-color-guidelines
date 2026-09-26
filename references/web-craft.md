@@ -33,6 +33,7 @@ F1 视觉辨识度一半来自字体。按角色分配，不要整页一种字�
 | McLaren | Barlow Semi Condensed / Archivo | JetBrains Mono | 窄体锐利，轻快高能见度 |
 | Ferrari | Saira / Archivo | IBM Plex Mono | 略带意式张力，可用斜体强调速度 |
 | Cadillac | Archivo（宽体设置）/ Anton | IBM Plex Mono | 宽体几何，雕塑感 |
+| Williams | Archivo / IBM Plex Sans | IBM Plex Mono | 坚定清爽的蓝白工程排版，避免企业 SaaS 感 |
 
 ### 字体禁止项
 
@@ -54,6 +55,7 @@ F1 视觉辨识度一半来自字体。按角色分配，不要整页一种字�
 | McLaren | 2-4px | 最锐利 |
 | Ferrari | 6-8px | 可以稍柔和，但不要药丸形卡片 |
 | Cadillac | 0-2px | 直角切面，雕塑感 |
+| Williams | 2-4px | 清晰的蓝黑白分区，避免软塌圆角 |
 
 超过 10px 的大圆角是所有车队的共同反模式。药丸按钮（`border-radius: 999px`）只允许用在小型 tag / badge 上。
 

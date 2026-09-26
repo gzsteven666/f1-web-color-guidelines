@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { mountSurfacePage } from '@surface/surface-page.js';
 import { useTeam } from '@/context/TeamContext';
 
@@ -12,6 +12,7 @@ import { useTeam } from '@/context/TeamContext';
  *   2. 贯穿赛道级贝塞尔涂装线绘制（从页顶至页底）
  *   3. 阶段性车漆色相平滑过渡
  * 并在用户切换车队时即时重构柔光环境与着色器参数。
+ * 具备双层物理受光 CSS 渐变降级保障（Fallback）。
  */
 
 interface SurfaceBackgroundProps {
@@ -23,11 +24,17 @@ export const SurfaceBackground: React.FC<SurfaceBackgroundProps> = ({ children }
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const { currentTeam, registerPageInstance } = useTeam();
+  const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const svg = svgRef.current;
     if (!canvas || !svg) return;
+
+    // 同步 CSS fallback 渐变变量给整页
+    if (currentTeam.preset.fallback) {
+      document.documentElement.style.setProperty('--surface-fallback', currentTeam.preset.fallback);
+    }
 
     // 获取页面中所有的涂装缝合/过渡元素 [data-seam]
     const seams = Array.from(document.querySelectorAll('[data-seam]'));
@@ -40,6 +47,7 @@ export const SurfaceBackground: React.FC<SurfaceBackgroundProps> = ({ children }
       seams,
       smooth: true,
       onFallback: () => {
+        setIsFallback(true);
         document.documentElement.classList.add('no-webgl');
       },
     });
@@ -59,13 +67,27 @@ export const SurfaceBackground: React.FC<SurfaceBackgroundProps> = ({ children }
     };
   }, [registerPageInstance]);
 
+  // 当当前车队切换时，动态同步更新 CSS 降级渐变
+  useEffect(() => {
+    if (currentTeam.preset.fallback) {
+      document.documentElement.style.setProperty('--surface-fallback', currentTeam.preset.fallback);
+    }
+  }, [currentTeam]);
+
   return (
-    <div className="relative min-h-screen w-full bg-[#050607] text-[#C8CCCE]">
+    <div
+      className="relative min-h-screen w-full text-[#C8CCCE] transition-colors duration-700"
+      style={{
+        background: currentTeam.preset.fallback,
+        backgroundColor: currentTeam.preset.studio?.ground || '#050607',
+        backgroundAttachment: 'fixed',
+      }}
+    >
       {/* 3D WebGL PBR 车漆渲染 Canvas */}
       <canvas
         ref={canvasRef}
         id="surface-canvas"
-        className="fixed inset-0 w-full h-full pointer-events-none z-0"
+        className={`fixed inset-0 w-full h-full pointer-events-none z-0 ${isFallback ? 'hidden' : ''}`}
       />
 
       {/* 贯穿全页的 SVG 赛道描线层 */}

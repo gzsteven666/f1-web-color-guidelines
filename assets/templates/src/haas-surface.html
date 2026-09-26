@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="no-js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoneyGram Haas F1 Team 配色 — 连续车身 Surface 基准模板</title>
+<!--
+  ============================================================
+  MoneyGram Haas F1 Team 配色 · "Surface" 连续车身基准模板
+  ============================================================
+  依据 2026 规则赛车 VF-26 官方设计语汇与 references/haas.md：
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
+    半哑冷白（CNC Lightweight White）与裸碳质感贯穿整屏
+  - 白向黑流动：首屏半哑冷白车头，经过 [data-seam] 过渡区后
+    平滑流向车身后段的外露裸碳黑（Raw Chassis Carbon）
+  - 美式硬核机械风：形式服从功能，极致减重与直角公差
+  - MoneyGram 速度红：精准点缀主 CTA、状态报警与赛道贯穿线
+  - 贯穿线：速度红涂装线配纯白电弧笔尖（racing-line.js）贯穿整页
+
+  ⚠ 本文件是源文件：通过 http 访问可直接运行。
+    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.replace('no-js', 'js');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.module.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.js": "https://cdn.jsdelivr.net/npm/three@0.186.1/build/three.core.min.js",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.mjs"
+  }
+}
+</script>
+<style>
+  /* ==========================================================
+     1. Design Tokens —— 机加工冷白 × 外露裸碳 × MoneyGram 红 × 合金灰
+     ========================================================== */
+  :root {
+    --void:            #060708;  /* 终极机房深黑：底座画布 */
+    --carbon:          #0F1012;  /* 外露裸碳黑：底板结构、一级容器 */
+    --card:            #16181C;  /* 二级卡片背景 */
+    --white:           #F8F9FA;  /* VF-26 轻量半哑冷白车身 */
+    --red:             #DA291C;  /* MoneyGram 速度红：主识别、CTA、贯穿线 */
+    --red-hover:       #ED3B2E;  /* 速度红悬浮微亮 */
+    --alloy:           #2E3238;  /* 机加工合金灰：导轨、分割线 */
+    --text-1:          #F8F9FA;
+    --text-2:          #A4ABB6;
+    --text-3:          #6C7480;
+    --hairline:        rgba(248, 249, 250, 0.12);
+    --hairline-strong: rgba(218, 41, 28, 0.50);
+
+    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-mono:    "IBM Plex Mono", "Consolas", monospace;
+
+    --r: 2px;
+    --ease: cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scrollbar-color: #2E3238 var(--void); }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: var(--void); }
+  ::-webkit-scrollbar-thumb { background: #2E3238; border-radius: 4px; border: 2px solid var(--void); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+  ::selection { background: var(--red); color: #FFFFFF; }
+
+  body {
+    background: var(--void);
+    color: var(--text-1);
+    font-family: var(--font-sans);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  #webgl-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 导航栏 */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    background: rgba(6, 7, 8, 0.85);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--white);
+  }
+  .nav-logo::before {
+    content: "";
+    display: block;
+    width: 10px; height: 10px;
+    background: var(--red);
+    box-shadow: 0 0 10px var(--red);
+  }
+  .nav-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--white);
+    border: 1px solid rgba(248, 249, 250, 0.3);
+    padding: 4px 10px;
+    border-radius: var(--r);
+    background: rgba(248, 249, 250, 0.06);
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 88vh;
+    display: flex;
+    align-items: center;
+    padding: 96px 0 64px;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--white);
+    background: rgba(248, 249, 250, 0.08);
+    border: 1px solid rgba(248, 249, 250, 0.25);
+    padding: 6px 14px;
+    border-radius: var(--r);
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 76px);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    color: var(--white);
+  }
+  h1 span.accent {
+    color: var(--red);
+    text-shadow: 0 0 30px rgba(218, 41, 28, 0.40);
+  }
+  .hero-p {
+    max-width: 620px;
+    font-size: 17px;
+    color: var(--text-2);
+    margin-bottom: 40px;
+  }
+  .actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: var(--r);
+    transition: all 0.25s var(--ease);
+  }
+  .btn-primary {
+    background: var(--red);
+    color: #FFFFFF;
+    border: 1px solid var(--red);
+    box-shadow: 0 0 20px rgba(218, 41, 28, 0.4);
+  }
+  .btn-primary:hover {
+    background: var(--red-hover);
+    box-shadow: 0 0 30px rgba(218, 41, 28, 0.6);
+  }
+  .btn-ghost {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--white);
+    border: 1px solid var(--hairline);
+  }
+  .btn-ghost:hover {
+    border-color: var(--white);
+    color: var(--white);
+  }
+
+  /* 涂装接缝区 */
+  .seam-banner {
+    padding: 32px 0;
+    border-top: 1px dashed rgba(218, 41, 28, 0.3);
+    border-bottom: 1px dashed rgba(218, 41, 28, 0.3);
+    background: rgba(15, 16, 18, 0.5);
+    margin: 48px 0;
+  }
+  .seam-meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .seam-meta::before {
+    content: "⚡";
+    color: var(--white);
+  }
+  .seam-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-top: 6px;
+  }
+
+  /* Section */
+  section {
+    padding: 96px 0;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 48px;
+    line-height: 1.15;
+  }
+
+  /* 卡片网格 */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+  }
+  .card {
+    background: rgba(22, 24, 28, 0.7);
+    border: 1px solid var(--hairline);
+    padding: 32px;
+    border-radius: var(--r);
+    backdrop-filter: blur(16px);
+    transition: all 0.3s var(--ease);
+  }
+  .card:hover {
+    border-color: rgba(218, 41, 28, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(6, 7, 8, 0.8);
+  }
+  .card-code {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--red);
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--white);
+    margin-bottom: 12px;
+  }
+  .card-desc {
+    font-size: 14px;
+    color: var(--text-2);
+  }
+
+  /* 遥测数据条 */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+  .stat-box {
+    background: rgba(15, 16, 18, 0.85);
+    border: 1px solid var(--hairline);
+    padding: 20px 24px;
+    border-radius: var(--r);
+  }
+  .stat-val {
+    font-family: var(--font-mono);
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-val span.unit {
+    font-size: 14px;
+    color: var(--red);
+    margin-left: 4px;
+  }
+  .stat-lbl {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--hairline);
+    padding: 48px 0;
+    background: rgba(6, 7, 8, 0.95);
+  }
+  .footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-3);
+  }
+
+  /* 进场动效 */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    transition-delay: var(--d, 0ms);
+  }
+  .js .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="webgl-bg"></canvas>
+
+<header>
+  <div class="wrap nav-inner">
+    <div class="nav-logo">
+      <span>MoneyGram Haas F1 Team</span>
+    </div>
+    <div class="nav-tag">2026 VF-26 // AMERICAN CNC</div>
+  </div>
+</header>
+
+<main>
+  <!-- Hero -->
+  <section class="hero" data-line="18,15 45,50 82,85">
+    <div class="wrap">
+      <div class="badge reveal">
+        <span>CHASSIS VF-26 // KANNAPOLIS & BANBURY</span>
+      </div>
+      <h1 class="reveal" style="--d: 80ms">
+        Industrial CNC<br>
+        <span class="accent">Lightweight</span> 2026
+      </h1>
+      <p class="hero-p reveal" style="--d: 160ms">
+        形式服从功能，直击美式机械减重本质。大面积半哑冷白空气动力学外壳与外露工程裸碳黑硬核对冲，MoneyGram 速度红提供精准的性能与指标指引。
+      </p>
+      <div class="actions reveal" style="--d: 240ms">
+        <a href="#engineering" class="btn btn-primary">探索机械减重</a>
+        <a href="#powertrain" class="btn btn-ghost">法拉利客户动力</a>
+      </div>
+
+      <div class="stats-bar reveal" style="--d: 320ms">
+        <div class="stat-box">
+          <div class="stat-val">2.08<span class="unit">s</span></div>
+          <div class="stat-lbl">坎纳波利斯换胎基准时间</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">1045<span class="unit">bhp</span></div>
+          <div class="stat-lbl">动力单元综合输出</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">349<span class="unit">km/h</span></div>
+          <div class="stat-lbl">美洲赛道大直道尾速</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">798<span class="unit">kg</span></div>
+          <div class="stat-lbl">2026 极限低重赛车总重</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 涂装插值接缝区 -->
+  <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
+    <div class="wrap">
+      <div class="seam-meta">Surface Seam // Transition Zone</div>
+      <div class="seam-title">CNC LIGHTWEIGHT WHITE ➔ RAW CHASSIS CARBON</div>
+      <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
+        滚动浏览，见证半哑光冷白外壳向底盘减重裸碳黑的硬朗几何切割，速度红细线利落收束。
+      </p>
+    </div>
+  </div>
+
+  <!-- 工程架构 -->
+  <section id="engineering" data-line="20,12 55,46 78,88">
+    <div class="wrap">
+      <div class="section-tag reveal">CNC Engineering</div>
+      <h2 class="section-title reveal">2026 规则美式机加工极简公差</h2>
+      <div class="grid-3">
+        <div class="card reveal" style="--d: 80ms">
+          <div class="card-code">// 01 · LIGHTWEIGHT COAT</div>
+          <div class="card-title">半哑冷白减重漆面</div>
+          <div class="card-desc">
+            清漆粗糙度 0.10，底漆粗糙度 0.28，精准复现哈斯为极致轻量化而喷涂的半哑光工业漆面，抗眩光且极简纯粹。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 160ms">
+          <div class="card-code">// 02 · SPEEDWAY RED</div>
+          <div class="card-title">MoneyGram 速度红</div>
+          <div class="card-desc">
+            速度红线条（#DA291C）以纯直角折弯贯穿全屏，纯白电弧笔尖如激光刻痕般在硬核底盘上划过。
+          </div>
+        </div>
+        <div class="card reveal" style="--d: 240ms">
+          <div class="card-code">// 03 · RAW CARBON</div>
+          <div class="card-title">外露裸碳纤维骨骼</div>
+          <div class="card-desc">
+            侧箱下沿与后扩散器大面积采用吸光碳纤单体壳，拒绝一切多余装饰，直击赛车下压力与机械本质。
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 动力总成 -->
+  <section id="powertrain" data-line="78,14 48,52 18,92">
+    <div class="wrap">
+      <div class="section-tag reveal">Customer Powertrain</div>
+      <h2 class="section-title reveal">高效稳定的法拉利混动伙伴</h2>
+      <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
+        搭载最新一代法拉利客户版 2026 规程动力单元，结合哈斯高强度轻量化机加工铝合金支架，释放澎湃持久动力。
+      </p>
+      <div class="actions reveal" style="--d: 80ms">
+        <a href="#" class="btn btn-primary">返回顶部 ↑</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap footer-inner">
+    <span>MoneyGram Haas F1 Team // VF-26 Continuous Surface UI</span>
+    <span>Based on FIA 2026 Technical Regulations</span>
+  </div>
+</footer>
+
+<script type="module">
+  import { HAAS } from '../../surface/teams.js';
+  import { mountSurfacePage } from '../../surface/surface-page.js';
+
+  mountSurfacePage({
+    preset: HAAS,
+    canvasId: 'webgl-bg',
+  });
+</script>
+</body>
+</html>
