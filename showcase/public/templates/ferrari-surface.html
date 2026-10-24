@@ -19,8 +19,7 @@
   - 内容与赛车无关：证明配色体系可迁移到任何网页
   颜色 token 与 references/ferrari.md 对齐。
 
-  ⚠ 本文件是源文件：通过 http 访问可直接运行。
-    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
   ============================================================
 -->
 <script>
@@ -147,6 +146,8 @@
   .nav::before {
     content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
     background: linear-gradient(180deg, rgba(14, 14, 15, 0.8) 0%, rgba(14, 14, 15, 0) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    mask-image: linear-gradient(180deg, #000 60%, transparent 100%); -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
   }
   .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
   .nav-logo {

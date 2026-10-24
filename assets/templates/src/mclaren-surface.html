@@ -138,6 +138,8 @@
   .nav::before {
     content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
     background: linear-gradient(180deg, rgba(12, 13, 15, 0.8) 0%, rgba(12, 13, 15, 0) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    mask-image: linear-gradient(180deg, #000 60%, transparent 100%); -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
   }
   .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
   .nav-logo {

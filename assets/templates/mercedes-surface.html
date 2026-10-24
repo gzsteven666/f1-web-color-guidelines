@@ -20,8 +20,7 @@
   - 内容与赛车无关：证明配色体系可迁移到任何网页
   颜色 token 与 references/mercedes.md 对齐。
 
-  ⚠ 本文件是源文件：通过 http 访问可直接运行。
-    可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
+  ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
   ============================================================
 -->
 <script>
@@ -129,7 +128,7 @@
   .paint-shade {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background:
-      linear-gradient(90deg, rgba(5, 6, 7, 0.60) 0%, rgba(5, 6, 7, 0.30) 42%, rgba(5, 6, 7, 0) 72%),
+      linear-gradient(90deg, rgba(5, 6, 7, 0.74) 0%, rgba(5, 6, 7, 0.46) 46%, rgba(5, 6, 7, 0) 78%),
       linear-gradient(180deg, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0) 14%, rgba(5, 6, 7, 0) 82%, rgba(5, 6, 7, 0.40) 100%);
   }
   /* 哑光噪点：极轻，消除大面积深色的"数字塑料感" */
@@ -156,6 +155,8 @@
   .nav::before {
     content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
     background: linear-gradient(180deg, rgba(5, 6, 7, 0.72) 0%, rgba(5, 6, 7, 0) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    mask-image: linear-gradient(180deg, #000 60%, transparent 100%); -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
   }
   .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
   .nav-logo {

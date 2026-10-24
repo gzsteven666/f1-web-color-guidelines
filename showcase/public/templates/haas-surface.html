@@ -23,6 +23,10 @@
 -->
 <script>
   document.documentElement.classList.replace('no-js', 'js');
+  // 兜底：动效脚本（依赖 CDN）若没跑起来，3 秒后无条件显示全部内容
+  setTimeout(function () {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('active'); });
+  }, 3000);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -361,11 +365,46 @@
     opacity: 1;
     transform: translateY(0);
   }
+  /* ==========================================================
+     可读性与涂装线（共享核心要求的挂载点）
+     ========================================================== */
+  /* 底衬：左侧文字栏压暗，高光留给右侧反射带；规则是"高光走留白，文字待在暗部" */
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(8, 8, 9, 0.74) 0%, rgba(8, 8, 9, 0.46) 46%, rgba(8, 8, 9, 0) 78%),
+      linear-gradient(180deg, rgba(8, 8, 9, 0.55) 0%, rgba(8, 8, 9, 0) 14%, rgba(8, 8, 9, 0) 82%, rgba(8, 8, 9, 0.40) 100%);
+  }
+  /* 涂装线：覆盖整个文档，尺寸由 racing-line.js 设置 */
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+  main, footer { position: relative; z-index: 3; }
+  /* 中文标题避免单字孤行 */
+  h1, h2, .section-title, .seam-title { text-wrap: balance; }
+  p, .card-desc, .hero-p { text-wrap: pretty; }
+
+  @media (max-width: 760px) {
+    #racing-line { display: none; }          /* 窄屏装饰整体退场，不缩小硬塞 */
+    .hero { align-items: flex-start; min-height: auto; padding: 72px 0 48px; }
+    .paint-shade { background: linear-gradient(180deg, rgba(8, 8, 9, 0.62) 0%, rgba(8, 8, 9, 0.42) 100%); }
+    .nav-tag { display: none; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .js .reveal { opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
 <body>
 
-<canvas id="webgl-bg"></canvas>
+<canvas id="webgl-bg" aria-hidden="true"></canvas>
+<div class="paint-shade" aria-hidden="true"></div>
+<svg id="racing-line"></svg>
 
 <header>
   <div class="wrap nav-inner">
@@ -2264,9 +2303,33 @@ function smoothstepUnit(x) {
 // ===== assets/surface/surface-page.js 结束 =====
 
 
-  mountSurfacePage({
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 车漆层不可用（无 WebGL / GPU 上下文丢失）时，换成预设里的 CSS 渐变
+  document.body.style.backgroundImage = HAAS.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('webgl-bg'),
+    svg: document.getElementById('racing-line'),
     preset: HAAS,
-    canvasId: 'webgl-bg',
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+  window.__surface = page;  // 调试入口：控制台里可用 __surface.surface.setTone(1)
+
+  /* ---- 进入视口时淡入；减少动态效果时直接显示 ---- */
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('active');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    if (reducedMotion) el.classList.add('active');
+    else observer.observe(el);
   });
 </script>
 </body>
