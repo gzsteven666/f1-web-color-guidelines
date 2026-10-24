@@ -3,7 +3,7 @@
 ## 设计目标
 
 做出 **轻快、锐利、高能见度、带有现代科技与速度感** 的网页视觉。
-整体应接近 McLaren Formula 1 Team 近年的公开视觉：**Papaya 橙为绝对主识别，Anthracite 深灰 / 黑色负责压重心，少量冷青蓝或 Teal 点缀用于速度感和技术感**。McLaren 官方对近两年的涂装描述很一致：2025 版写明延续 “iconic papaya colour palette”，并结合 anthracite 与一丝 teal；2026 也继续延续夺冠后的这条主逻辑，并把它扩展成更明确的冠军延续感：`iconic papaya colour palette`、`striking anthracite`、`small hints of teal`，以及类似 “all-papaya front / all-anthracite back” 的正反结构关系。([mclaren.com][1])
+整体应接近 McLaren Mastercard F1 Team 近年的公开视觉：**Papaya 橙为绝对主识别，Anthracite 深灰 / 黑色负责压重心，少量冷青蓝或 Teal 点缀用于速度感和技术感**。McLaren 官方对近两年的涂装描述很一致：2025 版写明延续 “iconic papaya colour palette”，并结合 anthracite 与一丝 teal；2026 也继续延续夺冠后的这条主逻辑，并把它扩展成更明确的冠军延续感：`iconic papaya colour palette`、`striking anthracite`、`small hints of teal`，以及类似 “all-papaya front / all-anthracite back” 的正反结构关系。([mclaren.com][1])
 
 ## 整体气质关键词
 
@@ -253,7 +253,7 @@ background: linear-gradient(
 ## 七、给 AI 的风格指令模板
 
 ```text
-请将页面设计为 McLaren Formula 1 Team 风格的数据可视化网页。
+请将页面设计为 McLaren Mastercard F1 Team 风格的数据可视化网页。
 
 视觉关键词：
 papaya performance, high-visibility speed, modern motorsport energy, anthracite contrast, technical agility, aerodynamic sharpness, lightweight precision, championship continuity

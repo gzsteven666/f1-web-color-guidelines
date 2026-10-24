@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mercedes-AMG PETRONAS F1 配色 — Editorial 基准模板</title>
+<title>BWT Alpine F1 Team 配色 — Editorial 基准模板</title>
 <!--
   ============================================================
-  Mercedes-AMG PETRONAS F1 配色 · "Editorial" 基准模板
+  BWT Alpine F1 Team 配色 · "Editorial" 基准模板
   ============================================================
-  与 aston-martin-editorial.html 同一骨架（尺度暴力 + 无盒版式 +
-  双通道视差），颜色与材质换成 Mercedes 体系：
-  - 纸面由冷银稀释（Silver Arrows 的浅色化），不是暖白
-  - 碳黑 #060708 是"墨色"：标题、幽灵按钮、深色车漆场
-  - PETRONAS 青绿 #00A19B 只做信号：主按钮、链接、图表、流线
-  - 车漆横带 = 黑碳底 + 低位 PETRONAS 流线（2026 官方语义）
-  - 内容与赛车无关：证明配色体系可迁移到任何网页
-  颜色 token 与 references/mercedes.md 对齐。
+  与 ferrari-editorial.html 同一骨架，颜色换成 Alpine 体系（A526）：
+  - 蓝色体系（涂装与上一年相似；官方未给细节，色阶为复现建议），BWT 粉只做单点点缀
+  - 主识别 Alpine Blue #0078C1：主按钮、巨字点睛、横带
+  - 第二强调 BWT Pink #FD4BC7：只做单点点缀（图表端点、Top 标签，规范 < 2%）
+  - 横带：深蓝 → Alpine 蓝的金属横带，底缘一条浅蓝结构切线
+  HEX 为网页复现建议值，不是官方色号；颜色关系依据见
+  references/alpine.md 与 references/official-2026-sources.md。
   ============================================================
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,28 +22,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
-     1. Design Tokens —— Steep 结构 × Mercedes 黑银青绿
+     1. Design Tokens —— Steep 结构 × Alpine
      ========================================================== */
   :root {
-    /* 纸面层级：冷银稀释，偏冷不偏暖（Silver Arrows 的纸面化） */
-    --paper:      #F4F6F6;
-    --fog:        #EAEEEE;
-    --mist:       #DEE4E5;
-    --hairline:   #C8D1D2;
+    /* 纸面层级：Alpine 纸面层级 */
+    --paper:      #F4F7FB;
+    --fog:        #EAF0F7;
+    --mist:       #DCE5F0;
+    --hairline:   #CBD7E6;
 
     /* 品牌核心 */
-    --ink:        #0E1011;  /* 正文：碳黑灰 */
-    --deep:       #060708;  /* 碳黑：标题、幽灵按钮、车漆场基底 */
-    --accent:     #00A19B;  /* PETRONAS 青绿：主按钮、链接、图表、流线 */
-    --edge:       #53C5BF;  /* 辅助青绿：hover / 弧形亮部 */
-    --signal:     #66D2CB;  /* 信号端点：图表端点、微量提示 */
+    --ink:        #08182B;  /* 正文：墨色 */
+    --deep:       #04101F;  /* 深背景：车漆场基底 */
+    --accent:     #0078C1;  /* Alpine Blue：绝对主识别 */
+    --accent-hi:  #1A93DE;  /* hover 提亮 */
+    --accent-2:     #FD4BC7;  /* 第二强调：仅点缀（< 2%） */
 
-    /* 协作气泡等浅色对：银灰水洗 */
-    --wash:       #D5DBDC;
-    --wash-ink:   #060708;
+    --wash:       #D6ECFA;  /* 主色水洗：气泡等浅色对 */
+    --wash-ink:   #07456E;
 
-    --muted:      #5C686B;  /* 辅助文字：冷灰 */
-    --ghost:      #7C878B;
+    --muted:      #56708C;
+    --ghost:      #94A9C0;
 
     --font-serif: "Source Serif 4", "Georgia", ui-serif, serif;
     --font-sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
@@ -57,12 +55,12 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scrollbar-color: #AEB9BB var(--paper); }
+  html { scrollbar-color: #B7C7DA var(--paper); }
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
-  ::-webkit-scrollbar-thumb { background: #AEB9BB; border-radius: 5px; border: 2px solid var(--paper); }
-  ::-webkit-scrollbar-thumb:hover { background: #00A19B; }
-  ::selection { background: #00A19B; color: #041010; }
+  ::-webkit-scrollbar-thumb { background: #B7C7DA; border-radius: 5px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: #0078C1; }
+  ::selection { background: #0078C1; color: #FFFFFF; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
   body {
@@ -81,17 +79,17 @@
   .reveal.in { opacity: 1; transform: none; }
 
   /* ==========================================================
-     2. 导航 —— 耳语级
+     2. 导航
      ========================================================== */
   nav .wrap { display: flex; align-items: center; gap: 32px; height: 76px; }
-  .nav-logo { font-weight: 600; font-size: 17px; color: var(--deep); letter-spacing: -0.01em; }
+  .nav-logo { font-weight: 600; font-size: 17px; color: var(--ink); letter-spacing: -0.01em; }
   .nav-links { display: flex; gap: 28px; margin-left: 24px; }
   .nav-links a { font-size: 16px; text-decoration: none; color: var(--ink); transition: color 180ms ease; }
   .nav-links a:hover { color: var(--accent); }
   .nav-cta { margin-left: auto; display: flex; gap: 10px; }
 
   /* ==========================================================
-     3. 药丸按钮 —— PETRONAS 实心 + 碳黑描边幽灵
+     3. 药丸按钮 —— 主色实心 + 墨色描边幽灵
      ========================================================== */
   .pill {
     display: inline-block;
@@ -103,22 +101,20 @@
     border: 1px solid transparent;
     transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
   }
-  /* 主按钮像仪表盘上的激活信号：青绿底配深色字（规范色） */
-  .pill-filled { background: var(--accent); color: #041010; font-weight: 500; }
-  .pill-filled:hover { background: #13B5AE; }
-  .pill-ghost { background: transparent; color: var(--deep); border-color: var(--deep); }
-  .pill-ghost:hover { background: rgba(0, 161, 155, 0.10); }
+  .pill-filled { background: var(--accent); color: #FFFFFF; font-weight: 500; }
+  .pill-filled:hover { background: var(--accent-hi); }
+  .pill-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+  .pill-ghost:hover { background: rgba(0, 120, 193, 0.08); }
   .pill-sm { font-size: 15px; padding: 7px 18px; }
 
-  .arrow-link { font-size: 16px; color: var(--deep); text-decoration: none; }
+  .arrow-link { font-size: 16px; color: var(--ink); text-decoration: none; }
   .arrow-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ==========================================================
-     4. Hero —— 巨字出血 + 黑银车漆场 + 悬浮残片
+     4. Hero —— 巨字出血 + 车漆场
      ========================================================== */
   .hero { padding: 40px 0 110px; position: relative; overflow: hidden; }
-  /* 车漆场：黑碳 → 钛灰 → PETRONAS 收尾（规范渐变方案 A），
-     锚定底部只占下半区，巨字区完全让开 */
+  /* 车漆场：深色 → 主色渐变（规范渐变方案 A 的下半区化） */
   .hero::before {
     content: "";
     position: absolute;
@@ -127,8 +123,8 @@
     width: 55%;
     border-top-left-radius: 140px;
     background:
-      radial-gradient(80% 70% at 22% 0%, rgba(83, 197, 191, 0.25) 0%, transparent 60%),
-      linear-gradient(135deg, #050607 0%, #101315 40%, #3E464B 75%, #00A19B 100%);
+      radial-gradient(80% 70% at 22% 0%, rgba(44, 184, 232, 0.32) 0%, transparent 60%),
+      linear-gradient(135deg, #04101F 0%, #07456E 34%, #0078C1 78%, #2CB8E8 100%);
     pointer-events: none;
   }
   .hero-glow {
@@ -145,7 +141,7 @@
     position: absolute;
     width: 130%; height: 130%;
     top: -30%; left: -20%;
-    background: radial-gradient(45% 40% at 50% 50%, rgba(102, 210, 203, 0.30) 0%, transparent 70%);
+    background: radial-gradient(45% 40% at 50% 50%, rgba(44, 184, 232, 0.35) 0%, transparent 70%);
     animation: glowDrift 14s ease-in-out infinite alternate;
   }
   @keyframes glowDrift {
@@ -160,7 +156,7 @@
     align-items: start;
   }
   .hero .ghost-tag { display: block; margin-bottom: 20px; }
-  /* 巨字：碳黑衬线撞破右缘；em 用 PETRONAS 青绿点睛 */
+  /* 巨字：墨色衬线，em 用主色点睛 */
   .hero-display {
     position: relative; z-index: 1;
     font-family: var(--font-serif);
@@ -168,7 +164,7 @@
     font-size: clamp(64px, 15vw, 200px);
     line-height: 0.95;
     letter-spacing: -0.03em;
-    color: var(--deep);
+    color: var(--ink);
     white-space: nowrap;
     margin: 8px 0 44px;
   }
@@ -191,13 +187,13 @@
   .artifacts { position: relative; min-height: 380px; }
   .artifact {
     position: absolute;
-    background: #FCFDFD;
+    background: #FAFCFE;
     border-radius: var(--r-artifact);
     padding: 18px 20px;
     box-shadow:
-      0 0 0 1px rgba(6, 7, 8, 0.08),
-      0 20px 25px -5px rgba(6, 7, 8, 0.22),
-      0 8px 10px -6px rgba(6, 7, 8, 0.18);
+      0 0 0 1px rgba(4, 16, 31, 0.08),
+      0 20px 25px -5px rgba(4, 16, 31, 0.22),
+      0 8px 10px -6px rgba(4, 16, 31, 0.18);
     animation: fadeUp 800ms ease backwards;
     transform: translate(
       calc(var(--mx, 0) * 1px),
@@ -207,7 +203,7 @@
     transition: transform 600ms cubic-bezier(0.2, 0, 0, 1);
   }
   .artifact .label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
-  .artifact .metric { font-size: 22px; font-weight: 500; color: var(--deep); }
+  .artifact .metric { font-size: 22px; font-weight: 500; color: var(--ink); }
   .artifact .delta { font-size: 14px; color: var(--muted); margin-top: 2px; }
   .artifact .delta b { color: var(--accent); font-weight: 500; }
 
@@ -230,7 +226,7 @@
   .mini-gauge .val {
     position: absolute; left: 0; right: 0; bottom: 2px;
     text-align: center;
-    font-size: 22px; font-weight: 500; color: var(--deep);
+    font-size: 22px; font-weight: 500; color: var(--ink);
   }
   .mini-gauge .val small { font-size: 13px; color: var(--muted); }
   .mini-arc-progress {
@@ -246,7 +242,7 @@
     font-size: 14px; font-weight: 500; color: var(--wash-ink);
   }
   .bubble-1 { background: var(--wash); }
-  .bubble-2 { background: #C4E8E5; color: #06514D; }
+  .bubble-2 { background: #FFD9F2; color: #8A1767; }
   .bubbles span { font-size: 14px; color: var(--muted); }
 
   /* ==========================================================
@@ -261,7 +257,7 @@
     font-size: clamp(38px, 5.5vw, 72px);
     letter-spacing: -0.02em;
     line-height: 1.16;
-    color: var(--deep);
+    color: var(--ink);
     margin-bottom: 48px;
     max-width: 900px;
   }
@@ -277,7 +273,7 @@
     transition: background 300ms ease;
     overflow: hidden;
   }
-  .index-row:hover { background: linear-gradient(90deg, rgba(0, 161, 155, 0.08) 0%, transparent 70%); }
+  .index-row:hover { background: linear-gradient(90deg, rgba(0, 120, 193, 0.07) 0%, transparent 70%); }
   .index-row .no {
     position: absolute;
     left: -6px; top: 50%;
@@ -286,14 +282,14 @@
     font-size: 128px;
     line-height: 1;
     color: var(--accent);
-    opacity: 0.14;
+    opacity: 0.12;
     pointer-events: none;
     transition: opacity 300ms ease, transform 300ms cubic-bezier(0.2, 0, 0, 1);
   }
-  .index-row:hover .no { opacity: 0.30; transform: translateY(-52%) translateX(8px); }
+  .index-row:hover .no { opacity: 0.26; transform: translateY(-52%) translateX(8px); }
   .index-row h3 {
     grid-column: 2;
-    font-size: 26px; font-weight: 500; color: var(--deep);
+    font-size: 26px; font-weight: 500; color: var(--ink);
     letter-spacing: -0.01em;
   }
   .index-row p { font-size: 16px; color: var(--muted); line-height: 1.5; }
@@ -306,13 +302,12 @@
   /* ==========================================================
      6. 车漆横带 + 无盒数据版面
      ========================================================== */
-  /* 黑碳横带 + 低位 PETRONAS 流线：2026 官方语义
-     （PETRONAS green flow line 低位扫过车身）的版面化 */
+  /* 车漆横带：深蓝 → Alpine 蓝的金属横带，底缘一条浅蓝结构切线 */
   .paint-band {
     position: relative;
     background:
-      radial-gradient(70% 90% at 18% 0%, rgba(83, 197, 191, 0.14) 0%, transparent 58%),
-      linear-gradient(120deg, #050607 0%, #101315 50%, #23282B 84%, #3E464B 100%);
+      radial-gradient(70% 90% at 18% 0%, rgba(44, 184, 232, 0.30) 0%, transparent 58%),
+      linear-gradient(120deg, #04101F 0%, #07456E 38%, #0A5E9E 68%, #0078C1 100%);
     padding: 88px 0;
     overflow: hidden;
   }
@@ -320,16 +315,16 @@
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(115deg,
       transparent 36%,
-      rgba(255, 255, 255, 0.05) 47%,
-      rgba(83, 197, 191, 0.12) 53%,
+      rgba(255, 255, 255, 0.09) 47%,
+      rgba(44, 184, 232, 0.16) 53%,
       transparent 64%);
     animation: sheen 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
-  /* 低位 PETRONAS 流线：横带下缘一条 2px 青绿光带 */
+  /* 结构切线：横带底缘一条 3px 切线 */
   .paint-band::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: 15%;
-    height: 2px; pointer-events: none;
-    background: linear-gradient(90deg, transparent 0%, #00A19B 30%, #66D2CB 60%, transparent 100%);
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 3px; pointer-events: none;
+    background: linear-gradient(90deg, #F4F7FB 0%, #F4F7FB 62%, transparent 100%);
   }
   @keyframes sheen {
     0%   { transform: translateX(-70%); }
@@ -342,27 +337,27 @@
     font-style: italic; font-weight: 400;
     font-size: clamp(30px, 4.4vw, 54px);
     line-height: 1.28; letter-spacing: -0.015em;
-    color: #F5F7F7;
+    color: #F6F8FB;
     max-width: 1000px;
   }
   .paint-band cite {
     display: block; margin-top: 22px;
     font-family: var(--font-sans); font-style: normal;
-    font-size: 15px; color: rgba(245, 247, 247, 0.58);
+    font-size: 15px; color: rgba(246, 248, 251, 0.62);
   }
 
   .data-spread { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: start; }
   .data-note h3 {
     font-family: var(--font-serif); font-weight: 400;
     font-size: 30px; letter-spacing: -0.01em; line-height: 1.3;
-    color: var(--deep); margin-bottom: 14px;
+    color: var(--ink); margin-bottom: 14px;
   }
   .data-note p { font-size: 16px; color: var(--muted); max-width: 380px; }
   table { width: 100%; border-collapse: collapse; }
   th {
     text-align: left; padding: 10px 4px;
     font-size: 13px; font-weight: 500; color: var(--ghost);
-    border-bottom: 1px solid var(--deep);
+    border-bottom: 1px solid var(--ink);
   }
   td {
     padding: 16px 4px; font-size: 16px; color: var(--ink);
@@ -371,21 +366,22 @@
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; }
   tr { transition: background 250ms ease; }
-  tbody tr:hover { background: rgba(0, 161, 155, 0.06); }
+  tbody tr:hover { background: rgba(0, 120, 193, 0.05); }
+  /* Top 标签用第二强调色：全页唯一一处（规范 < 2%） */
   .tag-pill {
     display: inline-block; padding: 2px 10px;
     border-radius: var(--r-pill);
-    background: rgba(0, 161, 155, 0.15);
-    color: #00726D; font-size: 12px; font-weight: 500;
+    background: rgba(253, 75, 199, 0.30);
+    color: #8A1767; font-size: 12px; font-weight: 500;
   }
 
   /* ==========================================================
-     7. Footer —— PETRONAS 流线收尾
+     7. Footer —— 主色 → 第二强调 速度线收尾
      ========================================================== */
   footer { padding: 48px 0 40px; }
   footer::before {
     content: ""; display: block; height: 2px; margin-bottom: 40px;
-    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--signal) 75%, transparent 100%);
+    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--accent-2) 75%, transparent 100%);
     opacity: 0.5;
   }
   footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
@@ -435,7 +431,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="nav-logo">Vertex</div>
+    <div class="nav-logo">Scoperta</div>
     <div class="nav-links">
       <a href="#">产品</a>
       <a href="#">客户</a>
@@ -453,11 +449,11 @@
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
-    <div class="hero-display" role="heading" aria-level="1">Data, forged<span class="l2">in <em>Silver Arrows</em>.</span></div>
+    <div class="hero-display" role="heading" aria-level="1">Data, set<span class="l2">in <em>Blue</em>.</span></div>
   </div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p>把 Mercedes-AMG PETRONAS 的黑银与精密，穿在一个普通数据产品身上。冷银纸面、碳黑墨色，唯一的彩色是一条 PETRONAS 青绿流线。</p>
+      <p>把 BWT Alpine F1 Team 的蓝色体系，穿在一个普通数据产品身上。冷白纸面、深蓝墨色，唯一的高饱和是那一抹 Alpine 蓝，粉色只出现一次。</p>
       <div class="hero-actions">
         <button class="pill pill-filled">开始使用</button>
         <button class="pill pill-ghost">预约演示</button>
@@ -472,8 +468,8 @@
         <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
         <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
           <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
-                fill="none" stroke="#00A19B" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="206" cy="10" r="3.5" fill="#66D2CB"/>
+                fill="none" stroke="#0078C1" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="206" cy="10" r="3.5" fill="#FD4BC7"/>
         </svg>
       </div>
       <div class="artifact artifact-2">
@@ -481,9 +477,9 @@
         <div class="mini-gauge">
           <svg viewBox="0 0 150 84" aria-hidden="true">
             <path d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#DEE4E5" stroke-width="8" stroke-linecap="round"/>
+                  fill="none" stroke="#DCE5F0" stroke-width="8" stroke-linecap="round"/>
             <path class="mini-arc-progress" d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#00A19B" stroke-width="8" stroke-linecap="round"
+                  fill="none" stroke="#0078C1" stroke-width="8" stroke-linecap="round"
                   stroke-dasharray="163.4"/>
           </svg>
           <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
@@ -503,7 +499,7 @@
 
 <section class="section-fog reveal">
   <div class="wrap">
-    <h2 class="section-title">精密不是复杂，<br>是把每个像素放在该在的位置。</h2>
+    <h2 class="section-title">运动感不是喧哗，<br>是把全部速度收进一种蓝。</h2>
     <div class="index-list">
       <a class="index-row" href="#">
         <span class="no">01</span>
@@ -520,14 +516,14 @@
       <a class="index-row" href="#">
         <span class="no">03</span>
         <h3>权限清晰到行</h3>
-        <p>行级权限与审计一体。青绿只出现在你按下去的那个按钮上。</p>
+        <p>行级权限与审计一体。粉色只出现在你按下去的那个按钮上。</p>
         <span class="arr">→</span>
       </a>
     </div>
   </div>
 </section>
 
-<!-- 车漆横带：黑碳底 + 低位 PETRONAS 流线（2026 官方语义的版面化） -->
+<!-- 车漆横带：深蓝 → Alpine 蓝的金属横带，底缘一条浅蓝结构切线 -->
 <section class="paint-band reveal">
   <div class="wrap">
     <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
@@ -559,8 +555,8 @@
 
 <footer>
   <div class="wrap">
-    <div class="nav-logo" style="font-size:15px">Vertex</div>
-    <div class="note">内容与赛车无关，仍应一眼认出 Silver Arrows 的黑银与 PETRONAS 青绿 —— 这是最终校验标准</div>
+    <div class="nav-logo" style="font-size:15px">Scoperta</div>
+    <div class="note">内容与赛车无关，仍应一眼认出 Alpine 的蓝色体系 —— 这是最终校验标准</div>
   </div>
 </footer>
 

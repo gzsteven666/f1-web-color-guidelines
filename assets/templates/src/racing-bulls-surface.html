@@ -3,18 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Visa Cash App RB 配色 — 连续车身 Surface 基准模板</title>
+<title>Visa Cash App Racing Bulls F1 Team 配色 — 连续车身 Surface 基准模板</title>
 <!--
   ============================================================
-  Visa Cash App RB 配色 · "Surface" 连续车身基准模板
+  Visa Cash App Racing Bulls F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  依据 2026 规则赛车 VCARB 03 官方设计语汇与 references/racing-bulls.md：
-  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
-    高闪耀电镀宝蓝（Candy Royal Blue）与镜面反射贯穿整屏
-  - 宝蓝向黑流动：首屏电镀宝蓝车身，经过 [data-seam] 过渡区后
-    平滑流向车身后段的法恩莎暗夜底盘黑（Faenza Nero Chassis）
-  - 极速纯白条带：纯白速度条纹横贯全屏，形成高反差动态切割
-  - 贯穿线：极速纯白涂装线配公牛火红笔尖（racing-line.js）贯穿整页
+  依据 2026 赛季官方涂装发布的颜色关系（见 references/official-2026-sources.md）
+  与 references/racing-bulls.md。HEX 为网页复现建议值，不是官方色号。
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js）
+  - 前后段经过 [data-seam] 过渡区平滑插值
+  - 贯穿线：涂装线（racing-line.js）贯穿整页
 
   ⚠ 本文件是源文件：通过 http 访问可直接运行。
     可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
@@ -41,21 +39,22 @@
 </script>
 <style>
   /* ==========================================================
-     1. Design Tokens —— 电镀宝蓝 × 极速纯白 × 公牛红 × 暗夜底盘
+     1. Design Tokens
      ========================================================== */
   :root {
-    --void:            #070B14;  /* 法恩莎暗夜底色：页面深色基底 */
-    --carbon:          #0C162A;  /* 底盘碳黑暗蓝：一级容器 */
-    --card:            #12203E;  /* 二级卡片背景 */
-    --blue:            #1640D6;  /* VCARB 03 电镀宝蓝车漆（Metalness 0.72） */
-    --blue-spec:       #4A7BFF;  /* 电光宝蓝高光漫射 */
-    --white:           #FFFFFF;  /* 极速纯白条带：主文字、贯穿线 */
-    --red:             #E51937;  /* 公牛活力红：笔尖光爆、点睛指示 */
-    --text-1:          #FFFFFF;
-    --text-2:          #BACAE6;
-    --text-3:          #7C92BA;
-    --hairline:        rgba(255, 255, 255, 0.14);
-    --hairline-strong: rgba(22, 64, 214, 0.60);
+    --void:            #0A1B4D;  /* 后段画布：深海军蓝 */
+    --carbon:          #0F2466;  /* 一级容器 */
+    --card:            #14307F;  /* 二级卡片 */
+    --white:           #F3F5F9;  /* 车身白 */
+    --blue:            #1E4FD8;  /* 点缀蓝：按钮、结构线、图表主系列 */
+    --red:             #E51937;  /* 牛头红：只做点睛（< 1%） */
+    --red-hover:       #FF3D57;
+    --ink:             #0A0E1A;  /* 白色前段上的墨色文字 */
+    --text-1:          #F3F5F9;
+    --text-2:          #A9B7DB;
+    --text-3:          #7686B0;
+    --hairline:        rgba(243, 245, 249, 0.14);
+    --hairline-strong: rgba(30, 79, 216, 0.55);
 
     --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -127,7 +126,7 @@
     display: block;
     width: 10px; height: 10px;
     background: var(--blue);
-    box-shadow: 0 0 10px var(--blue-spec);
+    box-shadow: 0 0 10px var(--blue);
   }
   .nav-tag {
     font-family: var(--font-mono);
@@ -136,7 +135,7 @@
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 4px 10px;
     border-radius: var(--r);
-    background: rgba(22, 64, 214, 0.2);
+    background: rgba(30, 79, 216, 0.2);
   }
 
   /* Hero */
@@ -152,8 +151,8 @@
     gap: 8px;
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--blue-spec);
-    background: rgba(22, 64, 214, 0.15);
+    color: var(--blue);
+    background: rgba(30, 79, 216, 0.15);
     border: 1px solid rgba(74, 123, 255, 0.35);
     padding: 6px 14px;
     border-radius: var(--r);
@@ -171,8 +170,8 @@
     color: var(--white);
   }
   h1 span.accent {
-    color: var(--blue-spec);
-    text-shadow: 0 0 30px rgba(22, 64, 214, 0.60);
+    color: var(--blue);
+    text-shadow: 0 0 30px rgba(30, 79, 216, 0.60);
   }
   .hero-p {
     max-width: 620px;
@@ -211,16 +210,16 @@
     background: var(--blue);
     color: #FFFFFF;
     border-color: var(--blue);
-    box-shadow: 0 0 30px rgba(22, 64, 214, 0.6);
+    box-shadow: 0 0 30px rgba(30, 79, 216, 0.6);
   }
   .btn-ghost {
-    background: rgba(22, 64, 214, 0.12);
+    background: rgba(30, 79, 216, 0.12);
     color: var(--white);
     border: 1px solid var(--hairline);
   }
   .btn-ghost:hover {
-    border-color: var(--blue-spec);
-    color: var(--blue-spec);
+    border-color: var(--blue);
+    color: var(--blue);
   }
 
   /* 涂装接缝区 */
@@ -234,7 +233,7 @@
   .seam-meta {
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--blue-spec);
+    color: var(--blue);
     letter-spacing: 0.15em;
     text-transform: uppercase;
     display: flex;
@@ -259,7 +258,7 @@
   .section-tag {
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--blue-spec);
+    color: var(--blue);
     letter-spacing: 0.12em;
     text-transform: uppercase;
     margin-bottom: 12px;
@@ -330,7 +329,7 @@
   }
   .stat-val span.unit {
     font-size: 14px;
-    color: var(--blue-spec);
+    color: var(--blue);
     margin-left: 4px;
   }
   .stat-lbl {
@@ -400,6 +399,23 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal { opacity: 1 !important; transform: none !important; }
   }
+  /* ==========================================================
+     白色前段：文字颜色随车漆明暗翻转
+     --surface-tone 由 surface-page.js 写入（0 = 前段白漆，1 = 后段深色）
+     ========================================================== */
+  :root {
+    --surface-tone: 0;
+    --ink-now:  color-mix(in srgb, #0A0E1A calc((1 - var(--surface-tone)) * 100%), #F3F5F9);
+    --ink-now2: color-mix(in srgb, #2B3350 calc((1 - var(--surface-tone)) * 100%), #A9B7DB);
+  }
+  .hero h1, .hero .badge { color: var(--ink-now); }
+  .hero .hero-p { color: var(--ink-now2); }
+  .hero .badge { border-color: var(--ink-now2); background: transparent; }
+  .hero .btn-ghost { color: var(--ink-now); border-color: var(--ink-now2); background: transparent; }
+  .paint-shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0) 12%, rgba(0, 0, 0, 0) 84%, rgba(0, 0, 0, 0.30) 100%); }
+  @media (max-width: 760px) {
+    .paint-shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.24) 100%); }
+  }
 </style>
 </head>
 <body>
@@ -411,9 +427,9 @@
 <header>
   <div class="wrap nav-inner">
     <div class="nav-logo">
-      <span>Visa Cash App RB</span>
+      <span>Visa Cash App Racing Bulls</span>
     </div>
-    <div class="nav-tag">2026 VCARB 03 // FAENZA DYNAMICS</div>
+    <div class="nav-tag">2026 VCARB 03 // FORD POWERTRAINS</div>
   </div>
 </header>
 
@@ -422,36 +438,36 @@
   <section class="hero" data-line="18,15 45,50 82,85">
     <div class="wrap">
       <div class="badge reveal">
-        <span>CHASSIS VCARB 03 // FAENZA RACING CAMPUS</span>
+        <span>CHASSIS VCARB 03 // FAENZA</span>
       </div>
       <h1 class="reveal" style="--d: 80ms">
-        Dynamic Candy<br>
-        <span class="accent">Royal Blue</span> 2026
+        Crisp White<br>
+        <span class="accent">Blue Accents</span> 2026
       </h1>
       <p class="hero-p reveal" style="--d: 160ms">
-        告别平淡灰暗，拥抱法恩莎意式灵动与高闪耀电镀宝蓝。大面积极速纯白条纹横贯车身形成高频视觉律动，公牛活力红点亮终极动能。
+        官方 2026 涂装延续白色设计，并加入蓝色点缀以呼应与福特的合作。页面前段是干净的白色车身，翻到后段才进入深海军蓝。
       </p>
       <div class="actions reveal" style="--d: 240ms">
-        <a href="#engineering" class="btn btn-primary">探索意式气动</a>
-        <a href="#powertrain" class="btn btn-ghost">本田动力总成</a>
+        <a href="#powertrain" class="btn btn-primary">动力单元</a>
+        <a href="#engineering" class="btn btn-ghost">涂装细节</a>
       </div>
 
       <div class="stats-bar reveal" style="--d: 320ms">
         <div class="stat-box">
           <div class="stat-val">1.98<span class="unit">s</span></div>
-          <div class="stat-lbl">法恩莎快速进站指标</div>
+          <div class="stat-lbl">进站基准时间（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">1050<span class="unit">bhp</span></div>
-          <div class="stat-lbl">Honda RBPT 综合输出</div>
+          <div class="stat-lbl">综合输出（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">351<span class="unit">km/h</span></div>
-          <div class="stat-lbl">蒙扎大直道极速</div>
+          <div class="stat-lbl">直道尾速（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">100<span class="unit">%</span></div>
-          <div class="stat-lbl">可持续先进燃料驱动</div>
+          <div class="stat-lbl">可持续燃料（示意）</div>
         </div>
       </div>
     </div>
@@ -461,38 +477,38 @@
   <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
     <div class="wrap">
       <div class="seam-meta">Surface Seam // Transition Zone</div>
-      <div class="seam-title">CANDY ROYAL BLUE ➔ FAENZA NERO CHASSIS</div>
+      <div class="seam-title">RACING WHITE ➔ DEEP NAVY</div>
       <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
-        滚动穿过车侧，观察高闪耀电光宝蓝向暗夜碳底的跳跃过渡，纯白极速拉花与公牛红点瞬息呼应。
+        滚动经过此区域时，白色车身平滑过渡到深海军蓝，文字颜色随车漆明暗同步翻转。
       </p>
     </div>
   </div>
 
-  <!-- 工程架构 -->
+  <!-- 涂装细节 -->
   <section id="engineering" data-line="20,12 55,46 78,88">
     <div class="wrap">
-      <div class="section-tag reveal">Faenza Aerodynamics</div>
-      <h2 class="section-title reveal">2026 规则灵动敏捷几何</h2>
+      <div class="section-tag reveal">Livery Details</div>
+      <h2 class="section-title reveal">2026 涂装：白色主体与蓝色点缀</h2>
       <div class="grid-3">
         <div class="card reveal" style="--d: 80ms">
-          <div class="card-code">// 01 · CANDY COAT</div>
-          <div class="card-title">电镀高光宝蓝漆面</div>
+          <div class="card-code">// 01 · WHITE BODY</div>
+          <div class="card-title">白色车身</div>
           <div class="card-desc">
-            清漆粗糙度仅 0.02，金属度 0.72，成就全围场最具镜面反差效果的电光宝蓝车身，反光锐利明亮。
+            白色是主体，占前段约 40%；用高光泽清漆（粗糙度 0.05）做出干净的受光层次。
           </div>
         </div>
         <div class="card reveal" style="--d: 160ms">
-          <div class="card-code">// 02 · VELOCITY STRIPE</div>
-          <div class="card-title">极速纯白条纹拉花</div>
+          <div class="card-code">// 02 · BLUE ACCENTS</div>
+          <div class="card-title">蓝色点缀</div>
           <div class="card-desc">
-            纯白涂装线贯穿车身，形成明快的高频反差，笔尖搭配公牛火红（#E51937），尽显意式赛车激情。
+            蓝色只做结构线、按钮和图表主系列，呼应福特合作；不做整页底色。
           </div>
         </div>
         <div class="card reveal" style="--d: 240ms">
-          <div class="card-code">// 03 · AGILE CREASE</div>
-          <div class="card-title">敏捷侧箱气动槽</div>
+          <div class="card-code">// 03 · RESTRAINED RED</div>
+          <div class="card-title">克制的牛头红</div>
           <div class="card-desc">
-            针对 2026 规程紧凑设计的侧箱起伏（Sharpness 4.8），有效引导气流贴合车身流向后方。
+            红色面积低于 1%，只作为徽标式的点睛与笔尖。
           </div>
         </div>
       </div>
@@ -502,10 +518,10 @@
   <!-- 动力总成 -->
   <section id="powertrain" data-line="78,14 48,52 18,92">
     <div class="wrap">
-      <div class="section-tag reveal">Honda RBPT Unit</div>
-      <h2 class="section-title reveal">精悍强大的混动心脏</h2>
+      <div class="section-tag reveal">Powertrain Era</div>
+      <h2 class="section-title reveal">Red Bull Ford DM01 动力单元</h2>
       <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
-        采用 Honda RBPT 混合动力总成，紧凑的封装结构赋予底盘极致灵活的动态响应与高速变向能力。
+        VCARB 03 使用 Red Bull Ford DM01 动力单元。页面里的数字均为示意数据。
       </p>
       <div class="actions reveal" style="--d: 80ms">
         <a href="#" class="btn btn-primary">返回顶部 ↑</a>
@@ -516,8 +532,8 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <span>Visa Cash App RB // VCARB 03 Continuous Surface UI</span>
-    <span>Based on FIA 2026 Technical Regulations</span>
+    <span>Visa Cash App Racing Bulls F1 Team // VCARB 03 Continuous Surface UI</span>
+    <span>配色为网页复现值，非官方色号；页面数字为示意数据</span>
   </div>
 </footer>
 

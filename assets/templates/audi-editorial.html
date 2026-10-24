@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scuderia Ferrari 配色 — Editorial 基准模板</title>
+<title>Audi Revolut F1 Team 配色 — Editorial 基准模板</title>
 <!--
   ============================================================
-  Scuderia Ferrari 配色 · "Editorial" 基准模板
+  Audi Revolut F1 Team 配色 · "Editorial" 基准模板
   ============================================================
-  与 aston-martin-editorial.html 同一骨架，颜色换成 Ferrari 体系：
-  - 纸面由 Ferrari White #F4F2EE 派生的暖白（结构白的纸面化）
-  - 炭黑偏酒红的深色做"墨色"：标题、幽灵按钮
-  - Rosso Scuderia #D3141C 是绝对主识别：主按钮、巨字点睛、横带
-  - Giallo #F7D117 只做血统点缀：图表端点、Top 标签（规范 < 2%）
-  - 车漆横带 = 深酒红 → Rosso → 白色结构切线（2026 gloss paint +
-    红白结构对比的版面化）
-  颜色 token 与 references/ferrari.md 对齐。
+  与 ferrari-editorial.html 同一骨架，颜色换成 Audi 体系（R26）：
+  - 钛金属饰面 + 外露碳纤维，Lava Red 只做点缀
+  - 主识别 Lava Red #F50537：主按钮、巨字点睛、横带
+  - 第二强调 Titanium #8A929A：只做单点点缀（图表端点、Top 标签，规范 < 2%）
+  - 横带：碳黑 → 钛灰的金属横带，底缘一条 Lava Red 切线
+  HEX 为网页复现建议值，不是官方色号；颜色关系依据见
+  references/audi.md 与 references/official-2026-sources.md。
   ============================================================
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,27 +22,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
-     1. Design Tokens —— Steep 结构 × Ferrari 红白
+     1. Design Tokens —— Steep 结构 × Audi
      ========================================================== */
   :root {
-    /* 纸面层级：Ferrari White 派生的暖白（意式暖调，区别于梅奔冷银） */
-    --paper:      #F9F7F4;
-    --fog:        #F1EDE8;
-    --mist:       #E8E2DB;
-    --hairline:   #D9CFC6;
+    /* 纸面层级：Audi 纸面层级 */
+    --paper:      #F4F5F7;
+    --fog:        #EBEDF0;
+    --mist:       #DDE0E5;
+    --hairline:   #CCD1D8;
 
     /* 品牌核心 */
-    --ink:        #241416;  /* 正文：炭黑偏酒红 */
-    --deep:       #140B0C;  /* 深背景红黑：车漆场基底 */
-    --accent:     #D3141C;  /* Rosso Scuderia：绝对主识别 */
-    --accent-hi:  #E32832;  /* hover 亮红 */
-    --giallo:     #F7D117;  /* 血统黄：仅点缀（< 2%） */
+    --ink:        #0B0E12;  /* 正文：墨色 */
+    --deep:       #07090C;  /* 深背景：车漆场基底 */
+    --accent:     #F50537;  /* Lava Red：绝对主识别 */
+    --accent-hi:  #FF2D57;  /* hover 提亮 */
+    --accent-2:     #8A929A;  /* 第二强调：仅点缀（< 2%） */
 
-    --wash:       #F6D9D6;  /* rosso 水洗：气泡等浅色对 */
-    --wash-ink:   #6D0F13;
+    --wash:       #FADADF;  /* 主色水洗：气泡等浅色对 */
+    --wash-ink:   #2A2F38;
 
-    --muted:      #7A6663;
-    --ghost:      #A69390;
+    --muted:      #5C646E;
+    --ghost:      #9AA1AB;
 
     --font-serif: "Source Serif 4", "Georgia", ui-serif, serif;
     --font-sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
@@ -56,12 +55,12 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scrollbar-color: #C8B8B0 var(--paper); }
+  html { scrollbar-color: #BFC4CC var(--paper); }
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
-  ::-webkit-scrollbar-thumb { background: #C8B8B0; border-radius: 5px; border: 2px solid var(--paper); }
-  ::-webkit-scrollbar-thumb:hover { background: #D3141C; }
-  ::selection { background: #D3141C; color: #FFFFFF; }
+  ::-webkit-scrollbar-thumb { background: #BFC4CC; border-radius: 5px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: #F50537; }
+  ::selection { background: #F50537; color: #FFFFFF; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
   body {
@@ -90,7 +89,7 @@
   .nav-cta { margin-left: auto; display: flex; gap: 10px; }
 
   /* ==========================================================
-     3. 药丸按钮 —— Rosso 实心 + 炭黑描边幽灵
+     3. 药丸按钮 —— 主色实心 + 墨色描边幽灵
      ========================================================== */
   .pill {
     display: inline-block;
@@ -105,17 +104,17 @@
   .pill-filled { background: var(--accent); color: #FFFFFF; font-weight: 500; }
   .pill-filled:hover { background: var(--accent-hi); }
   .pill-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
-  .pill-ghost:hover { background: rgba(211, 20, 28, 0.08); }
+  .pill-ghost:hover { background: rgba(245, 5, 55, 0.08); }
   .pill-sm { font-size: 15px; padding: 7px 18px; }
 
   .arrow-link { font-size: 16px; color: var(--ink); text-decoration: none; }
   .arrow-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ==========================================================
-     4. Hero —— 巨字出血 + Rosso 车漆场
+     4. Hero —— 巨字出血 + 车漆场
      ========================================================== */
   .hero { padding: 40px 0 110px; position: relative; overflow: hidden; }
-  /* 车漆场：深酒红 → Rosso → 白色结构切线收尾（规范渐变方案 A 的下半区化） */
+  /* 车漆场：深色 → 主色渐变（规范渐变方案 A 的下半区化） */
   .hero::before {
     content: "";
     position: absolute;
@@ -124,8 +123,8 @@
     width: 55%;
     border-top-left-radius: 140px;
     background:
-      radial-gradient(80% 70% at 22% 0%, rgba(240, 74, 74, 0.32) 0%, transparent 60%),
-      linear-gradient(135deg, #140B0C 0%, #6D0F13 34%, #D3141C 78%, #F04A4A 100%);
+      radial-gradient(80% 70% at 22% 0%, rgba(255, 90, 120, 0.32) 0%, transparent 60%),
+      linear-gradient(135deg, #07090C 0%, #2A2F38 34%, #F50537 78%, #FF5A78 100%);
     pointer-events: none;
   }
   .hero-glow {
@@ -142,7 +141,7 @@
     position: absolute;
     width: 130%; height: 130%;
     top: -30%; left: -20%;
-    background: radial-gradient(45% 40% at 50% 50%, rgba(240, 74, 74, 0.35) 0%, transparent 70%);
+    background: radial-gradient(45% 40% at 50% 50%, rgba(255, 90, 120, 0.35) 0%, transparent 70%);
     animation: glowDrift 14s ease-in-out infinite alternate;
   }
   @keyframes glowDrift {
@@ -157,7 +156,7 @@
     align-items: start;
   }
   .hero .ghost-tag { display: block; margin-bottom: 20px; }
-  /* 巨字：炭黑衬线，em 用 Rosso 点睛 */
+  /* 巨字：墨色衬线，em 用主色点睛 */
   .hero-display {
     position: relative; z-index: 1;
     font-family: var(--font-serif);
@@ -188,13 +187,13 @@
   .artifacts { position: relative; min-height: 380px; }
   .artifact {
     position: absolute;
-    background: #FCFAF8;
+    background: #FBFBFC;
     border-radius: var(--r-artifact);
     padding: 18px 20px;
     box-shadow:
-      0 0 0 1px rgba(20, 11, 12, 0.08),
-      0 20px 25px -5px rgba(20, 11, 12, 0.22),
-      0 8px 10px -6px rgba(20, 11, 12, 0.18);
+      0 0 0 1px rgba(7, 9, 12, 0.08),
+      0 20px 25px -5px rgba(7, 9, 12, 0.22),
+      0 8px 10px -6px rgba(7, 9, 12, 0.18);
     animation: fadeUp 800ms ease backwards;
     transform: translate(
       calc(var(--mx, 0) * 1px),
@@ -243,7 +242,7 @@
     font-size: 14px; font-weight: 500; color: var(--wash-ink);
   }
   .bubble-1 { background: var(--wash); }
-  .bubble-2 { background: #F8ECC4; color: #7A6104; }
+  .bubble-2 { background: #E3E6EA; color: #3A414C; }
   .bubbles span { font-size: 14px; color: var(--muted); }
 
   /* ==========================================================
@@ -274,7 +273,7 @@
     transition: background 300ms ease;
     overflow: hidden;
   }
-  .index-row:hover { background: linear-gradient(90deg, rgba(211, 20, 28, 0.07) 0%, transparent 70%); }
+  .index-row:hover { background: linear-gradient(90deg, rgba(245, 5, 55, 0.07) 0%, transparent 70%); }
   .index-row .no {
     position: absolute;
     left: -6px; top: 50%;
@@ -303,12 +302,12 @@
   /* ==========================================================
      6. 车漆横带 + 无盒数据版面
      ========================================================== */
-  /* Rosso 车漆横带：gloss paint 受光 + 底缘白色结构切线（2026 语义） */
+  /* 车漆横带：碳黑 → 钛灰的金属横带，底缘一条 Lava Red 切线 */
   .paint-band {
     position: relative;
     background:
-      radial-gradient(70% 90% at 18% 0%, rgba(240, 74, 74, 0.30) 0%, transparent 58%),
-      linear-gradient(120deg, #140B0C 0%, #6D0F13 38%, #A3161B 68%, #D3141C 100%);
+      radial-gradient(70% 90% at 18% 0%, rgba(255, 90, 120, 0.30) 0%, transparent 58%),
+      linear-gradient(120deg, #07090C 0%, #2A2F38 38%, #7D8591 68%, #F50537 100%);
     padding: 88px 0;
     overflow: hidden;
   }
@@ -317,15 +316,15 @@
     background: linear-gradient(115deg,
       transparent 36%,
       rgba(255, 255, 255, 0.09) 47%,
-      rgba(240, 74, 74, 0.16) 53%,
+      rgba(255, 90, 120, 0.16) 53%,
       transparent 64%);
     animation: sheen 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   }
-  /* 白色结构切线：横带底缘一条 3px 结构白，红白对比的最小表达 */
+  /* 结构切线：横带底缘一条 3px 切线 */
   .paint-band::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: 0;
     height: 3px; pointer-events: none;
-    background: linear-gradient(90deg, #F4F2EE 0%, #F4F2EE 62%, transparent 100%);
+    background: linear-gradient(90deg, #F50537 0%, #F50537 62%, transparent 100%);
   }
   @keyframes sheen {
     0%   { transform: translateX(-70%); }
@@ -338,13 +337,13 @@
     font-style: italic; font-weight: 400;
     font-size: clamp(30px, 4.4vw, 54px);
     line-height: 1.28; letter-spacing: -0.015em;
-    color: #F7F4F1;
+    color: #F0F3F6;
     max-width: 1000px;
   }
   .paint-band cite {
     display: block; margin-top: 22px;
     font-family: var(--font-sans); font-style: normal;
-    font-size: 15px; color: rgba(247, 244, 241, 0.62);
+    font-size: 15px; color: rgba(240, 243, 246, 0.62);
   }
 
   .data-spread { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: start; }
@@ -367,22 +366,22 @@
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; }
   tr { transition: background 250ms ease; }
-  tbody tr:hover { background: rgba(211, 20, 28, 0.05); }
-  /* Top 标签用血统黄：全页唯一一处 giallo（规范 < 2%） */
+  tbody tr:hover { background: rgba(245, 5, 55, 0.05); }
+  /* Top 标签用第二强调色：全页唯一一处（规范 < 2%） */
   .tag-pill {
     display: inline-block; padding: 2px 10px;
     border-radius: var(--r-pill);
-    background: rgba(247, 209, 23, 0.30);
-    color: #6E5A00; font-size: 12px; font-weight: 500;
+    background: rgba(138, 146, 154, 0.30);
+    color: #3A414C; font-size: 12px; font-weight: 500;
   }
 
   /* ==========================================================
-     7. Footer —— rosso → giallo 速度线收尾
+     7. Footer —— 主色 → 第二强调 速度线收尾
      ========================================================== */
   footer { padding: 48px 0 40px; }
   footer::before {
     content: ""; display: block; height: 2px; margin-bottom: 40px;
-    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--giallo) 75%, transparent 100%);
+    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--accent-2) 75%, transparent 100%);
     opacity: 0.5;
   }
   footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
@@ -450,11 +449,11 @@
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
-    <div class="hero-display" role="heading" aria-level="1">Data, born<span class="l2">in <em>Rosso</em>.</span></div>
+    <div class="hero-display" role="heading" aria-level="1">Data, built<span class="l2">in <em>Red</em>.</span></div>
   </div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p>把 Scuderia Ferrari 的 Rosso 与结构白，穿在一个普通数据产品身上。暖白纸面、炭黑墨色，唯一的高饱和是那一抹 Rosso Scuderia。</p>
+      <p>把 Audi Revolut F1 Team 的钛金属与碳纤维，穿在一个普通数据产品身上。冷白纸面、碳黑墨色，唯一的高饱和是那一抹 Lava Red。</p>
       <div class="hero-actions">
         <button class="pill pill-filled">开始使用</button>
         <button class="pill pill-ghost">预约演示</button>
@@ -469,8 +468,8 @@
         <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
         <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
           <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
-                fill="none" stroke="#D3141C" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="206" cy="10" r="3.5" fill="#F7D117"/>
+                fill="none" stroke="#F50537" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="206" cy="10" r="3.5" fill="#8A929A"/>
         </svg>
       </div>
       <div class="artifact artifact-2">
@@ -478,9 +477,9 @@
         <div class="mini-gauge">
           <svg viewBox="0 0 150 84" aria-hidden="true">
             <path d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#E8E2DB" stroke-width="8" stroke-linecap="round"/>
+                  fill="none" stroke="#DDE0E5" stroke-width="8" stroke-linecap="round"/>
             <path class="mini-arc-progress" d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#D3141C" stroke-width="8" stroke-linecap="round"
+                  fill="none" stroke="#F50537" stroke-width="8" stroke-linecap="round"
                   stroke-dasharray="163.4"/>
           </svg>
           <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
@@ -500,7 +499,7 @@
 
 <section class="section-fog reveal">
   <div class="wrap">
-    <h2 class="section-title">激情不是喧哗，<br>是把全部张力收进一种红。</h2>
+    <h2 class="section-title">精密不是冷漠，<br>是把每一处公差收进一种金属。</h2>
     <div class="index-list">
       <a class="index-row" href="#">
         <span class="no">01</span>
@@ -517,14 +516,14 @@
       <a class="index-row" href="#">
         <span class="no">03</span>
         <h3>权限清晰到行</h3>
-        <p>行级权限与审计一体。Rosso 只出现在你按下去的那个按钮上。</p>
+        <p>行级权限与审计一体。Lava Red 只出现在你按下去的那个按钮上。</p>
         <span class="arr">→</span>
       </a>
     </div>
   </div>
 </section>
 
-<!-- 车漆横带：gloss paint 受光 + 底缘白色结构切线（红白结构对比） -->
+<!-- 车漆横带：碳黑 → 钛灰的金属横带，底缘一条 Lava Red 切线 -->
 <section class="paint-band reveal">
   <div class="wrap">
     <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
@@ -557,7 +556,7 @@
 <footer>
   <div class="wrap">
     <div class="nav-logo" style="font-size:15px">Scoperta</div>
-    <div class="note">内容与赛车无关，仍应一眼认出 Ferrari 的 Rosso 与结构白 —— 这是最终校验标准</div>
+    <div class="note">内容与赛车无关，仍应一眼认出 Audi 的钛金属、碳纤维与 Lava Red —— 这是最终校验标准</div>
   </div>
 </footer>
 

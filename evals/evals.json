@@ -58,13 +58,13 @@
     },
     {
       "id": 6,
-      "prompt": "我想做 Red Bull Racing 风格的官网配色，给我一份完整指南。",
-      "expected_output": "明确说明当前 skill 不覆盖 Red Bull，避免强行套用已覆盖车队模板。",
+      "prompt": "我想做 Lotus F1 Team 风格的官网配色，给我一份完整指南。",
+      "expected_output": "明确说明 Lotus 不在 2026 赛季 11 支车队之内，避免强行套用已覆盖车队模板。",
       "files": [],
       "expectations": [
         "不会把未覆盖车队强行映射到已覆盖车队之一",
         "会明确说明超出当前 skill 覆盖范围",
-        "会避免输出看似完整但实际错误的 Red Bull 指引"
+        "会避免输出看似完整但实际无依据的 Lotus 指引，并给出通用方法论或扩展 skill 两条后续路径"
       ]
     },
     {
@@ -109,6 +109,50 @@
         "不将 Williams 简化为通用蓝色 SaaS 风格",
         "完整章节覆盖网页占比、组件、材质渐变、反模式及提示词",
         "区分官网有文字依据的涂装结构与自行拟定的网页色值"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "给我一份 Red Bull Racing 2026 的网页配色指引，我记得它是哑光暗夜蓝加红黄能量线？",
+      "expected_output": "纠正记忆：官方 2026 涂装是蓝黑配色加浅蓝提花并回归高光泽，红黄只是品牌点缀；HEX 为复现值。",
+      "files": [],
+      "expectations": [
+        "明确指出 2026 是高光泽而不是哑光",
+        "不把红黄描述成官方涂装的能量线",
+        "说明 HEX 是网页复现建议值，并引用 references/official-2026-sources.md"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "用 Racing Bulls 2026 的配色做一个产品官网首页，我想要大面积电光宝蓝。",
+      "expected_output": "说明官方主体是白色加蓝色点缀，大面积宝蓝与官方关系相反；给出白底为主、蓝色点缀的方案，或明确标注为创意演绎。",
+      "files": [],
+      "expectations": [
+        "指出官方涂装主体是白色而不是整体蓝色",
+        "给出白色主体加蓝色点缀的配色占比",
+        "若用户坚持大面积蓝色，需标注为创意演绎而非官方复现"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "给我 Haas 2026 的 Tailwind 配色，要黑底红点的那种暗黑风。",
+      "expected_output": "说明 VF-26 官方是白色与红色涂装，TGR 冠名；黑底红点属于旧思路；给出白红为主的 Tailwind 配色。",
+      "files": [],
+      "expectations": [
+        "使用 TGR Haas F1 Team 而不是 MoneyGram",
+        "指出官方涂装是白色与红色",
+        "输出 theme.extend.colors 或等价结构"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "帮我列一下 2026 年 11 支车队的队名和车型名，用来做页面标题。",
+      "expected_output": "输出与参赛名单一致的队名和车型名：McLaren MCL40、Audi Revolut F1 Team R26、Cadillac MAC-26、TGR Haas F1 Team、Visa Cash App Racing Bulls 等。",
+      "files": [],
+      "expectations": [
+        "McLaren 车型为 MCL40",
+        "Audi 为 Audi Revolut F1 Team / R26",
+        "Cadillac 为 MAC-26，Haas 为 TGR Haas F1 Team，Racing Bulls 为 Visa Cash App Racing Bulls"
       ]
     }
   ]

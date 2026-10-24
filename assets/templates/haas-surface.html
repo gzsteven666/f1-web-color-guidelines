@@ -4,19 +4,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MoneyGram Haas F1 Team 配色 — 连续车身 Surface 基准模板</title>
+<title>TGR Haas F1 Team 配色 — 连续车身 Surface 基准模板</title>
 <!--
   ============================================================
-  MoneyGram Haas F1 Team 配色 · "Surface" 连续车身基准模板
+  TGR Haas F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  依据 2026 规则赛车 VF-26 官方设计语汇与 references/haas.md：
-  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
-    半哑冷白（CNC Lightweight White）与裸碳质感贯穿整屏
-  - 白向黑流动：首屏半哑冷白车头，经过 [data-seam] 过渡区后
-    平滑流向车身后段的外露裸碳黑（Raw Chassis Carbon）
-  - 美式硬核机械风：形式服从功能，极致减重与直角公差
-  - MoneyGram 速度红：精准点缀主 CTA、状态报警与赛道贯穿线
-  - 贯穿线：速度红涂装线配纯白电弧笔尖（racing-line.js）贯穿整页
+  依据 2026 赛季官方涂装发布的颜色关系（见 references/official-2026-sources.md）
+  与 references/haas.md。HEX 为网页复现建议值，不是官方色号。
+  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js）
+  - 前后段经过 [data-seam] 过渡区平滑插值
+  - 贯穿线：涂装线（racing-line.js）贯穿整页
 
   ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
   ============================================================
@@ -42,21 +39,22 @@
 </script>
 <style>
   /* ==========================================================
-     1. Design Tokens —— 机加工冷白 × 外露裸碳 × MoneyGram 红 × 合金灰
+     1. Design Tokens
      ========================================================== */
   :root {
-    --void:            #060708;  /* 终极机房深黑：底座画布 */
-    --carbon:          #0F1012;  /* 外露裸碳黑：底板结构、一级容器 */
-    --card:            #16181C;  /* 二级卡片背景 */
-    --white:           #F8F9FA;  /* VF-26 轻量半哑冷白车身 */
-    --red:             #DA291C;  /* MoneyGram 速度红：主识别、CTA、贯穿线 */
-    --red-hover:       #ED3B2E;  /* 速度红悬浮微亮 */
-    --alloy:           #2E3238;  /* 机加工合金灰：导轨、分割线 */
-    --text-1:          #F8F9FA;
-    --text-2:          #A4ABB6;
-    --text-3:          #6C7480;
-    --hairline:        rgba(248, 249, 250, 0.12);
-    --hairline-strong: rgba(218, 41, 28, 0.50);
+    --void:            #101114;  /* 后段画布：近黑 */
+    --carbon:          #17181C;  /* 一级容器 */
+    --card:            #1E2025;  /* 二级卡片 */
+    --white:           #F4F5F7;  /* 车身白 */
+    --red:             #E0201B;  /* Haas 红：主识别、CTA、贯穿线 */
+    --red-hover:       #FF3B33;
+    --alloy:           #2A2D33;  /* 合金灰：导轨、分割线 */
+    --ink:             #101114;  /* 白色前段上的墨色文字 */
+    --text-1:          #F4F5F7;
+    --text-2:          #A5ACB8;
+    --text-3:          #6E7682;
+    --hairline:        rgba(244, 245, 247, 0.12);
+    --hairline-strong: rgba(224, 32, 27, 0.50);
 
     --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -67,10 +65,10 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scrollbar-color: #2E3238 var(--void); }
+  html { scrollbar-color: #2A2D33 var(--void); }
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--void); }
-  ::-webkit-scrollbar-thumb { background: #2E3238; border-radius: 4px; border: 2px solid var(--void); }
+  ::-webkit-scrollbar-thumb { background: #2A2D33; border-radius: 4px; border: 2px solid var(--void); }
   ::-webkit-scrollbar-thumb:hover { background: var(--red); }
   ::selection { background: var(--red); color: #FFFFFF; }
 
@@ -173,7 +171,7 @@
   }
   h1 span.accent {
     color: var(--red);
-    text-shadow: 0 0 30px rgba(218, 41, 28, 0.40);
+    text-shadow: 0 0 30px rgba(224, 32, 27, 0.40);
   }
   .hero-p {
     max-width: 620px;
@@ -205,11 +203,11 @@
     background: var(--red);
     color: #FFFFFF;
     border: 1px solid var(--red);
-    box-shadow: 0 0 20px rgba(218, 41, 28, 0.4);
+    box-shadow: 0 0 20px rgba(224, 32, 27, 0.4);
   }
   .btn-primary:hover {
     background: var(--red-hover);
-    box-shadow: 0 0 30px rgba(218, 41, 28, 0.6);
+    box-shadow: 0 0 30px rgba(224, 32, 27, 0.6);
   }
   .btn-ghost {
     background: rgba(255, 255, 255, 0.05);
@@ -224,8 +222,8 @@
   /* 涂装接缝区 */
   .seam-banner {
     padding: 32px 0;
-    border-top: 1px dashed rgba(218, 41, 28, 0.3);
-    border-bottom: 1px dashed rgba(218, 41, 28, 0.3);
+    border-top: 1px dashed rgba(224, 32, 27, 0.3);
+    border-bottom: 1px dashed rgba(224, 32, 27, 0.3);
     background: rgba(15, 16, 18, 0.5);
     margin: 48px 0;
   }
@@ -286,7 +284,7 @@
     transition: all 0.3s var(--ease);
   }
   .card:hover {
-    border-color: rgba(218, 41, 28, 0.5);
+    border-color: rgba(224, 32, 27, 0.5);
     transform: translateY(-2px);
     box-shadow: 0 12px 32px rgba(6, 7, 8, 0.8);
   }
@@ -398,6 +396,23 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal { opacity: 1 !important; transform: none !important; }
   }
+  /* ==========================================================
+     白色前段：文字颜色随车漆明暗翻转
+     --surface-tone 由 surface-page.js 写入（0 = 前段白漆，1 = 后段深色）
+     ========================================================== */
+  :root {
+    --surface-tone: 0;
+    --ink-now:  color-mix(in srgb, #101114 calc((1 - var(--surface-tone)) * 100%), #F4F5F7);
+    --ink-now2: color-mix(in srgb, #30343D calc((1 - var(--surface-tone)) * 100%), #A5ACB8);
+  }
+  .hero h1, .hero .badge { color: var(--ink-now); }
+  .hero .hero-p { color: var(--ink-now2); }
+  .hero .badge { border-color: var(--ink-now2); background: transparent; }
+  .hero .btn-ghost { color: var(--ink-now); border-color: var(--ink-now2); background: transparent; }
+  .paint-shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0) 12%, rgba(0, 0, 0, 0) 84%, rgba(0, 0, 0, 0.30) 100%); }
+  @media (max-width: 760px) {
+    .paint-shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.24) 100%); }
+  }
 </style>
 </head>
 <body>
@@ -409,9 +424,9 @@
 <header>
   <div class="wrap nav-inner">
     <div class="nav-logo">
-      <span>MoneyGram Haas F1 Team</span>
+      <span>TGR Haas F1 Team</span>
     </div>
-    <div class="nav-tag">2026 VF-26 // AMERICAN CNC</div>
+    <div class="nav-tag">2026 VF-26 // TGR PARTNERSHIP</div>
   </div>
 </header>
 
@@ -420,36 +435,36 @@
   <section class="hero" data-line="18,15 45,50 82,85">
     <div class="wrap">
       <div class="badge reveal">
-        <span>CHASSIS VF-26 // KANNAPOLIS & BANBURY</span>
+        <span>CHASSIS VF-26 // KANNAPOLIS &amp; BANBURY</span>
       </div>
       <h1 class="reveal" style="--d: 80ms">
-        Industrial CNC<br>
-        <span class="accent">Lightweight</span> 2026
+        White &amp; Red<br>
+        <span class="accent">Direct</span> 2026
       </h1>
       <p class="hero-p reveal" style="--d: 160ms">
-        形式服从功能，直击美式机械减重本质。大面积半哑冷白空气动力学外壳与外露工程裸碳黑硬核对冲，MoneyGram 速度红提供精准的性能与指标指引。
+        官方 2026 涂装是白色与红色，体现与丰田 Gazoo Racing 扩大后的冠名合作。页面前段是明快的白色车身与平面红色结构，后段才进入深色数据区。
       </p>
       <div class="actions reveal" style="--d: 240ms">
-        <a href="#engineering" class="btn btn-primary">探索机械减重</a>
-        <a href="#powertrain" class="btn btn-ghost">法拉利客户动力</a>
+        <a href="#powertrain" class="btn btn-primary">动力单元</a>
+        <a href="#engineering" class="btn btn-ghost">涂装细节</a>
       </div>
 
       <div class="stats-bar reveal" style="--d: 320ms">
         <div class="stat-box">
           <div class="stat-val">2.08<span class="unit">s</span></div>
-          <div class="stat-lbl">坎纳波利斯换胎基准时间</div>
+          <div class="stat-lbl">换胎基准时间（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">1045<span class="unit">bhp</span></div>
-          <div class="stat-lbl">动力单元综合输出</div>
+          <div class="stat-lbl">综合输出（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">349<span class="unit">km/h</span></div>
-          <div class="stat-lbl">美洲赛道大直道尾速</div>
+          <div class="stat-lbl">直道尾速（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">798<span class="unit">kg</span></div>
-          <div class="stat-lbl">2026 极限低重赛车总重</div>
+          <div class="stat-lbl">赛车总重（示意）</div>
         </div>
       </div>
     </div>
@@ -459,38 +474,38 @@
   <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
     <div class="wrap">
       <div class="seam-meta">Surface Seam // Transition Zone</div>
-      <div class="seam-title">CNC LIGHTWEIGHT WHITE ➔ RAW CHASSIS CARBON</div>
+      <div class="seam-title">HAAS WHITE ➔ CARBON INK</div>
       <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
-        滚动浏览，见证半哑光冷白外壳向底盘减重裸碳黑的硬朗几何切割，速度红细线利落收束。
+        滚动经过此区域时，白色车身平滑过渡到近黑数据面板（页面节奏的设计选择，不是官方涂装），文字颜色随之翻转。
       </p>
     </div>
   </div>
 
-  <!-- 工程架构 -->
+  <!-- 涂装细节 -->
   <section id="engineering" data-line="20,12 55,46 78,88">
     <div class="wrap">
-      <div class="section-tag reveal">CNC Engineering</div>
-      <h2 class="section-title reveal">2026 规则美式机加工极简公差</h2>
+      <div class="section-tag reveal">Livery Details</div>
+      <h2 class="section-title reveal">2026 涂装：白与红的直接对比</h2>
       <div class="grid-3">
         <div class="card reveal" style="--d: 80ms">
-          <div class="card-code">// 01 · LIGHTWEIGHT COAT</div>
-          <div class="card-title">半哑冷白减重漆面</div>
+          <div class="card-code">// 01 · WHITE BODY</div>
+          <div class="card-title">白色车身</div>
           <div class="card-desc">
-            清漆粗糙度 0.10，底漆粗糙度 0.28，精准复现哈斯为极致轻量化而喷涂的半哑光工业漆面，抗眩光且极简纯粹。
+            前段以半高光白漆（粗糙度 0.26）为主体，干净、明快，避免回到旧版的黑底思路。
           </div>
         </div>
         <div class="card reveal" style="--d: 160ms">
-          <div class="card-code">// 02 · SPEEDWAY RED</div>
-          <div class="card-title">MoneyGram 速度红</div>
+          <div class="card-code">// 02 · FLAT RED</div>
+          <div class="card-title">平面红色结构</div>
           <div class="card-desc">
-            速度红线条（#DA291C）以纯直角折弯贯穿全屏，纯白电弧笔尖如激光刻痕般在硬核底盘上划过。
+            红色是平面的结构与动能色，用于主按钮、章节标签和贯穿线；不做发光渐变。
           </div>
         </div>
         <div class="card reveal" style="--d: 240ms">
-          <div class="card-code">// 03 · RAW CARBON</div>
-          <div class="card-title">外露裸碳纤维骨骼</div>
+          <div class="card-code">// 03 · SPECIAL LIVERIES</div>
+          <div class="card-title">联名涂装不作基准</div>
           <div class="card-desc">
-            侧箱下沿与后扩散器大面积采用吸光碳纤单体壳，拒绝一切多余装饰，直击赛车下压力与机械本质。
+            季中的联名涂装（如哥斯拉主题）是单站限定，本模板只使用常规白红涂装。
           </div>
         </div>
       </div>
@@ -501,9 +516,9 @@
   <section id="powertrain" data-line="78,14 48,52 18,92">
     <div class="wrap">
       <div class="section-tag reveal">Customer Powertrain</div>
-      <h2 class="section-title reveal">高效稳定的法拉利混动伙伴</h2>
+      <h2 class="section-title reveal">法拉利客户动力单元</h2>
       <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
-        搭载最新一代法拉利客户版 2026 规程动力单元，结合哈斯高强度轻量化机加工铝合金支架，释放澎湃持久动力。
+        VF-26 使用法拉利 067/6 动力单元。页面里的数字均为示意数据。
       </p>
       <div class="actions reveal" style="--d: 80ms">
         <a href="#" class="btn btn-primary">返回顶部 ↑</a>
@@ -514,8 +529,8 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <span>MoneyGram Haas F1 Team // VF-26 Continuous Surface UI</span>
-    <span>Based on FIA 2026 Technical Regulations</span>
+    <span>TGR Haas F1 Team // VF-26 Continuous Surface UI</span>
+    <span>配色为网页复现值，非官方色号；页面数字为示意数据</span>
   </div>
 </footer>
 
@@ -692,12 +707,12 @@ export const FERRARI = {
 };
 
 // ------------------------------------------------------------------
-// 3. McLaren Formula 1 Team (迈凯伦)
+// 3. McLaren Mastercard F1 Team (迈凯伦)
 // ------------------------------------------------------------------
 export const MCLAREN = {
   id: 'mclaren',
-  name: 'McLaren Formula 1 Team',
-  chassis: 'MCL39',
+  name: 'McLaren Mastercard F1 Team',
+  chassis: 'MCL40',
 
   // —— 涂装阶段：All-papaya front / All-anthracite back ——
   // 前段高能见度木瓜橙，后段烟煤深灰碳纤维骨架，并结合一丝冰感 Teal 速度反光。
@@ -851,7 +866,7 @@ export const ASTON_MARTIN = {
 export const CADILLAC = {
   id: 'cadillac',
   name: 'Cadillac Formula 1 Team',
-  chassis: 'MAC-01',
+  chassis: 'MAC-26',
 
   // —— 涂装阶段：Black-and-White dual-color livery 黑白双面 ——
   // 阶段 0：American Racing White 冷峻纯白高光雕塑；阶段 1：Bold Attitude 纯粹黑碳面。
@@ -1017,40 +1032,40 @@ export const RED_BULL = {
   name: 'Oracle Red Bull Racing',
   chassis: 'RB22 // FORD POWERTRAINS',
 
-  // —— 涂装阶段：2026 RB22 标志性哑光暗夜蓝向外露碳黑底盘流动 ——
+  // —— 涂装阶段：2026 RB22 官方为蓝黑配色 + 浅蓝提花，并回归高光泽（HEX 为网页复现值）——
   livery: [
     {
-      // 阶段 0：Matte Midnight Navy 哑光磨砂深蓝（#040D1A）
-      color: '#040D1A',
-      metalness: 0.10,          // 低金属度
-      roughness: 0.42,          // 高粗糙度底漆：吸光不反光的经典红牛磨砂质感
-      clearcoat: 0.20,          // 极低清漆层（Satin Matte finish）
-      clearcoatRoughness: 0.50, // 漫射清漆，彻底消除刺眼高光亮斑
-      envIntensity: 0.95,
+      // 阶段 0：Bull Blue 高光泽车身蓝（#0B2B7E）
+      color: '#0B2B7E',
+      metalness: 0.45,
+      roughness: 0.20,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04, // 回到光泽饰面：清漆光滑，保留清晰亮带
+      envIntensity: 1.20,
     },
     {
-      // 阶段 1：后部空气动力学裸碳黑（#020509）
-      color: '#020509',
-      metalness: 0.15,
-      roughness: 0.38,
-      clearcoat: 0.25,
-      clearcoatRoughness: 0.45,
-      envIntensity: 0.85,
+      // 阶段 1：Chassis Black 底盘黑（#05070D）
+      color: '#05070D',
+      metalness: 0.20,
+      roughness: 0.30,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.05,
     },
   ],
 
   // —— 虚拟摄影棚：米尔顿凯恩斯冠军工坊的暗夜冷调柔光 ——
   studio: {
-    sky: '#0C182B',             // 暗夜冷海军蓝天幕
+    sky: '#10224F',             // 深蓝天幕
     horizon: '#060F1C',
     ground: '#020509',
     strips: [
       // 顶部主柔光箱（宽屏均匀柔和照射，呈现磨砂漆面弧度）
       { azimuth: 0, elevation: 34, w: 24, h: 1.6, color: '#F5F7FA', intensity: 13 },
-      // 侧向公牛极速红光带（勾勒车侧肌肉线条）
-      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#EA1D2D', intensity: 10 },
-      // 低位能量荧光黄脉冲光晕（模拟 2026 电驱爆发指示）
-      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFEB00', intensity: 9 },
+      // 侧向浅蓝光带（呼应提花浅蓝）
+      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#2F5FD6', intensity: 10 },
+      // 低位暖黄光晕（品牌太阳黄，极少量）
+      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFC20E', intensity: 5 },
     ],
   },
 
@@ -1069,30 +1084,30 @@ export const RED_BULL = {
 
   // —— 贯穿赛道线：公牛极速红主线，配能量荧光黄（Electric Yellow）笔尖 ——
   line: {
-    color: '#EA1D2D',           // 公牛极速红
-    tipColor: '#FFEB00',        // 能量荧光黄笔尖
+    color: '#E4002B',           // 公牛红
+    tipColor: '#FFC20E',        // 太阳黄笔尖
     width: 2.2,
     ghostOpacity: 0.18,
   },
 
   render: {
     toneMapping: 'neutral',
-    exposure: 1.05,
+    exposure: 1.08,
     maxDpr: 1.5,
   },
 
   fallback:
-    'radial-gradient(100% 60% at 20% 15%, rgba(24, 43, 69, 0.40) 0%, transparent 65%),' +
-    'linear-gradient(155deg, #040D1A 0%, #061122 35%, #03070E 75%, #020509 100%)',
+    'radial-gradient(100% 60% at 20% 15%, rgba(47, 95, 214, 0.28) 0%, transparent 65%),' +
+    'linear-gradient(155deg, #0B2B7E 0%, #08173F 38%, #04060C 100%)',
 };
 
 // ------------------------------------------------------------------
-// 8. Audi F1 Team (奥迪厂队 / 2026 AU26)
+// 8. Audi Revolut F1 Team (奥迪厂队 / 2026 R26)
 // ------------------------------------------------------------------
 export const AUDI = {
   id: 'audi',
-  name: 'Audi F1 Team',
-  chassis: 'AU26 // VORSPRUNG 2026',
+  name: 'Audi Revolut F1 Team',
+  chassis: 'R26 // VORSPRUNG 2026',
 
   // —— 涂装阶段：包豪斯工业理性，航空冰钛银与玄武岩碳黑双拼 ——
   livery: [
@@ -1241,30 +1256,30 @@ export const ALPINE = {
 };
 
 // ------------------------------------------------------------------
-// 10. Visa Cash App RB (极速公牛 / 2026 VCARB 03)
+// 10. Visa Cash App Racing Bulls (极速公牛 / 2026 VCARB 03)
 // ------------------------------------------------------------------
 export const RACING_BULLS = {
   id: 'racing-bulls',
-  name: 'Visa Cash App RB',
+  name: 'Visa Cash App Racing Bulls',
   chassis: 'VCARB 03 // FAENZA DYNAMICS',
 
-  // —— 涂装阶段：高光泽电镀金属宝蓝与极速白条纹的鲜明对冲 ——
+  // —— 涂装阶段：2026 官方为白色设计 + 蓝色点缀（呼应福特合作）；HEX 为网页复现值 ——
   livery: [
     {
-      // 阶段 0：Electric Candy Royal Blue 电镀宝蓝（#1640D6）
-      color: '#1640D6',
-      metalness: 0.72,          // 金属漆与高透色漆层结合
-      roughness: 0.15,          // 极度平整，带来全场最耀眼的高光
-      clearcoat: 1.0,           // 满级 Candy 清漆
-      clearcoatRoughness: 0.02, // 镜面无暇
-      envIntensity: 1.35,
+      // 阶段 0：Racing White 车身白（#F3F5F9）
+      color: '#F3F5F9',
+      metalness: 0.10,
+      roughness: 0.24,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.05,
+      envIntensity: 1.15,
     },
     {
-      // 阶段 1：Faenza Nero Chassis 暗夜底盘碳黑（#070B14）
-      color: '#070B14',
-      metalness: 0.20,
-      roughness: 0.30,
-      clearcoat: 0.95,
+      // 阶段 1：Deep Navy 深海军蓝（#0A1B4D），页面后段的节奏色
+      color: '#0A1B4D',
+      metalness: 0.30,
+      roughness: 0.26,
+      clearcoat: 1.0,
       clearcoatRoughness: 0.05,
       envIntensity: 1.10,
     },
@@ -1272,14 +1287,14 @@ export const RACING_BULLS = {
 
   // —— 虚拟摄影棚：明快耀眼的纯白天幕与公牛火红点缀 ——
   studio: {
-    sky: '#182C5E',             // 明亮夜空蓝天幕
-    horizon: '#0C1632',
-    ground: '#070B14',
+    sky: '#B9C3DB',             // 冷灰蓝天幕：让白漆有层次而不过曝
+    horizon: '#7B88A8',
+    ground: '#0A0E1A',
     strips: [
       // 顶部超宽白光条（呈现电光宝蓝的流线镜面）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 17 },
+      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 12 },
       // 侧向电光蓝反光带
-      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#4A7BFF', intensity: 13 },
+      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#1E4FD8', intensity: 9 },
       // 低位公牛活力红微光带
       { azimuth: -16, elevation: -20, w: 20, h: 0.25, color: '#E51937', intensity: 9 },
     ],
@@ -1298,67 +1313,67 @@ export const RACING_BULLS = {
     pointer: [0.10, 0.05],
   },
 
-  // —— 贯穿赛道线：极速纯白条带主线，公牛火红（Toros Red）笔尖 ——
+  // —— 贯穿赛道线：点缀蓝主线，牛头红笔尖 ——
   line: {
-    color: '#FFFFFF',           // 纯白速度主线
-    tipColor: '#E51937',        // 公牛火红点
+    color: '#1E4FD8',           // 点缀蓝主线
+    tipColor: '#E51937',        // 牛头红点睛
     width: 2.5,
     ghostOpacity: 0.20,
   },
 
   render: {
     toneMapping: 'neutral',
-    exposure: 1.10,
+    exposure: 1.38,
     maxDpr: 1.5,
   },
 
   fallback:
-    'radial-gradient(110% 68% at 22% 10%, rgba(74, 123, 255, 0.42) 0%, transparent 60%),' +
-    'linear-gradient(155deg, #1034B0 0%, #0A1C4D 38%, #070B14 100%)',
+    'radial-gradient(110% 68% at 22% 10%, rgba(30, 79, 216, 0.14) 0%, transparent 60%),' +
+    'linear-gradient(170deg, #F3F5F9 0%, #DCE3F2 34%, #0F2466 62%, #0A1B4D 100%)',
 };
 
 // ------------------------------------------------------------------
-// 11. MoneyGram Haas F1 Team (哈斯车队 / 2026 VF-26)
+// 11. TGR Haas F1 Team (哈斯车队 / 2026 VF-26)
 // ------------------------------------------------------------------
 export const HAAS = {
   id: 'haas',
-  name: 'MoneyGram Haas F1 Team',
+  name: 'TGR Haas F1 Team',
   chassis: 'VF-26 // AMERICAN CNC',
 
-  // —— 涂装阶段：轻量化机加工冷白与外露吸光裸碳黑的三元秩序 ——
+  // —— 涂装阶段：2026 官方为白色与红色涂装（TGR 冠名合作）；HEX 为网页复现值 ——
   livery: [
     {
-      // 阶段 0：CNC Lightweight White 半哑冷白（#F8F9FA）
-      color: '#F8F9FA',
-      metalness: 0.15,
-      roughness: 0.28,          // 半哑光涂层，追求极致减重
-      clearcoat: 0.85,
-      clearcoatRoughness: 0.10,
-      envIntensity: 1.20,
+      // 阶段 0：Haas White 车身白（#F4F5F7）
+      color: '#F4F5F7',
+      metalness: 0.12,
+      roughness: 0.26,
+      clearcoat: 0.9,
+      clearcoatRoughness: 0.08,
+      envIntensity: 1.15,
     },
     {
-      // 阶段 1：Raw Chassis Carbon 外露裸碳黑（#0F1012）
-      color: '#0F1012',
-      metalness: 0.25,
-      roughness: 0.36,
-      clearcoat: 0.80,
-      clearcoatRoughness: 0.12,
+      // 阶段 1：Carbon Ink 近黑（#101114），页面后段的数据面板底色（节奏选择，非官方涂装）
+      color: '#101114',
+      metalness: 0.22,
+      roughness: 0.34,
+      clearcoat: 0.85,
+      clearcoatRoughness: 0.10,
       envIntensity: 0.95,
     },
   ],
 
   // —— 虚拟摄影棚：北卡罗来纳坎纳波利斯工业车间的硬朗光感 ——
   studio: {
-    sky: '#26292E',             // 冷灰机匣天顶
-    horizon: '#14161A',
+    sky: '#BDC2CB',             // 冷灰天顶：白漆不过曝
+    horizon: '#80858F',
     ground: '#060708',
     strips: [
       // 顶部大功率白光天幕
-      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 15 },
+      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 12 },
       // 侧向机加工合金冷光
       { azimuth: 56, elevation: 12, w: 1.2, h: 16, color: '#A4ABB6', intensity: 8 },
-      // 低位 MoneyGram 速度红流光带
-      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#DA291C', intensity: 10 },
+      // 低位 Haas 红光带
+      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#E0201B', intensity: 8 },
     ],
   },
 
@@ -1375,23 +1390,23 @@ export const HAAS = {
     pointer: [0.08, 0.04],
   },
 
-  // —— 贯穿赛道线：MoneyGram 速度红主线，纯白高亮笔尖 ——
+  // —— 贯穿赛道线：Haas 红主线，墨黑笔尖 ——
   line: {
-    color: '#DA291C',           // MoneyGram 速度红
-    tipColor: '#FFFFFF',        // 纯白高光点
+    color: '#E0201B',           // Haas 红
+    tipColor: '#101114',        // 墨黑点（浅底可见）
     width: 2.5,
     ghostOpacity: 0.16,
   },
 
   render: {
     toneMapping: 'neutral',
-    exposure: 1.05,
+    exposure: 1.38,
     maxDpr: 1.5,
   },
 
   fallback:
-    'radial-gradient(110% 65% at 20% 12%, rgba(248, 249, 250, 0.22) 0%, transparent 60%),' +
-    'linear-gradient(160deg, #24272D 0%, #121417 38%, #060708 100%)',
+    'radial-gradient(110% 65% at 20% 12%, rgba(224, 32, 27, 0.10) 0%, transparent 60%),' +
+    'linear-gradient(165deg, #F4F5F7 0%, #D9DCE2 36%, #1E2025 64%, #101114 100%)',
 };
 
 // ------------------------------------------------------------------

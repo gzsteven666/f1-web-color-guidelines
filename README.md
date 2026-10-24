@@ -6,15 +6,15 @@
 
 - Mercedes-AMG PETRONAS (W17)
 - Scuderia Ferrari (SF-26)
-- McLaren Formula 1 Team (MCL39)
+- McLaren Mastercard F1 Team (MCL40)
 - Aston Martin Aramco F1 Team (AMR26)
-- Cadillac Formula 1 Team (MAC-01)
+- Cadillac Formula 1 Team (MAC-26)
 - Atlassian Williams F1 Team (FW48)
 - Oracle Red Bull Racing (RB22)
-- Audi F1 Team (AU26)
+- Audi Revolut F1 Team (R26)
 - BWT Alpine F1 Team (A526)
-- Visa Cash App RB (VCARB 03)
-- MoneyGram Haas F1 Team (VF-26)
+- Visa Cash App Racing Bulls (VCARB 03)
+- TGR Haas F1 Team (VF-26)
 
 这个 skill 适合以下任务：
 
@@ -31,7 +31,7 @@
 ├─ README.md
 ├─ SKILL.md
 ├─ references/
-│  ├─ 11 支车队 2026 规程官方视觉设计指引 (aston-martin, mercedes, mclaren, ferrari, cadillac, williams, red-bull, audi, alpine, racing-bulls, haas)
+│  ├─ 11 支车队 2026 视觉设计指引 (aston-martin, mercedes, mclaren, ferrari, cadillac, williams, red-bull, audi, alpine, racing-bulls, haas)
 │  ├─ web-craft.md              ← 字体/形状/材质/动效/构图的跨车队配方
 │  ├─ cross-team-methodology.md
 │  └─ official-2026-sources.md
@@ -39,14 +39,15 @@
 │  ├─ surface/                  ← 共享核心：WebGL PBR 车漆、PMREM 摄影棚天穹、SVG 贯穿赛道线与车队预设
 │  └─ templates/                ← 可直接双击打开的单文件 HTML 基准模板
 │     ├─ <team>-surface.html    ← 连续车身 PBR + 贯穿涂装线模式（双击直接运行）
-│     ├─ <team>-editorial.html  ← 每队一个浅色杂志模式（默认主参考）
+│     ├─ <team>-editorial.html  ← 11 队各一个浅色杂志模式（默认主参考）
 │     └─ aston-martin.html      ← 深色 Mission Control（dashboard 场景）
 ├─ showcase/                    ← React + Vite + Tailwind CSS + React Bits 动效工程化 Showcase
 ├─ scripts/
 │  ├─ build-templates.mjs       ← 递归内联生成单文件模板的构建脚本
+│  ├─ sync-showcase-templates.mjs ← 把模板同步到 showcase（predev/prebuild 自动调用）
 │  └─ package-quickshare.mjs    ← 自动化打包 QuickShare 专用 ZIP 压缩包脚本
 ├─ QUICKSHARE_DEPLOY.md         ← QuickShare 部署与使用完整指南
-├─ f1-surface-quickshare.zip    ← QuickShare 专用即插即用打包产物
+├─ (f1-surface-quickshare.zip)  ← 运行 npm run package:quickshare 生成，不入库
 └─ evals/
    └─ evals.json
 ```
@@ -68,7 +69,7 @@
 
 ## 2026 资料校对
 
-原有五队已按 2026-03-09 可核实到的官方 2026 发布资料校对；Williams 于 2026-09-26 依车队官网 FW48 发布资料补充。网页 HEX 为复现建议值，非官方 token。
+Aston Martin、Mercedes、McLaren、Ferrari、Cadillac 按 2026-03-09 可核实到的官方 2026 发布资料校对；Williams 于 2026-09-26 补充；Red Bull、Audi、Alpine、Racing Bulls、Haas 及全部队名/车型名于 2026-10-24 对照参赛名单与官方/主流媒体发布报道重新核对（来源见 `references/official-2026-sources.md`）。网页 HEX 为复现建议值，非官方 token。
 
 重点更新包括：
 
@@ -78,11 +79,11 @@
 - Ferrari：更新为 2026 的更亮 Rosso Scuderia、白色结构角色、gloss paint
 - Cadillac：强调 `fast standing still` 与 chevron 渐变逻辑
 - Williams：FW48 高光泽蓝、流动黑、白色结构面与极细红白历史描边
-- Red Bull Racing：RB22 哑光暗夜深蓝、非反射磨砂清漆、红黄双色能量脉冲线
-- Audi F1 Team：AU26 航空冰钛冷银、玄武岩碳黑与 350kW 高能猩红电弧
-- Alpine：A526 阿尔派皇家金属蓝、暗影碳黑与 BWT 电气亮粉对冲
-- Visa Cash App RB：VCARB 03 高闪耀电镀宝蓝、极速纯白条带与公牛火红
-- Haas：VF-26 轻量半哑冷白、外露裸碳黑与 MoneyGram 速度红机械三元秩序
+- Red Bull Racing：RB22 蓝与黑配色、浅蓝提花织纹、**回归高光泽**；红黄仅作品牌点缀
+- Audi Revolut F1 Team：R26 钛金属饰面、外露碳纤维、Lava Red 点缀与 Revolut 冠名
+- Alpine：A526 涂装与上一年相似（蓝色体系）；官方未给出更细色彩描述，色阶为网页复现建议
+- Visa Cash App Racing Bulls：VCARB 03 白色设计加蓝色点缀（呼应福特合作）
+- TGR Haas F1 Team：VF-26 白色与红色涂装（TGR 冠名合作）
 
 ## 如何使用
 
