@@ -82,9 +82,9 @@ const deployReadme = `==========================================================
   - templates/                      5 大车队纯原生单文件模板 (零依赖)
       ├─ mercedes-surface.html      梅赛德斯 W17 连续车身 3D 模板
       ├─ ferrari-surface.html       法拉利 SF-26 连续车身 3D 模板
-      ├─ mclaren-surface.html       迈凯伦 MCL39 连续车身 3D 模板
+      ├─ mclaren-surface.html       迈凯伦 MCL40 连续车身 3D 模板
       ├─ aston-martin-surface.html  阿斯顿马丁 AMR26 连续车身 3D 模板
-      └─ cadillac-surface.html      凯迪拉克 MAC-01 连续车身 3D 模板
+      └─ cadillac-surface.html      凯迪拉克 MAC-26 连续车身 3D 模板
   - favicon.svg / icons.svg         矢量图标
 
 ------------------------------------------------------------------------

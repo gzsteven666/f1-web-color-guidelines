@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>McLaren F1 配色 — Editorial 基准模板</title>
+<title>TGR Haas F1 Team 配色 — Editorial 基准模板</title>
 <!--
   ============================================================
-  McLaren F1 配色 · "Editorial" 基准模板
+  TGR Haas F1 Team 配色 · "Editorial" 基准模板
   ============================================================
-  与 aston-martin-editorial.html 同一骨架，颜色换成 McLaren 体系：
-  - 纸面由 anthracite 稀释的冷灰（轻量工程感），不偏绿不偏暖
-  - anthracite #1E1F22 是"墨色"：标题、幽灵按钮
-  - Papaya #FF8700 是绝对主识别：主按钮、巨字点睛、横带、编号
-  - Teal #4FD5D6 只做极小信号：图表端点（规范：总面积 < 5%）
-  - 车漆横带 = anthracite 底 + papaya 受光（正反结构：全 papaya 前 /
-    全 anthracite 后 的 2026 官方语义）
-  颜色 token 与 references/mclaren.md 对齐。
+  与 ferrari-editorial.html 同一骨架，颜色换成 Haas 体系（VF-26）：
+  - 白色与红色涂装（TGR 冠名合作），红色是平面结构色
+  - 主识别 Haas Red #E0201B：主按钮、巨字点睛、横带
+  - 第二强调 Alloy Grey #8E96A3：只做单点点缀（图表端点、Top 标签，规范 < 2%）
+  - 横带：近黑 → Haas 红的横带，底缘一条白色结构切线
+  HEX 为网页复现建议值，不是官方色号；颜色关系依据见
+  references/haas.md 与 references/official-2026-sources.md。
   ============================================================
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,27 +22,27 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
-     1. Design Tokens —— Steep 结构 × McLaren papaya/anthracite
+     1. Design Tokens —— Steep 结构 × Haas
      ========================================================== */
   :root {
-    /* 纸面层级：anthracite 稀释的冷灰纸面 */
-    --paper:      #F6F6F5;
-    --fog:        #EDEDEB;
-    --mist:       #E2E2DF;
-    --hairline:   #D0D0CC;
+    /* 纸面层级：Haas 纸面层级 */
+    --paper:      #F6F7F9;
+    --fog:        #EEEFF2;
+    --mist:       #E0E2E7;
+    --hairline:   #CFD2D9;
 
     /* 品牌核心 */
-    --ink:        #1E1F22;  /* anthracite：正文与"墨色" */
-    --deep:       #0F1012;  /* carbon black：车漆场基底 */
-    --accent:     #FF8700;  /* Papaya：绝对主识别 */
-    --accent-hi:  #FF9B2F;  /* 受光橙：hover / 渐变亮部 */
-    --teal:       #4FD5D6;  /* Teal：极小信号（< 5%） */
+    --ink:        #101114;  /* 正文：墨色 */
+    --deep:       #17181C;  /* 深背景：车漆场基底 */
+    --accent:     #E0201B;  /* Haas Red：绝对主识别 */
+    --accent-hi:  #FF3B33;  /* hover 提亮 */
+    --accent-2:     #8E96A3;  /* 第二强调：仅点缀（< 2%） */
 
-    --wash:       #FFE1BD;  /* papaya 水洗：气泡等浅色对 */
-    --wash-ink:   #7A4100;
+    --wash:       #FBDAD8;  /* 主色水洗：气泡等浅色对 */
+    --wash-ink:   #7A0F0C;
 
-    --muted:      #6A6C66;
-    --ghost:      #90928C;
+    --muted:      #666C78;
+    --ghost:      #A0A5AF;
 
     --font-serif: "Source Serif 4", "Georgia", ui-serif, serif;
     --font-sans:  "Archivo", "Segoe UI", system-ui, sans-serif;
@@ -56,12 +55,12 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html { scrollbar-color: #BDBDB8 var(--paper); }
+  html { scrollbar-color: #C4C8D0 var(--paper); }
   ::-webkit-scrollbar { width: 10px; }
   ::-webkit-scrollbar-track { background: var(--paper); }
-  ::-webkit-scrollbar-thumb { background: #BDBDB8; border-radius: 5px; border: 2px solid var(--paper); }
-  ::-webkit-scrollbar-thumb:hover { background: #FF8700; }
-  ::selection { background: #FF8700; color: #111111; }
+  ::-webkit-scrollbar-thumb { background: #C4C8D0; border-radius: 5px; border: 2px solid var(--paper); }
+  ::-webkit-scrollbar-thumb:hover { background: #E0201B; }
+  ::selection { background: #E0201B; color: #FFFFFF; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
 
   body {
@@ -90,7 +89,7 @@
   .nav-cta { margin-left: auto; display: flex; gap: 10px; }
 
   /* ==========================================================
-     3. 药丸按钮 —— Papaya 实心（黑字：高能见度）+ anthracite 幽灵
+     3. 药丸按钮 —— 主色实心 + 墨色描边幽灵
      ========================================================== */
   .pill {
     display: inline-block;
@@ -102,21 +101,20 @@
     border: 1px solid transparent;
     transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
   }
-  /* 规范：papaya 底配深色字（#111），像赛车高能见度识别块 */
-  .pill-filled { background: var(--accent); color: #111111; font-weight: 500; }
+  .pill-filled { background: var(--accent); color: #FFFFFF; font-weight: 500; }
   .pill-filled:hover { background: var(--accent-hi); }
   .pill-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
-  .pill-ghost:hover { background: rgba(255, 135, 0, 0.10); }
+  .pill-ghost:hover { background: rgba(224, 32, 27, 0.08); }
   .pill-sm { font-size: 15px; padding: 7px 18px; }
 
   .arrow-link { font-size: 16px; color: var(--ink); text-decoration: none; }
   .arrow-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
   /* ==========================================================
-     4. Hero —— 巨字出血 + papaya/anthracite 车漆场
+     4. Hero —— 巨字出血 + 车漆场
      ========================================================== */
   .hero { padding: 40px 0 110px; position: relative; overflow: hidden; }
-  /* 车漆场：anthracite 切面中露出高能见度 papaya（规范渐变方案 A） */
+  /* 车漆场：深色 → 主色渐变（规范渐变方案 A 的下半区化） */
   .hero::before {
     content: "";
     position: absolute;
@@ -125,8 +123,8 @@
     width: 55%;
     border-top-left-radius: 140px;
     background:
-      radial-gradient(80% 70% at 22% 0%, rgba(255, 180, 87, 0.30) 0%, transparent 60%),
-      linear-gradient(135deg, #0B0C0E 0%, #1E1F22 38%, #FF8700 82%, #FFB457 100%);
+      radial-gradient(80% 70% at 22% 0%, rgba(255, 90, 82, 0.32) 0%, transparent 60%),
+      linear-gradient(135deg, #17181C 0%, #7A0F0C 34%, #E0201B 78%, #FF5A52 100%);
     pointer-events: none;
   }
   .hero-glow {
@@ -143,7 +141,7 @@
     position: absolute;
     width: 130%; height: 130%;
     top: -30%; left: -20%;
-    background: radial-gradient(45% 40% at 50% 50%, rgba(255, 155, 47, 0.32) 0%, transparent 70%);
+    background: radial-gradient(45% 40% at 50% 50%, rgba(255, 90, 82, 0.35) 0%, transparent 70%);
     animation: glowDrift 14s ease-in-out infinite alternate;
   }
   @keyframes glowDrift {
@@ -158,7 +156,7 @@
     align-items: start;
   }
   .hero .ghost-tag { display: block; margin-bottom: 20px; }
-  /* 巨字：anthracite 衬线，em 用 papaya 点睛 */
+  /* 巨字：墨色衬线，em 用主色点睛 */
   .hero-display {
     position: relative; z-index: 1;
     font-family: var(--font-serif);
@@ -189,13 +187,13 @@
   .artifacts { position: relative; min-height: 380px; }
   .artifact {
     position: absolute;
-    background: #FDFDFC;
+    background: #FCFCFD;
     border-radius: var(--r-artifact);
     padding: 18px 20px;
     box-shadow:
-      0 0 0 1px rgba(15, 16, 18, 0.08),
-      0 20px 25px -5px rgba(15, 16, 18, 0.22),
-      0 8px 10px -6px rgba(15, 16, 18, 0.18);
+      0 0 0 1px rgba(23, 24, 28, 0.08),
+      0 20px 25px -5px rgba(23, 24, 28, 0.22),
+      0 8px 10px -6px rgba(23, 24, 28, 0.18);
     animation: fadeUp 800ms ease backwards;
     transform: translate(
       calc(var(--mx, 0) * 1px),
@@ -207,7 +205,7 @@
   .artifact .label { font-size: 14px; color: var(--muted); margin-bottom: 6px; }
   .artifact .metric { font-size: 22px; font-weight: 500; color: var(--ink); }
   .artifact .delta { font-size: 14px; color: var(--muted); margin-top: 2px; }
-  .artifact .delta b { color: #D96F00; font-weight: 500; } /* papaya 压深一档保证浅底可读 */
+  .artifact .delta b { color: var(--accent); font-weight: 500; }
 
   .artifact-1 { top: 6%; right: 0; width: 250px; animation-delay: 300ms; }
   .artifact-2 { top: 40%; left: 4%; width: 210px; animation-delay: 420ms; z-index: 2; }
@@ -244,7 +242,7 @@
     font-size: 14px; font-weight: 500; color: var(--wash-ink);
   }
   .bubble-1 { background: var(--wash); }
-  .bubble-2 { background: #C9F0F0; color: #0E5F60; }
+  .bubble-2 { background: #E3E5EA; color: #3A3F49; }
   .bubbles span { font-size: 14px; color: var(--muted); }
 
   /* ==========================================================
@@ -275,7 +273,7 @@
     transition: background 300ms ease;
     overflow: hidden;
   }
-  .index-row:hover { background: linear-gradient(90deg, rgba(255, 135, 0, 0.08) 0%, transparent 70%); }
+  .index-row:hover { background: linear-gradient(90deg, rgba(224, 32, 27, 0.07) 0%, transparent 70%); }
   .index-row .no {
     position: absolute;
     left: -6px; top: 50%;
@@ -284,11 +282,11 @@
     font-size: 128px;
     line-height: 1;
     color: var(--accent);
-    opacity: 0.14;
+    opacity: 0.12;
     pointer-events: none;
     transition: opacity 300ms ease, transform 300ms cubic-bezier(0.2, 0, 0, 1);
   }
-  .index-row:hover .no { opacity: 0.30; transform: translateY(-52%) translateX(8px); }
+  .index-row:hover .no { opacity: 0.26; transform: translateY(-52%) translateX(8px); }
   .index-row h3 {
     grid-column: 2;
     font-size: 26px; font-weight: 500; color: var(--ink);
@@ -304,13 +302,12 @@
   /* ==========================================================
      6. 车漆横带 + 无盒数据版面
      ========================================================== */
-  /* papaya/anthracite 正反结构横带：papaya 前段受光、anthracite 后段压稳
-     （2026 官方 all-papaya front / all-anthracite back 的版面化） */
+  /* 车漆横带：近黑 → Haas 红的横带，底缘一条白色结构切线 */
   .paint-band {
     position: relative;
     background:
-      radial-gradient(70% 90% at 18% 0%, rgba(255, 180, 87, 0.30) 0%, transparent 58%),
-      linear-gradient(105deg, #FF8700 0%, #E66A00 34%, #1E1F22 72%, #0F1012 100%);
+      radial-gradient(70% 90% at 18% 0%, rgba(255, 90, 82, 0.30) 0%, transparent 58%),
+      linear-gradient(120deg, #17181C 0%, #7A0F0C 38%, #B3140F 68%, #E0201B 100%);
     padding: 88px 0;
     overflow: hidden;
   }
@@ -318,10 +315,16 @@
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: linear-gradient(115deg,
       transparent 36%,
-      rgba(255, 255, 255, 0.10) 47%,
-      rgba(255, 180, 87, 0.16) 53%,
+      rgba(255, 255, 255, 0.09) 47%,
+      rgba(255, 90, 82, 0.16) 53%,
       transparent 64%);
     animation: sheen 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  }
+  /* 结构切线：横带底缘一条 3px 切线 */
+  .paint-band::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+    height: 3px; pointer-events: none;
+    background: linear-gradient(90deg, #F6F7F9 0%, #F6F7F9 62%, transparent 100%);
   }
   @keyframes sheen {
     0%   { transform: translateX(-70%); }
@@ -334,14 +337,13 @@
     font-style: italic; font-weight: 400;
     font-size: clamp(30px, 4.4vw, 54px);
     line-height: 1.28; letter-spacing: -0.015em;
-    color: #FFFFFF;
+    color: #F4F5F7;
     max-width: 1000px;
-    text-shadow: 0 1px 12px rgba(15, 16, 18, 0.25); /* papaya 亮段上保证可读 */
   }
   .paint-band cite {
     display: block; margin-top: 22px;
     font-family: var(--font-sans); font-style: normal;
-    font-size: 15px; color: rgba(255, 255, 255, 0.68);
+    font-size: 15px; color: rgba(244, 245, 247, 0.62);
   }
 
   .data-spread { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; align-items: start; }
@@ -364,21 +366,22 @@
   tr:last-child td { border-bottom: none; }
   td.num, th.num { text-align: right; }
   tr { transition: background 250ms ease; }
-  tbody tr:hover { background: rgba(255, 135, 0, 0.06); }
+  tbody tr:hover { background: rgba(224, 32, 27, 0.05); }
+  /* Top 标签用第二强调色：全页唯一一处（规范 < 2%） */
   .tag-pill {
     display: inline-block; padding: 2px 10px;
     border-radius: var(--r-pill);
-    background: rgba(255, 135, 0, 0.16);
-    color: #9A5500; font-size: 12px; font-weight: 500;
+    background: rgba(142, 150, 163, 0.30);
+    color: #3A3F49; font-size: 12px; font-weight: 500;
   }
 
   /* ==========================================================
-     7. Footer —— papaya → teal 速度线收尾
+     7. Footer —— 主色 → 第二强调 速度线收尾
      ========================================================== */
   footer { padding: 48px 0 40px; }
   footer::before {
     content: ""; display: block; height: 2px; margin-bottom: 40px;
-    background: linear-gradient(90deg, var(--ink) 0%, var(--accent) 45%, var(--teal) 75%, transparent 100%);
+    background: linear-gradient(90deg, var(--deep) 0%, var(--accent) 45%, var(--accent-2) 75%, transparent 100%);
     opacity: 0.5;
   }
   footer .wrap { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
@@ -428,7 +431,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="nav-logo">Slipstream</div>
+    <div class="nav-logo">Scoperta</div>
     <div class="nav-links">
       <a href="#">产品</a>
       <a href="#">客户</a>
@@ -446,11 +449,11 @@
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
     <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
-    <div class="hero-display" role="heading" aria-level="1">Data, painted<span class="l2">in <em>Papaya</em>.</span></div>
+    <div class="hero-display" role="heading" aria-level="1">Data, drawn<span class="l2">in <em>Red</em>.</span></div>
   </div>
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p>把 McLaren F1 的 papaya 与 anthracite，穿在一个普通数据产品身上。冷灰纸面、深灰墨色，唯一的暖色是高能见度的 papaya 橙。</p>
+      <p>把 TGR Haas F1 Team 的白与红，穿在一个普通数据产品身上。白色纸面、近黑墨色，唯一的高饱和是那一抹平面的 Haas 红。</p>
       <div class="hero-actions">
         <button class="pill pill-filled">开始使用</button>
         <button class="pill pill-ghost">预约演示</button>
@@ -465,8 +468,8 @@
         <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
         <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
           <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
-                fill="none" stroke="#FF8700" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="206" cy="10" r="3.5" fill="#4FD5D6"/>
+                fill="none" stroke="#E0201B" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="206" cy="10" r="3.5" fill="#8E96A3"/>
         </svg>
       </div>
       <div class="artifact artifact-2">
@@ -474,9 +477,9 @@
         <div class="mini-gauge">
           <svg viewBox="0 0 150 84" aria-hidden="true">
             <path d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#E2E2DF" stroke-width="8" stroke-linecap="round"/>
+                  fill="none" stroke="#E0E2E7" stroke-width="8" stroke-linecap="round"/>
             <path class="mini-arc-progress" d="M 23 76 A 52 52 0 0 1 127 76"
-                  fill="none" stroke="#FF8700" stroke-width="8" stroke-linecap="round"
+                  fill="none" stroke="#E0201B" stroke-width="8" stroke-linecap="round"
                   stroke-dasharray="163.4"/>
           </svg>
           <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
@@ -496,7 +499,7 @@
 
 <section class="section-fog reveal">
   <div class="wrap">
-    <h2 class="section-title">轻快不是简陋，<br>是把重量都留给速度。</h2>
+    <h2 class="section-title">直接不是粗糙，<br>是把全部结构收进一条红线。</h2>
     <div class="index-list">
       <a class="index-row" href="#">
         <span class="no">01</span>
@@ -513,14 +516,14 @@
       <a class="index-row" href="#">
         <span class="no">03</span>
         <h3>权限清晰到行</h3>
-        <p>行级权限与审计一体。papaya 只出现在你按下去的那个按钮上。</p>
+        <p>行级权限与审计一体。红色只出现在你按下去的那个按钮上。</p>
         <span class="arr">→</span>
       </a>
     </div>
   </div>
 </section>
 
-<!-- 车漆横带：papaya 前段受光 → anthracite 后段压稳（正反结构） -->
+<!-- 车漆横带：近黑 → Haas 红的横带，底缘一条白色结构切线 -->
 <section class="paint-band reveal">
   <div class="wrap">
     <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
@@ -552,8 +555,8 @@
 
 <footer>
   <div class="wrap">
-    <div class="nav-logo" style="font-size:15px">Slipstream</div>
-    <div class="note">内容与赛车无关，仍应一眼认出 McLaren 的 papaya 与 anthracite —— 这是最终校验标准</div>
+    <div class="nav-logo" style="font-size:15px">Scoperta</div>
+    <div class="note">内容与赛车无关，仍应一眼认出 Haas 的白与红 —— 这是最终校验标准</div>
   </div>
 </footer>
 

@@ -1,6 +1,6 @@
 ---
 name: f1-web-color-guidelines
-description: F1 team web color and styling guide for designing, restyling, reviewing, or implementing web pages, dashboards, landing pages, admin panels, design systems, and data visualization UIs in Formula 1 2026 aesthetics across all 11 teams (Mercedes-AMG PETRONAS, Ferrari, McLaren, Aston Martin, Cadillac, Williams, Red Bull Racing, Audi, Alpine, Visa Cash App RB, Haas). Outputs full design guidelines, color tokens (CSS variables / Tailwind theme / design token JSON), AI style prompts, and design reviews. 当用户提到 F1 风格、车队配色、赛车视觉、车队官网、赛车 dashboard，或点名任一 2026 车队，或在 F1/车队语境下提到网页配色、Tailwind 配色、design token、CSS variables、风格提示词、视觉审查时触发。
+description: F1 2026 team web color and styling guide (all 11 teams) for designing, restyling, reviewing or implementing web pages, dashboards, landing pages and data-viz UIs; outputs guidelines, color tokens (CSS variables / Tailwind / token JSON), AI style prompts and design reviews. 当用户提到 F1 风格、车队配色、赛车视觉、车队官网、赛车 dashboard，或点名任一 2026 车队，或在 F1/车队语境下提到网页配色、Tailwind 配色、design token、CSS variables、风格提示词、视觉审查时触发。
 ---
 
 # F1 Web Color Guidelines
@@ -8,15 +8,15 @@ description: F1 team web color and styling guide for designing, restyling, revie
 将 F1 车队配色指引转成网页可执行规范：颜色 token、占比、组件映射、材质隐喻、渐变逻辑、提示词和反模式校验。当前版本已完整覆盖 2026 赛季全阵容全部 11 支车队：
 - Mercedes-AMG PETRONAS (W17)
 - Scuderia Ferrari (SF-26)
-- McLaren Formula 1 Team (MCL39)
+- McLaren Mastercard F1 Team (MCL40)
 - Aston Martin Aramco F1 Team (AMR26)
-- Cadillac Formula 1 Team (MAC-01)
+- Cadillac Formula 1 Team (MAC-26)
 - Atlassian Williams F1 Team (FW48)
 - Oracle Red Bull Racing (RB22)
-- Audi F1 Team (AU26)
+- Audi Revolut F1 Team (R26)
 - BWT Alpine F1 Team (A526)
-- Visa Cash App RB (VCARB 03)
-- MoneyGram Haas F1 Team (VF-26)
+- Visa Cash App Racing Bulls (VCARB 03)
+- TGR Haas F1 Team (VF-26)
 
 ## 工作流
 
@@ -48,9 +48,9 @@ description: F1 team web color and styling guide for designing, restyling, revie
 - Cadillac: `references/cadillac.md`
 - Williams: `references/williams.md`
 - Red Bull Racing: `references/red-bull.md`
-- Audi F1 Team: `references/audi.md`
+- Audi Revolut F1 Team: `references/audi.md`
 - Alpine: `references/alpine.md`
-- Visa Cash App RB: `references/racing-bulls.md`
+- Visa Cash App Racing Bulls: `references/racing-bulls.md`
 - Haas: `references/haas.md`
 
 遇到以下场景时，再额外读取 `references/web-craft.md`（字体、形状、材质、动效、页面构图、无盒版式的通用配方）：
@@ -237,7 +237,7 @@ description: F1 team web color and styling guide for designing, restyling, revie
 
 ## 风格底线
 
-- 不要把 6 支车队做成同一个深色模板换色。
+- 不要把 11 支车队做成同一个深色模板换色。
 - 不要把渐变当成唯一高级感来源；先做明暗层级、材质、体积，再做渐变。
 - 不要默认使用紫色、蓝紫赛博光或大面积发光描边。
 - 不要把图表系统做成独立彩虹板。

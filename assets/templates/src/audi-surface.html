@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Audi F1 Team 配色 — 连续车身 Surface 基准模板</title>
+<title>Audi Revolut F1 Team 配色 — 连续车身 Surface 基准模板</title>
 <!--
   ============================================================
-  Audi F1 Team 配色 · "Surface" 连续车身基准模板
+  Audi Revolut F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  依据 2026 规则赛车 AU26 官方设计语汇与 references/audi.md：
+  依据 2026 规则赛车 R26 官方设计语汇与 references/audi.md：
   - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
     航空级冰钛冷银（Titanium Ice Silver）高金属镜面反射贯穿整屏
   - 钛银向玄武岩碳黑流动：首屏钛冷银车头，经过 [data-seam] 过渡区后
@@ -23,6 +23,10 @@
 -->
 <script>
   document.documentElement.classList.replace('no-js', 'js');
+  // 兜底：动效脚本（依赖 CDN）若没跑起来，3 秒后无条件显示全部内容
+  setTimeout(function () {
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('active'); });
+  }, 3000);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,7 +48,7 @@
     --void:            #050608;  /* 深渊黑底：终极暗部画布 */
     --basalt:          #0B0E12;  /* 玄武岩底盘黑：机械结构、容器底色 */
     --card:            #12161D;  /* 二级卡片背景 */
-    --titanium:        #D2D7DF;  /* AU26 冰钛冷银金属车漆（Metalness 0.96） */
+    --titanium:        #D2D7DF;  /* R26 冰钛冷银金属车漆（Metalness 0.96） */
     --red:             #F50537;  /* 奥迪运动高能猩红：主识别、CTA、贯穿线 */
     --red-hover:       #FF1A4B;  /* 猩红脉冲悬浮 */
     --white:           #F0F3F6;  /* 工业刻度白：高精度文字、标题 */
@@ -361,18 +365,53 @@
     opacity: 1;
     transform: translateY(0);
   }
+  /* ==========================================================
+     可读性与涂装线（共享核心要求的挂载点）
+     ========================================================== */
+  /* 底衬：左侧文字栏压暗，高光留给右侧反射带；规则是"高光走留白，文字待在暗部" */
+  .paint-shade {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(8, 10, 12, 0.74) 0%, rgba(8, 10, 12, 0.46) 46%, rgba(8, 10, 12, 0) 78%),
+      linear-gradient(180deg, rgba(8, 10, 12, 0.55) 0%, rgba(8, 10, 12, 0) 14%, rgba(8, 10, 12, 0) 82%, rgba(8, 10, 12, 0.40) 100%);
+  }
+  /* 涂装线：覆盖整个文档，尺寸由 racing-line.js 设置 */
+  #racing-line {
+    position: absolute; top: 0; left: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+  main, footer { position: relative; z-index: 3; }
+  /* 中文标题避免单字孤行 */
+  h1, h2, .section-title, .seam-title { text-wrap: balance; }
+  p, .card-desc, .hero-p { text-wrap: pretty; }
+
+  @media (max-width: 760px) {
+    #racing-line { display: none; }          /* 窄屏装饰整体退场，不缩小硬塞 */
+    .hero { align-items: flex-start; min-height: auto; padding: 72px 0 48px; }
+    .paint-shade { background: linear-gradient(180deg, rgba(8, 10, 12, 0.62) 0%, rgba(8, 10, 12, 0.42) 100%); }
+    .nav-tag { display: none; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; animation: none !important; }
+    .js .reveal { opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
 <body>
 
-<canvas id="webgl-bg"></canvas>
+<canvas id="webgl-bg" aria-hidden="true"></canvas>
+<div class="paint-shade" aria-hidden="true"></div>
+<svg id="racing-line"></svg>
 
 <header>
   <div class="wrap nav-inner">
     <div class="nav-logo">
-      <span>Audi F1 Team</span>
+      <span>Audi Revolut F1 Team</span>
     </div>
-    <div class="nav-tag">2026 AU26 // VORSPRUNG 2026</div>
+    <div class="nav-tag">2026 R26 // VORSPRUNG 2026</div>
   </div>
 </header>
 
@@ -381,7 +420,7 @@
   <section class="hero" data-line="18,15 45,50 82,85">
     <div class="wrap">
       <div class="badge reveal">
-        <span>CHASSIS AU26 // NEUBURG & INGOLSTADT HQ</span>
+        <span>CHASSIS R26 // NEUBURG & INGOLSTADT HQ</span>
       </div>
       <h1 class="reveal" style="--d: 80ms">
         Titanium Ice<br>
@@ -475,7 +514,7 @@
 
 <footer>
   <div class="wrap footer-inner">
-    <span>Audi F1 Team // AU26 Continuous Surface UI</span>
+    <span>Audi Revolut F1 Team // R26 Continuous Surface UI</span>
     <span>Based on FIA 2026 Technical Regulations</span>
   </div>
 </footer>
@@ -484,9 +523,33 @@
   import { AUDI } from '../../surface/teams.js';
   import { mountSurfacePage } from '../../surface/surface-page.js';
 
-  mountSurfacePage({
+  const root = document.documentElement;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 车漆层不可用（无 WebGL / GPU 上下文丢失）时，换成预设里的 CSS 渐变
+  document.body.style.backgroundImage = AUDI.fallback;
+
+  const page = mountSurfacePage({
+    canvas: document.getElementById('webgl-bg'),
+    svg: document.getElementById('racing-line'),
     preset: AUDI,
-    canvasId: 'webgl-bg',
+    seams: [document.querySelector('[data-seam]')],
+    onFallback: () => root.classList.add('no-webgl'),
+  });
+  window.__surface = page;  // 调试入口：控制台里可用 __surface.surface.setTone(1)
+
+  /* ---- 进入视口时淡入；减少动态效果时直接显示 ---- */
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (!entry.isIntersecting) continue;
+      entry.target.classList.add('active');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach((el) => {
+    if (reducedMotion) el.classList.add('active');
+    else observer.observe(el);
   });
 </script>
 </body>
