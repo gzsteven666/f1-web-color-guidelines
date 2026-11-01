@@ -342,6 +342,12 @@
     footer .wrap { flex-direction: column; gap: 20px; }
     footer .note { text-align: left; }
   }
+  /* 可读性：影棚主光带会扫过正文 —— 小字与标题加一圈深色光晕，不加色块（金属渐变字除外：
+     text-shadow 会透过透明字形把它染暗）。涂装线只走两侧边缘，横向只在区块留白里穿过 */
+  .hero-copy p, .readout dt, .readout .delta, .index-row p, .seam p, .feature-col p, .stat .label, .quote cite, footer .note {
+    text-shadow: 0 0 14px rgba(0, 0, 0, 0.85), 0 0 4px rgba(0, 0, 0, 0.6);
+  }
+  .hero-title .line > span:not(.metal-text), .section-title, .seam-title, .quote blockquote { text-shadow: 0 0 28px rgba(0, 0, 0, 0.7); }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 96px; height: 8px; background: linear-gradient(90deg, #FF8000 0 80%, #4FD5D6 80% 100%); clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
 </style>
@@ -368,7 +374,7 @@
 </header>
 
 <main>
-  <section class="hero" data-line="50,22 15,85">
+  <section class="hero" data-line="97,10 97,93 66,99">
     <div class="wrap">
       <p class="eyebrow" data-decrypt="MCLAREN F1 TEAM // WOKING MTC SPEC">MCLAREN F1 TEAM // WOKING MTC SPEC</p>
 
@@ -410,7 +416,7 @@
     </div>
   </section>
 
-  <section id="features" data-line="88,18 72,75">
+  <section id="features" data-line="30,2 3,5 3,94 24,99">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="AERODYNAMIC AGILITY">AERODYNAMIC AGILITY</p>
       <h2 class="section-title reveal">轻量化精密工程，<br>每一毫克都在为敏捷让路。</h2>
@@ -438,7 +444,7 @@
     </div>
   </section>
 
-  <section id="seam" class="seam" data-seam data-line="28,25 50,75">
+  <section id="seam" class="seam" data-seam data-line="40,2 97,20 97,80 70,98">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="PAPAYA TO ANTHRACITE TRANSITION">PAPAYA TO ANTHRACITE TRANSITION</p>
       <h2 class="seam-title reveal">从高能见度木瓜橙，<br>平滑过渡至深灰骨架。</h2>
@@ -453,7 +459,7 @@
     </div>
   </section>
 
-  <section id="performance" data-line="75,20 30,80">
+  <section id="performance" data-line="40,2 3,5 3,93 22,99">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="WORLD CHAMPIONS">WORLD CHAMPIONS</p>
       <h2 class="section-title reveal">轻量化设计驱动的数据架构</h2>
@@ -493,14 +499,14 @@
     </div>
   </section>
 
-  <section class="quote" data-line="4,6 4,70 36,96">
+  <section class="quote" data-line="40,4 97,16 97,90">
     <div class="wrap">
       <blockquote class="reveal">“追求速度从来不是在直道上踩死油门，而是在每个弯心把轻巧与锐利发挥到极致。”</blockquote>
       <cite class="reveal" style="--d: 80ms">McLaren F1 Team Principal</cite>
     </div>
   </section>
 
-  <section class="cta" data-line="36,4 74,40 97,86">
+  <section class="cta" data-line="97,8 97,94 74,99">
     <div class="wrap">
       <h2 class="section-title reveal">拥抱轻快与敏捷，<br>体验木瓜橙与深灰对冲。</h2>
       <div class="actions reveal" style="--d: 80ms">
@@ -511,7 +517,7 @@
   </section>
 </main>
 
-<footer data-line="97,0 72,0">
+<footer data-line="60,0 40,0">
   <div class="wrap">
     <span class="nav-logo">Vertex</span>
     <span class="note">内容与赛车无关，仍应一眼认出 Iconic Papaya 的活力与 Anthracite 的速度骨架</span>
@@ -532,7 +538,9 @@
  *   livery   涂装阶段。页面滚动时 tone 从 0 走到 livery.length - 1，
  *            车漆在相邻两个阶段之间插值（颜色、金属度、粗糙度……）
  *   studio   摄影棚：几条长条柔光箱，决定反射带长什么样、在哪里
+ *            可选 blur（预滤波模糊，默认 0.04）；strip 可选 edge（渐变边宽度）与 falloff（长度方向中心加权）
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
+ *            可选 panel（凸面板件 + 圆角折线），见 paint-surface.js 顶部说明
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -571,27 +579,33 @@ export const MERCEDES = {
     },
   ],
 
+  // —— 影棚效果图布光：全部中性白光，颜色只来自车漆本身 ——
+  // PETRONAS 青绿不再打在灯上（官方影棚图里没有彩色灯），它留给贯穿全页的涂装线
   studio: {
-    sky: '#6E787C',            // 冷灰棚顶：银漆的"银"主要来自这里
-    horizon: '#262D30',
-    ground: '#0A0C0E',
+    sky: '#2A2C2E',            // 中性深灰棚顶
+    horizon: '#141516',
+    ground: '#050506',         // 黑色地面：板件下半部反射它，形成上亮下暗
+    blur: 0.012,               // 预滤波很轻，清漆上能看清柔光箱轮廓
     strips: [
-      { azimuth: 0, elevation: 32, w: 20, h: 1.4, color: '#FFFFFF', intensity: 14 },
-      { azimuth: 0, elevation: 13, w: 24, h: 0.3, color: '#FFFFFF', intensity: 10 },
-      { azimuth: 62, elevation: 6, w: 0.9, h: 16, color: '#DFE6EA', intensity: 5 },
-      // 低位 PETRONAS 青绿灯条（官方语义：PETRONAS green flow line 低位扫过车身）
-      { azimuth: -8, elevation: -28, w: 20, h: 0.22, color: '#00A19B', intensity: 11 },
+      // 顶部大面积光天幕：板件上半部的大片柔和银色渐变
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      // 主光条：板件上缘那道又长又利落的高光
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      // 侧面竖条柔光箱：给反射加一道纵向分割
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      // 低位轮廓光：板件下缘一条细亮线，勾出车身边界
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
+  // —— 车身：一块块绷紧的凸面板件 + 圆角折线，而不是丝绸般的交叉波纹 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.34, 0.28, -0.04],
-      [-0.78, 0.58, 0.11, 0.06],
-      [1.6, 1.15, 0.025, -0.08],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频的双曲率：让光带略微弯曲，不至于是死直线
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0.11 },
+    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -646,27 +660,28 @@ export const FERRARI = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#380B0E',            // 深红暗调天穹，衬托红色烤漆的色纯度
-    horizon: '#1A0708',
-    ground: '#0A0304',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 34, w: 20, h: 1.3, color: '#FFFFFF', intensity: 15 },
-      // 2026 结构白切光：模拟座舱与引擎盖侧翼的结构白切面
-      { azimuth: 52, elevation: 14, w: 22, h: 0.35, color: '#F4F2EE', intensity: 12 },
-      // 跃马黄点缀光（极少量血统微光）
-      { azimuth: -45, elevation: -22, w: 18, h: 0.2, color: '#F7D117', intensity: 4 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 激进高张力的雕塑肌肉曲线，更紧凑起伏
     waves: [
-      [0.0, 1.05, 0.38, 0.04],
-      [0.58, 0.42, 0.24, -0.03],
-      [-0.82, 0.62, 0.14, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0.14 },
+    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -721,29 +736,28 @@ export const MCLAREN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#463E38',            // 带有轻微暖钛调的灰调天穹
-    horizon: '#201D1A',
-    ground: '#0C0C0E',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 30, w: 22, h: 1.5, color: '#FFFFFF', intensity: 14 },
-      // 迈凯伦特有的一丝冰青蓝速度光晕（Teal Accent #4FD5D6）
-      { azimuth: 65, elevation: 10, w: 1.4, h: 18, color: '#4FD5D6', intensity: 9 },
-      // 下方暖橙受光补强
-      { azimuth: -12, elevation: -26, w: 20, h: 0.25, color: '#FF9B2F', intensity: 8 },
-      // 轮毂罩 Google Chrome 液态高光与微反射（Chrome Wheel Rim Specular #E2E8F0）
-      { azimuth: -58, elevation: 16, w: 1.2, h: 14, color: '#E2E8F0', intensity: 10 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 现代空气动力学锋面起伏
     waves: [
-      [0.0, 0.88, 0.32, 0.05],
-      [0.48, 0.36, 0.26, -0.04],
-      [-0.72, 0.54, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0.12 },
+    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -799,28 +813,28 @@ export const ASTON_MARTIN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#182C26',            // 墨绿冷调天穹
-    horizon: '#0C1815',
-    ground: '#050908',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部修长高亮白条：拉出英伦 GT 与 F1 赛车极其优雅平滑的背脊光
-      { azimuth: 0, elevation: 35, w: 24, h: 0.9, color: '#FFFFFF', intensity: 16 },
-      // 侧向车漆反射高光绿
-      { azimuth: 58, elevation: 8, w: 1.0, h: 18, color: '#037A68', intensity: 8 },
-      // 低位 Lime 荧光黄绿速度光带（2026 Works 细节）
-      { azimuth: -10, elevation: -26, w: 22, h: 0.20, color: '#A9D23E', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 沉稳克制、流线型更修长的起伏
     waves: [
-      [0.0, 0.78, 0.30, 0.03],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.64, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0.10 },
+    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0 },
+    panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -875,27 +889,30 @@ export const CADILLAC = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#64686C',            // 纯粹单色灰白高对比天穹，无多余彩色杂光
-    horizon: '#242628',
-    ground: '#080809',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 32, w: 22, h: 1.6, color: '#FFFFFF', intensity: 16 },
-      // 锐利工业几何切面银光（模拟 Cadillac Chevron 雕塑折面）
-      { azimuth: 60, elevation: 12, w: 1.0, h: 20, color: '#D9DDE1', intensity: 12 },
-      { azimuth: -8, elevation: -26, w: 22, h: 0.25, color: '#E4E7EA', intensity: 10 },
+      // 页面用白字：白车在暗棚里只给较弱的顶光，车身保持深灰，白字才压得住
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.0, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 10, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 工业几何 Chevron 切面导向起伏
     waves: [
-      [0.0, 0.95, 0.36, 0.04],
-      [0.60, 0.40, 0.30, -0.04],
-      [-0.80, 0.60, 0.12, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     // 锐利的 Chevron 几何棱线
-    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0.15 },
+    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0 },
+    panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -955,34 +972,33 @@ export const WILLIAMS = {
     },
   ],
 
-  // —— 虚拟摄影棚：牛津郡 Grove 试车场清冷天穹与白色长条柔光箱 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#1E2D4A',             // 清冷英伦夜蓝天穹
-    horizon: '#0E1726',         // 地平线收束色
-    ground: '#050B14',          // 深邃吸光地表（营造底盘悬浮感）
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超宽纯白主柔光箱（模拟主展厅穹顶天幕反射，勾勒车脊轮廓）
-      { azimuth: 0, elevation: 34, w: 22, h: 1.4, color: '#F4F7FA', intensity: 16 },
-      // 侧向 58° 结构高光切线（刻画侧箱进气道导流折角）
-      { azimuth: 58, elevation: 14, w: 1.5, h: 18, color: '#FFFFFF', intensity: 12 },
-      // 低位蓝光漫射带（模拟地表受光反射，增强鲜蓝层次）
-      { azimuth: -24, elevation: -18, w: 20, h: 0.4, color: '#4089E5', intensity: 7 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 车身空气动力学微起伏：Grove 风洞低风阻导流槽与 Forward W 动量线 ——
   surface: {
     waves: [
-      [0, 0.94, 0.33, 0.05],
-      [0.55, 0.38, 0.25, -0.04],
-      [-0.8, 0.60, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     crease: {
       dir: [0.38, 0.93],        // 侧向导流折痕方向
       period: 8.2,
       sharpness: 4.8,           // 锐利的侧箱起伏
-      height: 0.12,
+      height: 0,
     },
+    panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -1038,29 +1054,28 @@ export const RED_BULL = {
     },
   ],
 
-  // —— 虚拟摄影棚：米尔顿凯恩斯冠军工坊的暗夜冷调柔光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#10224F',             // 深蓝天幕
-    horizon: '#060F1C',
-    ground: '#020509',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部主柔光箱（宽屏均匀柔和照射，呈现磨砂漆面弧度）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.6, color: '#F5F7FA', intensity: 13 },
-      // 侧向浅蓝光带（呼应提花浅蓝）
-      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#2F5FD6', intensity: 10 },
-      // 低位暖黄光晕（品牌太阳黄，极少量）
-      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFC20E', intensity: 5 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 侵略性风刀气动微起伏与向前俯冲刀锋切痕 ——
   surface: {
     waves: [
-      [0.0, 0.90, 0.35, 0.05],
-      [0.50, 0.32, 0.26, -0.04],
-      [-0.75, 0.55, 0.10, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0.13 },
+    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -1115,29 +1130,29 @@ export const AUDI = {
     },
   ],
 
-  // —— 虚拟摄影棚：因戈尔施塔特精密实验室的高亮冷白矩阵 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#2A323D',             // 冷钛天顶
-    horizon: '#14181F',
-    ground: '#050608',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超高亮条纹（模拟风洞主天幕，反射出冷冽钛合金光刃）
-      { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
-      // 侧向 55° 精密工业切光
-      { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位 Lava Red 细光带（官方点缀色）
-      { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
+      // 钛金属反射很强：顶光和主光调弱一档，避免 hero 标题落在过曝的光带上
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.6, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 德意志精密模块化折痕与微米级公差导流面 ——
   surface: {
     waves: [
-      [0.0, 0.85, 0.32, 0.04],
-      [0.46, 0.34, 0.25, -0.03],
-      [-0.70, 0.52, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0.11 },
+    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -1192,29 +1207,29 @@ export const ALPINE = {
     },
   ],
 
-  // —— 虚拟摄影棚：恩斯通风洞天幕，辅以 BWT 电气亮粉底光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#0C223A',             // 深邃阿尔派天顶
-    horizon: '#061220',
-    ground: '#04070A',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部大柔光箱
-      { azimuth: 0, elevation: 35, w: 22, h: 1.4, color: '#FFFFFF', intensity: 15 },
-      // 侧向水蓝高光条
-      { azimuth: 58, elevation: 10, w: 1.2, h: 18, color: '#2CE8FF', intensity: 10 },
-      // 低位 BWT 电气亮粉光晕（标志性蓝粉碰撞）
-      { azimuth: -12, elevation: -25, w: 22, h: 0.28, color: '#FD4BC7', intensity: 11 },
+      // 蓝色金属漆受光后很亮：调弱一档，粉色小字和标签才看得清
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.4, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 流线型气动起伏与侧箱下洗通道 ——
   surface: {
     waves: [
-      [0.0, 0.88, 0.32, 0.04],
-      [0.48, 0.32, 0.25, -0.04],
-      [-0.72, 0.56, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0.12 },
+    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -1252,11 +1267,11 @@ export const RACING_BULLS = {
     {
       // 阶段 0：Racing White 车身白（#F3F5F9）
       color: '#F3F5F9',
-      metalness: 0.10,
-      roughness: 0.24,
+      metalness: 0.0,          // 实色白漆：白来自漫反射，光泽全部来自清漆
+      roughness: 0.5,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      envIntensity: 1.15,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Deep Navy 深海军蓝（#0A1B4D），页面后段的节奏色
@@ -1269,29 +1284,28 @@ export const RACING_BULLS = {
     },
   ],
 
-  // —— 虚拟摄影棚：明快耀眼的纯白天幕与公牛火红点缀 ——
+  // —— 影棚效果图布光（与 Haas 同一套）：中性白光；白车的"白"靠大面积漫射光 ——
   studio: {
-    sky: '#B9C3DB',             // 冷灰蓝天幕：让白漆有层次而不过曝
-    horizon: '#7B88A8',
-    ground: '#0A0E1A',
+    sky: '#A6A8AB',
+    horizon: '#7A7C7F',
+    ground: '#18191A',
+    blur: 0.012,
     strips: [
-      // 顶部超宽白光条（呈现电光宝蓝的流线镜面）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 12 },
-      // 侧向电光蓝反光带
-      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#1E4FD8', intensity: 9 },
-      // 低位公牛活力红微光带
-      { azimuth: -16, elevation: -20, w: 20, h: 0.25, color: '#E51937', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 意式灵动敏捷的空气动力学导流微波 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.35, 0.26, -0.04],
-      [-0.76, 0.58, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0.12 },
+    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0 },
+    panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],
@@ -1327,13 +1341,14 @@ export const HAAS = {
   // —— 涂装阶段：2026 官方为白色与红色涂装（TGR 冠名合作）；HEX 为网页复现值 ——
   livery: [
     {
-      // 阶段 0：Haas White 车身白（#F4F5F7）
+      // 阶段 0：Haas White 车身白（#F4F5F7）。实色白漆：底漆不含金属（白来自漫反射），
+      // 光泽全部来自清漆 —— 这样白车是干净的白，高光是清漆上利落的灯带，而不是一层银灰色反光
       color: '#F4F5F7',
-      metalness: 0.12,
-      roughness: 0.26,
-      clearcoat: 0.9,
-      clearcoatRoughness: 0.08,
-      envIntensity: 1.15,
+      metalness: 0.0,
+      roughness: 0.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Carbon Ink 近黑（#101114），页面后段的数据面板底色（节奏选择，非官方涂装）
@@ -1346,29 +1361,29 @@ export const HAAS = {
     },
   ],
 
-  // —— 虚拟摄影棚：北卡罗来纳坎纳波利斯工业车间的硬朗光感 ——
+  // —— 影棚效果图布光：中性白光；白车的"白"靠大面积漫射光，而不是把天顶调成浅蓝灰 ——
+  // 去掉了原来的红色灯条：它在白漆上反射成粉红色污渍。Haas 红留给贯穿全页的涂装线
   studio: {
-    sky: '#BDC2CB',             // 冷灰天顶：白漆不过曝
-    horizon: '#80858F',
-    ground: '#060708',
+    sky: '#A6A8AB',             // 中性浅灰棚顶：白漆的漫反射亮度主要来自这里
+    horizon: '#7A7C7F',
+    ground: '#18191A',          // 深灰地面：板件下缘自然变暗，但不发黑发脏
+    blur: 0.012,
     strips: [
-      // 顶部大功率白光天幕
-      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 12 },
-      // 侧向机加工合金冷光
-      { azimuth: 56, elevation: 12, w: 1.2, h: 16, color: '#A4ABB6', intensity: 8 },
-      // 低位 Haas 红光带
-      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#E0201B', intensity: 8 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
-  // —— 美式机加工紧密公差切角与直角导流槽 ——
+  // —— 车身：绷紧的凸面板件 + 圆角折线（白漆是实色漆，不加金属闪粒） ——
   surface: {
     waves: [
-      [0.0, 0.82, 0.30, 0.04],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.68, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.5, 0.02],
+      [-0.12, 0.3, 0.12, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0.11 },
+    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -1434,6 +1449,12 @@ export const TEAM_PRESETS = {
  *   唯一的自定义着色器代码是"车身曲面法线"：几组低频正弦 + 腰线台阶，
  *   逐像素算出法线，让一块平面看起来像起伏的车身板件。
  *
+ * 两种观感（由预设决定，参数缺省时保持旧观感）：
+ *   - 流动丝绸：多组正弦交叉 + 彩色灯条 → 反射是 S 形流光（旧预设）
+ *   - 影棚效果图：surface.panel 把车身切成一块块绷紧的凸面板件，板件之间是带圆角的折线；
+ *     studio.strips 用中性白光、带 edge 渐变边的柔光箱 → 反射是又长又顺、边缘利落的光带，
+ *     接近车队发布会和影棚效果图里的车漆。
+ *
  * 滚动时发生什么：
  *   - 曲面以视差速度向上滑移 → 反射带在屏幕上移动
  *   - 灯光（环境贴图）绕水平轴缓慢旋转 → 光带从上往下扫过
@@ -1485,6 +1506,8 @@ uniform vec4 uCrease;                // 腰线：(方向 x, 方向 y, 间距, �
 uniform float uCreaseHeight;         // 腰线台阶高差
 uniform float uScrollY;              // 曲面滑移量（世界单位）
 uniform float uTime;                 // 秒，驱动极慢的起伏漂移
+uniform vec4 uPanel;                 // 板件：(方向 x, 方向 y, 板件宽度, 边缘最大倾斜)；倾斜为 0 时不启用
+uniform float uPanelFillet;          // 折线圆角占板件半宽的比例（0 ~ 1）
 varying vec2 vBodyPos;               // 片元在平面上的世界坐标
 
 // tanh 的导数 sech²：tanh 台阶的"坡度"。腰线正中坡度最大，反射偏折最强，形成一道亮线
@@ -1508,6 +1531,16 @@ vec3 bodyNormal( vec2 p ) {
   float along = dot( dir, p );
   float d = ( fract( along / uCrease.z + 0.5 ) - 0.5 ) * uCrease.z; // 到最近一道腰线的距离
   grad += uCreaseHeight * uCrease.w * bodySech2( uCrease.w * d ) * dir;
+  // 板件：沿 panelDir 每隔 period 一块凸面（h = -c·d²，坡度随离板件中心的距离线性增大），
+  // 相邻板件在交界处坡度方向相反 → 一道折线。fillet 让坡度在交界附近平滑归零，相当于折线的圆角，
+  // 避免硬边锯齿。凸面上不同高度的法线朝向不同 → 顶灯落在板件上半部，地面落在下半部，
+  // 形成影棚车身"上亮下暗、中间一道锐利光带"的经典观感。
+  if ( uPanel.w > 0.0 ) {
+    vec2 panelDir = normalize( uPanel.xy );
+    float t = ( fract( dot( panelDir, p ) / uPanel.z + 0.5 ) - 0.5 ) * 2.0; // 板件内位置：-1 ~ 1
+    float fillet = smoothstep( 1.0, 1.0 - uPanelFillet, abs( t ) );
+    grad -= uPanel.w * t * fillet * panelDir;
+  }
   return normalize( vec3( - grad, 1.0 ) );
 }
 `;
@@ -1537,6 +1570,29 @@ void main() {
     ? mix( uHorizon, uSky, smoothstep( 0.0, 0.8, y ) )
     : mix( uHorizon, uGround, smoothstep( 0.0, 0.5, - y ) );
   gl_FragColor = vec4( color, 1.0 );
+}
+`;
+
+// 柔光箱：中心亮、四边在 edge 宽度内渐暗，长度方向可再加一点中心加权（falloff）。
+// 真实柔光箱的扩散布就是这样发光的，清漆上因此能看到"有轮廓、内部有渐变"的光带，而不是一块死白
+const SOFTBOX_VERTEX = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+const SOFTBOX_FRAGMENT = /* glsl */ `
+uniform vec3 uColor;
+uniform vec2 uEdge;     // 渐变边宽度占宽、高的比例
+uniform float uFalloff; // 长度方向的中心加权（0 = 均匀）
+varying vec2 vUv;
+void main() {
+  float fx = smoothstep( 0.0, uEdge.x, vUv.x ) * smoothstep( 0.0, uEdge.x, 1.0 - vUv.x );
+  float fy = smoothstep( 0.0, uEdge.y, vUv.y ) * smoothstep( 0.0, uEdge.y, 1.0 - vUv.y );
+  float along = abs( vUv.x - 0.5 ) * 2.0;
+  float core = 1.0 - uFalloff * along * along;
+  gl_FragColor = vec4( uColor * fx * fy * core, 1.0 );
 }
 `;
 
@@ -1661,16 +1717,7 @@ export class PaintSurface {
     this._livery = this.preset.livery.map((stop) => ({ ...stop, color: new THREE.Color(stop.color) }));
 
     // 更新着色器 uniform 参数
-    const surface = this.preset.surface;
-    for (let i = 0; i < MAX_WAVES; i++) {
-      const w = surface.waves[i];
-      if (w) this.uniforms.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
-      else this.uniforms.uWaves.value[i].set(0, 0, 0, 0);
-    }
-    this.uniforms.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
-    const crease = surface.crease;
-    this.uniforms.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
-    this.uniforms.uCreaseHeight.value = crease.height;
+    this._syncSurfaceUniforms();
 
     this._applyLivery(this._state.tone);
     this._dirty = true;
@@ -1741,17 +1788,25 @@ export class PaintSurface {
 
     // 柔光箱：发光长条，摆在半径 12 的球面上并面朝车身（原点）。
     // 颜色乘以 intensity 得到 HDR 亮度，PMREM 用半浮点纹理保存，不会被截断到 1。
+    // strip.edge（世界单位）> 0 时用渐变边柔光箱，否则是旧的均匀发光长条。
     const radius = 12;
     for (const strip of studio.strips) {
       const azimuth = THREE.MathUtils.degToRad(strip.azimuth);
       const elevation = THREE.MathUtils.degToRad(strip.elevation);
-      const panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(strip.w, strip.h),
-        new THREE.MeshBasicMaterial({
-          color: new THREE.Color(strip.color).multiplyScalar(strip.intensity),
-          side: THREE.DoubleSide,
-        }),
-      );
+      const color = new THREE.Color(strip.color).multiplyScalar(strip.intensity);
+      const material = strip.edge
+        ? new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            uniforms: {
+              uColor: { value: color },
+              uEdge: { value: new THREE.Vector2(Math.min(0.5, strip.edge / strip.w), Math.min(0.5, strip.edge / strip.h)) },
+              uFalloff: { value: strip.falloff ?? 0 },
+            },
+            vertexShader: SOFTBOX_VERTEX,
+            fragmentShader: SOFTBOX_FRAGMENT,
+          })
+        : new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(strip.w, strip.h), material);
       panel.position.set(
         radius * Math.cos(elevation) * Math.sin(azimuth),
         radius * Math.sin(elevation),
@@ -1762,7 +1817,8 @@ export class PaintSurface {
     }
 
     const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.envTarget = pmrem.fromScene(studioScene, 0.04, 0.1, 100);
+    // blur：预滤波模糊。旧预设 0.04；影棚效果图要看清柔光箱轮廓，用更小的值
+    this.envTarget = pmrem.fromScene(studioScene, studio.blur ?? 0.04, 0.1, 100);
     pmrem.dispose();
     studioScene.traverse((object) => {
       object.geometry?.dispose();
@@ -1788,19 +1844,17 @@ export class PaintSurface {
     });
 
     // 这些 uniform 对象会直接挂进着色器，之后改 .value 即可生效，无需重新编译
-    const waves = Array.from({ length: MAX_WAVES }, (_, i) => {
-      const w = surface.waves[i];
-      return w ? new THREE.Vector4(w[0], w[1], w[2], w[3]) : new THREE.Vector4();
-    });
-    const crease = surface.crease;
     this.uniforms = {
-      uWaves: { value: waves },
-      uWaveCount: { value: Math.min(surface.waves.length, MAX_WAVES) },
-      uCrease: { value: new THREE.Vector4(crease.dir[0], crease.dir[1], crease.period, crease.sharpness) },
-      uCreaseHeight: { value: crease.height },
+      uWaves: { value: Array.from({ length: MAX_WAVES }, () => new THREE.Vector4()) },
+      uWaveCount: { value: 0 },
+      uCrease: { value: new THREE.Vector4() },
+      uCreaseHeight: { value: 0 },
+      uPanel: { value: new THREE.Vector4() },
+      uPanelFillet: { value: 0 },
       uScrollY: { value: 0 },
       uTime: { value: 0 },
     };
+    this._syncSurfaceUniforms();
 
     this.material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, this.uniforms);
@@ -1814,6 +1868,25 @@ export class PaintSurface {
 
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
     this.scene.add(this.mesh);
+  }
+
+  /** 把 preset.surface 写进着色器 uniform（初始化和 setPreset 共用）；panel 缺省时倾斜为 0，即不启用 */
+  _syncSurfaceUniforms() {
+    const surface = this.preset.surface;
+    const u = this.uniforms;
+    for (let i = 0; i < MAX_WAVES; i++) {
+      const w = surface.waves[i];
+      if (w) u.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
+      else u.uWaves.value[i].set(0, 0, 0, 0);
+    }
+    u.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
+    const crease = surface.crease;
+    u.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
+    u.uCreaseHeight.value = crease.height;
+    const panel = surface.panel;
+    if (panel) u.uPanel.value.set(panel.dir[0], panel.dir[1], panel.period, panel.tilt);
+    else u.uPanel.value.set(0, 1, 1, 0);
+    u.uPanelFillet.value = panel?.fillet ?? 0;
   }
 
   /* ---------------- 每帧 ---------------- */

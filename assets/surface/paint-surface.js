@@ -16,6 +16,12 @@
  *   唯一的自定义着色器代码是"车身曲面法线"：几组低频正弦 + 腰线台阶，
  *   逐像素算出法线，让一块平面看起来像起伏的车身板件。
  *
+ * 两种观感（由预设决定，参数缺省时保持旧观感）：
+ *   - 流动丝绸：多组正弦交叉 + 彩色灯条 → 反射是 S 形流光（旧预设）
+ *   - 影棚效果图：surface.panel 把车身切成一块块绷紧的凸面板件，板件之间是带圆角的折线；
+ *     studio.strips 用中性白光、带 edge 渐变边的柔光箱 → 反射是又长又顺、边缘利落的光带，
+ *     接近车队发布会和影棚效果图里的车漆。
+ *
  * 滚动时发生什么：
  *   - 曲面以视差速度向上滑移 → 反射带在屏幕上移动
  *   - 灯光（环境贴图）绕水平轴缓慢旋转 → 光带从上往下扫过
@@ -67,6 +73,8 @@ uniform vec4 uCrease;                // 腰线：(方向 x, 方向 y, 间距, �
 uniform float uCreaseHeight;         // 腰线台阶高差
 uniform float uScrollY;              // 曲面滑移量（世界单位）
 uniform float uTime;                 // 秒，驱动极慢的起伏漂移
+uniform vec4 uPanel;                 // 板件：(方向 x, 方向 y, 板件宽度, 边缘最大倾斜)；倾斜为 0 时不启用
+uniform float uPanelFillet;          // 折线圆角占板件半宽的比例（0 ~ 1）
 varying vec2 vBodyPos;               // 片元在平面上的世界坐标
 
 // tanh 的导数 sech²：tanh 台阶的"坡度"。腰线正中坡度最大，反射偏折最强，形成一道亮线
@@ -90,6 +98,16 @@ vec3 bodyNormal( vec2 p ) {
   float along = dot( dir, p );
   float d = ( fract( along / uCrease.z + 0.5 ) - 0.5 ) * uCrease.z; // 到最近一道腰线的距离
   grad += uCreaseHeight * uCrease.w * bodySech2( uCrease.w * d ) * dir;
+  // 板件：沿 panelDir 每隔 period 一块凸面（h = -c·d²，坡度随离板件中心的距离线性增大），
+  // 相邻板件在交界处坡度方向相反 → 一道折线。fillet 让坡度在交界附近平滑归零，相当于折线的圆角，
+  // 避免硬边锯齿。凸面上不同高度的法线朝向不同 → 顶灯落在板件上半部，地面落在下半部，
+  // 形成影棚车身"上亮下暗、中间一道锐利光带"的经典观感。
+  if ( uPanel.w > 0.0 ) {
+    vec2 panelDir = normalize( uPanel.xy );
+    float t = ( fract( dot( panelDir, p ) / uPanel.z + 0.5 ) - 0.5 ) * 2.0; // 板件内位置：-1 ~ 1
+    float fillet = smoothstep( 1.0, 1.0 - uPanelFillet, abs( t ) );
+    grad -= uPanel.w * t * fillet * panelDir;
+  }
   return normalize( vec3( - grad, 1.0 ) );
 }
 `;
@@ -119,6 +137,29 @@ void main() {
     ? mix( uHorizon, uSky, smoothstep( 0.0, 0.8, y ) )
     : mix( uHorizon, uGround, smoothstep( 0.0, 0.5, - y ) );
   gl_FragColor = vec4( color, 1.0 );
+}
+`;
+
+// 柔光箱：中心亮、四边在 edge 宽度内渐暗，长度方向可再加一点中心加权（falloff）。
+// 真实柔光箱的扩散布就是这样发光的，清漆上因此能看到"有轮廓、内部有渐变"的光带，而不是一块死白
+const SOFTBOX_VERTEX = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+const SOFTBOX_FRAGMENT = /* glsl */ `
+uniform vec3 uColor;
+uniform vec2 uEdge;     // 渐变边宽度占宽、高的比例
+uniform float uFalloff; // 长度方向的中心加权（0 = 均匀）
+varying vec2 vUv;
+void main() {
+  float fx = smoothstep( 0.0, uEdge.x, vUv.x ) * smoothstep( 0.0, uEdge.x, 1.0 - vUv.x );
+  float fy = smoothstep( 0.0, uEdge.y, vUv.y ) * smoothstep( 0.0, uEdge.y, 1.0 - vUv.y );
+  float along = abs( vUv.x - 0.5 ) * 2.0;
+  float core = 1.0 - uFalloff * along * along;
+  gl_FragColor = vec4( uColor * fx * fy * core, 1.0 );
 }
 `;
 
@@ -243,16 +284,7 @@ export class PaintSurface {
     this._livery = this.preset.livery.map((stop) => ({ ...stop, color: new THREE.Color(stop.color) }));
 
     // 更新着色器 uniform 参数
-    const surface = this.preset.surface;
-    for (let i = 0; i < MAX_WAVES; i++) {
-      const w = surface.waves[i];
-      if (w) this.uniforms.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
-      else this.uniforms.uWaves.value[i].set(0, 0, 0, 0);
-    }
-    this.uniforms.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
-    const crease = surface.crease;
-    this.uniforms.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
-    this.uniforms.uCreaseHeight.value = crease.height;
+    this._syncSurfaceUniforms();
 
     this._applyLivery(this._state.tone);
     this._dirty = true;
@@ -323,17 +355,25 @@ export class PaintSurface {
 
     // 柔光箱：发光长条，摆在半径 12 的球面上并面朝车身（原点）。
     // 颜色乘以 intensity 得到 HDR 亮度，PMREM 用半浮点纹理保存，不会被截断到 1。
+    // strip.edge（世界单位）> 0 时用渐变边柔光箱，否则是旧的均匀发光长条。
     const radius = 12;
     for (const strip of studio.strips) {
       const azimuth = THREE.MathUtils.degToRad(strip.azimuth);
       const elevation = THREE.MathUtils.degToRad(strip.elevation);
-      const panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(strip.w, strip.h),
-        new THREE.MeshBasicMaterial({
-          color: new THREE.Color(strip.color).multiplyScalar(strip.intensity),
-          side: THREE.DoubleSide,
-        }),
-      );
+      const color = new THREE.Color(strip.color).multiplyScalar(strip.intensity);
+      const material = strip.edge
+        ? new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            uniforms: {
+              uColor: { value: color },
+              uEdge: { value: new THREE.Vector2(Math.min(0.5, strip.edge / strip.w), Math.min(0.5, strip.edge / strip.h)) },
+              uFalloff: { value: strip.falloff ?? 0 },
+            },
+            vertexShader: SOFTBOX_VERTEX,
+            fragmentShader: SOFTBOX_FRAGMENT,
+          })
+        : new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(strip.w, strip.h), material);
       panel.position.set(
         radius * Math.cos(elevation) * Math.sin(azimuth),
         radius * Math.sin(elevation),
@@ -344,7 +384,8 @@ export class PaintSurface {
     }
 
     const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.envTarget = pmrem.fromScene(studioScene, 0.04, 0.1, 100);
+    // blur：预滤波模糊。旧预设 0.04；影棚效果图要看清柔光箱轮廓，用更小的值
+    this.envTarget = pmrem.fromScene(studioScene, studio.blur ?? 0.04, 0.1, 100);
     pmrem.dispose();
     studioScene.traverse((object) => {
       object.geometry?.dispose();
@@ -370,19 +411,17 @@ export class PaintSurface {
     });
 
     // 这些 uniform 对象会直接挂进着色器，之后改 .value 即可生效，无需重新编译
-    const waves = Array.from({ length: MAX_WAVES }, (_, i) => {
-      const w = surface.waves[i];
-      return w ? new THREE.Vector4(w[0], w[1], w[2], w[3]) : new THREE.Vector4();
-    });
-    const crease = surface.crease;
     this.uniforms = {
-      uWaves: { value: waves },
-      uWaveCount: { value: Math.min(surface.waves.length, MAX_WAVES) },
-      uCrease: { value: new THREE.Vector4(crease.dir[0], crease.dir[1], crease.period, crease.sharpness) },
-      uCreaseHeight: { value: crease.height },
+      uWaves: { value: Array.from({ length: MAX_WAVES }, () => new THREE.Vector4()) },
+      uWaveCount: { value: 0 },
+      uCrease: { value: new THREE.Vector4() },
+      uCreaseHeight: { value: 0 },
+      uPanel: { value: new THREE.Vector4() },
+      uPanelFillet: { value: 0 },
       uScrollY: { value: 0 },
       uTime: { value: 0 },
     };
+    this._syncSurfaceUniforms();
 
     this.material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, this.uniforms);
@@ -396,6 +435,25 @@ export class PaintSurface {
 
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
     this.scene.add(this.mesh);
+  }
+
+  /** 把 preset.surface 写进着色器 uniform（初始化和 setPreset 共用）；panel 缺省时倾斜为 0，即不启用 */
+  _syncSurfaceUniforms() {
+    const surface = this.preset.surface;
+    const u = this.uniforms;
+    for (let i = 0; i < MAX_WAVES; i++) {
+      const w = surface.waves[i];
+      if (w) u.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
+      else u.uWaves.value[i].set(0, 0, 0, 0);
+    }
+    u.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
+    const crease = surface.crease;
+    u.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
+    u.uCreaseHeight.value = crease.height;
+    const panel = surface.panel;
+    if (panel) u.uPanel.value.set(panel.dir[0], panel.dir[1], panel.period, panel.tilt);
+    else u.uPanel.value.set(0, 1, 1, 0);
+    u.uPanelFillet.value = panel?.fillet ?? 0;
   }
 
   /* ---------------- 每帧 ---------------- */

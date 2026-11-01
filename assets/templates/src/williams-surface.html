@@ -398,7 +398,18 @@
     .feature-grid, .stats { grid-template-columns: 1fr; }
     .index-row { grid-template-columns: 48px 1fr 32px; }
     .index-row p { grid-column: 2 / -1; }
+    /* 窄屏放不下导航链接：之前链接被挤成一字一行，直接收起（与其他车队页一致） */
+    .nav-links, .nav-badge { display: none; }
   }
+  @media (max-width: 520px) {
+    .nav-cta .btn-ghost { display: none; }
+  }
+  /* 可读性：影棚主光带会扫过正文 —— 小字与标题加一圈深色光晕，不加色块（金属渐变字除外：
+     text-shadow 会透过透明字形把它染暗）。涂装线只走两侧边缘，横向只在区块留白里穿过 */
+  .hero-copy p, .readout dt, .readout .delta, .index-row p, .seam p, .feature-col p, .stat .label, .quote cite, footer .note {
+    text-shadow: 0 0 14px rgba(0, 0, 0, 0.85), 0 0 4px rgba(0, 0, 0, 0.6);
+  }
+  .hero-title .line > span:not(.metal-text):not(.radiant-text), .section-title, .seam-title, .quote blockquote { text-shadow: 0 0 28px rgba(0, 0, 0, 0.7); }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 88px; height: 7px; background: linear-gradient(#F4F7FA, #F4F7FA) 0 0 / 100% 3px no-repeat, linear-gradient(#D6293E, #D6293E) 0 6px / 100% 1px no-repeat; }
 </style>
@@ -434,7 +445,7 @@
 
 <main>
   <!-- 首屏：高光泽鲜蓝主车漆 -->
-  <section id="home" class="hero" data-line="18,12 36,44 68,52 82,90">
+  <section id="home" class="hero" data-line="97,10 97,93 66,99">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="GROVE ENGINEERING CAMPUS // CHASSIS FW48">
         GROVE ENGINEERING CAMPUS // CHASSIS FW48
@@ -479,7 +490,7 @@
   </section>
 
   <!-- 工程模块索引 -->
-  <section id="chassis" data-line="82,10 65,35 30,75 14,92">
+  <section id="chassis" data-line="30,2 3,5 3,94 24,99">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="AERODYNAMIC ARCHITECTURE">AERODYNAMIC ARCHITECTURE</p>
       <h2 class="section-title reveal">牛津郡格罗夫研发中心<br>尖端方程式工程秩序</h2>
@@ -508,7 +519,7 @@
   </section>
 
   <!-- 涂装缝合区 (Seam)：鲜蓝平滑过渡至流动碳黑 -->
-  <section id="seam" class="seam" data-seam data-line="14,18 42,48 76,82">
+  <section id="seam" class="seam" data-seam data-line="40,2 97,20 97,80 70,98">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="LIVERY TRANSITION SEAM">LIVERY TRANSITION SEAM</p>
       <h2 class="seam-title reveal">从高光泽鲜蓝，<br>流向空气动力学碳黑。</h2>
@@ -525,7 +536,7 @@
   </section>
 
   <!-- 性能数据与统计 -->
-  <section id="performance" data-line="76,14 45,60 20,88">
+  <section id="performance" data-line="40,2 3,5 3,93 22,99">
     <div class="wrap">
       <p class="eyebrow reveal" data-decrypt="RACING TELEMETRY & HERITAGE">RACING TELEMETRY & HERITAGE</p>
       <h2 class="section-title reveal">严谨公差验证的纯粹赛车性能</h2>
@@ -566,7 +577,7 @@
   </section>
 
   <!-- 车队工程师格言 -->
-  <section class="quote" data-line="20,10 50,50 80,90">
+  <section class="quote" data-line="40,4 97,16 97,90">
     <div class="wrap">
       <blockquote class="reveal">
         “一级方程式的灵魂在于始终向前。FW48 将我们九夺世界冠军的赛车血统，以最锋利澄澈的姿态带入全新的空气动力学时代。”
@@ -576,7 +587,7 @@
   </section>
 
   <!-- CTA -->
-  <section id="cta" class="cta" data-line="80,10 50,45 18,85">
+  <section id="cta" class="cta" data-line="97,8 97,94 74,99">
     <div class="wrap">
       <h2 class="section-title reveal">体验 2026 连续车身，<br>感受纯正英伦赛车工程美学。</h2>
       <div class="actions reveal" style="--d: 80ms">
@@ -587,7 +598,7 @@
   </section>
 </main>
 
-<footer data-line="18,0 80,0">
+<footer data-line="60,0 40,0">
   <div class="wrap">
     <span class="nav-logo">Atlassian Williams F1 Team</span>
     <span class="note">FW48 Vibrant Gloss Blue 配色转译示例 · 色号为网页复现建议值</span>

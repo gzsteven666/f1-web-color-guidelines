@@ -9,23 +9,31 @@
   ============================================================
   BWT Alpine F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  官方只说明涂装与上一年相似（见 references/official-2026-sources.md）；
-  配色依据 references/alpine.md，HEX 为网页复现建议值。
-  - 前后段经过 [data-seam] 过渡区平滑插值；贯穿线由 racing-line.js 绘制
+  版式与 Ferrari / McLaren / Aston Martin / Cadillac 同一套系统（超大标题、发丝线数据行、
+  索引列表、过渡区、引言、CTA），颜色、字体、章节标记和车漆预设是本队自己的。
+  - 车漆层：全屏 WebGL 影棚车漆（assets/surface/paint-surface.js），区块背景透明
+  - 过渡区 [data-seam]：前段车身平滑过渡到后段
+  - 涂装线（racing-line.js）只走页面两侧边缘，横向只在区块留白里穿过，不压标题和正文
+  依据 references/official-2026-sources.md 与 references/alpine.md；HEX 为网页复现值，不是官方色号。
+  页面数字为示意数据；非官方、与车队无关联。
 
   ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
   ============================================================
 -->
 <script>
+  // 有 JS 时才启用"进场前隐藏"的样式；JS 失败时内容保持可见
   document.documentElement.classList.replace('no-js', 'js');
   // 兜底：动效脚本（依赖 CDN）若没跑起来，3 秒后无条件显示全部内容
   setTimeout(function () {
-    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('active'); });
+    document.querySelectorAll('.reveal').forEach(function (el) { el.classList.add('in'); });
   }, 3000);
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+<!--
+  依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
+-->
 <script type="importmap">
 {
   "imports": {
@@ -37,22 +45,26 @@
 </script>
 <style>
   /* ==========================================================
-     1. Design Tokens —— 阿尔派金属蓝 × 暗影碳黑 × BWT 亮粉 × 冰白
+     1. Design Tokens
      ========================================================== */
   :root {
-    --void:            #04070A;  /* 深渊夜蓝黑：终极暗部画布 */
-    --carbon:          #080C11;  /* 暗影碳黑：底板结构、容器底色 */
-    --card:            #0D1622;  /* 二级卡片背景 */
-    --blue:            #0078C1;  /* A526 阿尔派金属蓝（Metalness 0.85） */
-    --cyan:            #2CE8FF;  /* 水蓝受光亮带：微光折射、笔尖高光 */
-    --pink:            #FD4BC7;  /* BWT 电气亮粉：主识别、CTA、贯穿线 */
-    --pink-hover:      #FF69D2;  /* 亮粉悬浮态 */
-    --white:           #F6F8FB;  /* 气动冰白：高对比文字、标尺 */
-    --text-1:          #F6F8FB;
-    --text-2:          #A5B6CC;
-    --text-3:          #687E98;
-    --hairline:        rgba(246, 248, 251, 0.10);
-    --hairline-strong: rgba(253, 75, 199, 0.45);
+    /* BWT Alpine F1 Team：颜色与 references/ 及 tokens/ 对齐；HEX 为网页复现值 */
+    --surface-tone: 0;          /* 由 surface-page.js 写入：0 = 前段车身，1 = 过渡区之后 */
+    --carbon:        #04070A;  /* 页面底色（WebGL 不可用时） */
+    --veil:          #04070A;  /* 压光层与导航底色 */
+    --accent:        #FD4BC7;  /* 主识别：主按钮、进度条 */
+    --accent-hover:  #FF69D2;
+    --accent-shadow: #0E223B;
+    --on-accent:     #14041A;  /* 主按钮文字 */
+    --accent-text:   #FD4BC7;  /* 用作文字的主色（比按钮底色更亮/更深一档，保证对比度） */
+    --signal-text:   #2CE8FF;  /* 标签、强调小字 */
+    --metal:         linear-gradient(180deg, #FFFFFF 0%, #CDEBFF 40%, #5DB8EE 76%, #F6F8FB 100%);
+
+    --text-1:        #F6F8FB;
+    --text-2:        #A9BACF;
+    --text-3:        #7489A3;
+    --hairline:        color-mix(in srgb, var(--text-1) 16%, transparent);
+    --hairline-strong: color-mix(in srgb, var(--text-1) 34%, transparent);
 
     --font-display: "Outfit", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
@@ -63,336 +75,317 @@
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scrollbar-color: #182F4D var(--void); }
+
+  html { scrollbar-color: var(--accent-shadow) var(--carbon); }
   ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: var(--void); }
-  ::-webkit-scrollbar-thumb { background: #182F4D; border-radius: 4px; border: 2px solid var(--void); }
-  ::-webkit-scrollbar-thumb:hover { background: var(--pink); }
-  ::selection { background: var(--pink); color: #FFFFFF; }
+  ::-webkit-scrollbar-track { background: var(--carbon); }
+  ::-webkit-scrollbar-thumb { background: var(--accent-shadow); border-radius: 4px; border: 2px solid var(--carbon); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+  ::selection { background: var(--accent); color: var(--on-accent); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  /* Lenis 平滑滚动样式 */
+  html.lenis, html.lenis body { height: auto; }
+  .lenis:not(.lenis-autoToggle).lenis-stopped { overflow: clip; }
+  .lenis.lenis-smooth iframe { pointer-events: none; }
 
   body {
-    background: var(--void);
+    position: relative;
+    background: var(--carbon);
+    background-attachment: fixed;
     color: var(--text-1);
     font-family: var(--font-sans);
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  #webgl-bg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .wrap {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* 导航栏 */
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 40;
-    backdrop-filter: blur(12px);
-    background: rgba(4, 7, 10, 0.85);
-    border-bottom: 1px solid var(--hairline);
-  }
-  .nav-inner {
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .nav-logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--white);
-  }
-  .nav-logo::before {
-    content: "";
-    display: block;
-    width: 10px; height: 10px;
-    background: var(--pink);
-    box-shadow: 0 0 10px var(--pink);
-  }
-  .nav-tag {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--cyan);
-    border: 1px solid rgba(44, 232, 255, 0.3);
-    padding: 4px 10px;
-    border-radius: var(--r);
-    background: rgba(44, 232, 255, 0.05);
-  }
-
-  /* Hero */
-  .hero {
-    min-height: 88vh;
-    display: flex;
-    align-items: center;
-    padding: 96px 0 64px;
-  }
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--pink);
-    background: rgba(253, 75, 199, 0.08);
-    border: 1px solid rgba(253, 75, 199, 0.25);
-    padding: 6px 14px;
-    border-radius: var(--r);
-    margin-bottom: 24px;
-    letter-spacing: 0.08em;
-  }
-  h1 {
-    font-family: var(--font-display);
-    font-size: clamp(40px, 6vw, 76px);
-    font-weight: 700;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
-    margin-bottom: 24px;
-    color: var(--white);
-  }
-  h1 span.accent {
-    color: var(--pink);
-    text-shadow: 0 0 30px rgba(253, 75, 199, 0.40);
-  }
-  .hero-p {
-    max-width: 620px;
     font-size: 17px;
-    color: var(--text-2);
-    margin-bottom: 40px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  .actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 24px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: var(--r);
-    transition: all 0.25s var(--ease);
-  }
-  .btn-primary {
-    background: var(--pink);
-    color: #FFFFFF;
-    border: 1px solid var(--pink);
-    box-shadow: 0 0 20px rgba(253, 75, 199, 0.4);
-  }
-  .btn-primary:hover {
-    background: var(--pink-hover);
-    box-shadow: 0 0 30px rgba(253, 75, 199, 0.6);
-  }
-  .btn-ghost {
-    background: rgba(0, 120, 193, 0.08);
-    color: var(--white);
-    border: 1px solid var(--hairline);
-  }
-  .btn-ghost:hover {
-    border-color: var(--cyan);
-    color: var(--cyan);
-  }
-
-  /* 涂装接缝区 */
-  .seam-banner {
-    padding: 32px 0;
-    border-top: 1px dashed rgba(253, 75, 199, 0.3);
-    border-bottom: 1px dashed rgba(253, 75, 199, 0.3);
-    background: rgba(8, 12, 17, 0.5);
-    margin: 48px 0;
-  }
-  .seam-meta {
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .eyebrow {
     font-family: var(--font-mono);
     font-size: 12px;
-    color: var(--pink);
-    letter-spacing: 0.15em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .seam-meta::before {
-    content: "⚡";
-    color: var(--cyan);
-  }
-  .seam-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    color: var(--white);
-    margin-top: 6px;
-  }
-
-  /* Section */
-  section {
-    padding: 96px 0;
-  }
-  .section-tag {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--pink);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-  .section-title {
-    font-family: var(--font-display);
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 48px;
-    line-height: 1.15;
-  }
-
-  /* 卡片网格 */
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-  }
-  .card {
-    background: rgba(13, 22, 34, 0.7);
-    border: 1px solid var(--hairline);
-    padding: 32px;
-    border-radius: var(--r);
-    backdrop-filter: blur(16px);
-    transition: all 0.3s var(--ease);
-  }
-  .card:hover {
-    border-color: rgba(253, 75, 199, 0.5);
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(4, 7, 10, 0.8);
-  }
-  .card-code {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--cyan);
-    margin-bottom: 12px;
-  }
-  .card-title {
-    font-family: var(--font-display);
-    font-size: 20px;
-    color: var(--white);
-    margin-bottom: 12px;
-  }
-  .card-desc {
-    font-size: 14px;
-    color: var(--text-2);
-  }
-
-  /* 遥测数据条 */
-  .stats-bar {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-top: 40px;
-  }
-  .stat-box {
-    background: rgba(8, 12, 17, 0.85);
-    border: 1px solid var(--hairline);
-    padding: 20px 24px;
-    border-radius: var(--r);
-  }
-  .stat-val {
-    font-family: var(--font-mono);
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--white);
-  }
-  .stat-val span.unit {
-    font-size: 14px;
-    color: var(--pink);
-    margin-left: 4px;
-  }
-  .stat-lbl {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text-3);
-    text-transform: uppercase;
-    margin-top: 4px;
-  }
-
-  /* Footer */
-  footer {
-    border-top: 1px solid var(--hairline);
-    padding: 48px 0;
-    background: rgba(4, 7, 10, 0.95);
-  }
-  .footer-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--font-mono);
-    font-size: 12px;
     color: var(--text-3);
   }
 
-  /* 进场动效 */
-  .js .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
-    transition-delay: var(--d, 0ms);
-  }
-  .js .reveal.active {
-    opacity: 1;
-    transform: translateY(0);
-  }
   /* ==========================================================
-     可读性与涂装线（共享核心要求的挂载点）
+     2. 车身图层 —— 车漆层 / 可读性压光 / 涂装线 / 内容
      ========================================================== */
-  /* 底衬：左侧文字栏压暗，高光留给右侧反射带；规则是"高光走留白，文字待在暗部" */
+  #paint {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    z-index: 0;
+    opacity: 0;
+    transition: opacity 900ms ease;
+  }
+  #paint[data-ready] { opacity: 1; }
+  .no-webgl #paint { display: none; }
+
   .paint-shade {
     position: fixed; inset: 0; z-index: 1; pointer-events: none;
     background:
-      linear-gradient(90deg, rgba(4, 8, 18, 0.18) 0%, rgba(4, 8, 18, 0.08) 46%, rgba(4, 8, 18, 0) 78%),
-      linear-gradient(180deg, rgba(4, 8, 18, 0.30) 0%, rgba(4, 8, 18, 0) 14%, rgba(4, 8, 18, 0) 82%, rgba(4, 8, 18, 0.22) 100%);
+      linear-gradient(90deg, color-mix(in srgb, var(--veil) 65%, transparent) 0%, color-mix(in srgb, var(--veil) 30%, transparent) 42%, color-mix(in srgb, var(--veil) 0%, transparent) 72%),
+      linear-gradient(180deg, color-mix(in srgb, var(--veil) 55%, transparent) 0%, color-mix(in srgb, var(--veil) 0%, transparent) 14%, color-mix(in srgb, var(--veil) 0%, transparent) 82%, color-mix(in srgb, var(--veil) 40%, transparent) 100%);
   }
-  /* 涂装线：覆盖整个文档，尺寸由 racing-line.js 设置 */
+  .paint-shade::after {
+    content: ""; position: absolute; inset: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
   #racing-line {
     position: absolute; top: 0; left: 0;
     z-index: 2;
     pointer-events: none;
     overflow: visible;
   }
-  main, footer { position: relative; z-index: 3; }
-  /* 中文标题避免单字孤行 */
-  h1, h2, .section-title, .seam-title { text-wrap: balance; }
-  p, .card-desc, .hero-p { text-wrap: pretty; }
 
-  @media (max-width: 760px) {
-    #racing-line { display: none; }          /* 窄屏装饰整体退场，不缩小硬塞 */
-    .hero { align-items: flex-start; min-height: auto; padding: 72px 0 48px; }
-    .paint-shade { background: linear-gradient(180deg, rgba(4, 8, 18, 0.62) 0%, rgba(4, 8, 18, 0.42) 100%); }
-    .nav-tag { display: none; }
-    .stats-bar { grid-template-columns: 1fr 1fr; }
+  .nav, main, footer { position: relative; z-index: 3; }
+
+  /* ==========================================================
+     3. 导航
+     ========================================================== */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 10; }
+  .nav::before {
+    content: ""; position: absolute; inset: 0 0 -24px; pointer-events: none;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--veil) 80%, transparent) 0%, color-mix(in srgb, var(--veil) 0%, transparent) 100%);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    mask-image: linear-gradient(180deg, #000 60%, transparent 100%); -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+  }
+  .nav .wrap { position: relative; display: flex; align-items: center; gap: 36px; height: 68px; }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 600; font-size: 18px; letter-spacing: -0.01em;
+    color: var(--text-1); text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-size: 14px; color: var(--text-2); text-decoration: none;
+    transition: color 180ms var(--ease);
+  }
+  .nav-links a:hover, .nav-links a[aria-current] { color: var(--text-1); }
+  .nav-links a[aria-current] { box-shadow: inset 0 -2px 0 var(--accent); padding-bottom: 4px; }
+  .nav-cta { margin-left: auto; display: flex; gap: 10px; }
+
+  /* ==========================================================
+     4. 按钮
+     ========================================================== */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    height: 44px; padding: 0 18px;
+    border-radius: var(--r);
+    border: 1px solid transparent;
+    font: 500 15px/1 var(--font-sans);
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms var(--ease), border-color 180ms var(--ease), color 180ms var(--ease);
+  }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+  .btn-primary { background: var(--accent); color: var(--on-accent); }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:active { background: var(--accent); filter: brightness(0.9); }
+  .btn .arr { transition: transform 180ms var(--ease); }
+  .btn:hover .arr { transform: translateX(3px); }
+  .btn-ghost { background: color-mix(in srgb, var(--veil) 40%, transparent); color: var(--text-1); border-color: color-mix(in srgb, var(--text-1) 28%, transparent); }
+  .btn-ghost:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); border-color: color-mix(in srgb, var(--accent) 60%, transparent); }
+
+  /* ==========================================================
+     5. Hero
+     ========================================================== */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: 132px 0 56px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+  }
+  .hero .eyebrow { margin-bottom: 28px; }
+  .hero-title {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(56px, 10.6vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.045em;
+    margin-bottom: 44px;
+  }
+  .hero-title .line { display: block; overflow: hidden; padding-bottom: 0.06em; }
+  .hero-title .line > span { display: inline-block; }
+  .hero-title .l2 { padding-left: 7vw; }
+  .js .hero-title .line > span { transform: translateY(105%); animation: rise 1000ms var(--ease) forwards; }
+  .js .hero-title .l2 > span { animation-delay: 120ms; }
+  @keyframes rise { to { transform: none; } }
+
+  .metal-text {
+    font-style: normal;
+    background: var(--metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: minmax(0, 520px) 1fr;
+    gap: 48px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .hero-copy p { font-size: 19px; line-height: 1.6; color: var(--text-2); margin-bottom: 28px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  .telemetry {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid var(--hairline-strong);
+  }
+  .readout { padding: 20px 24px 4px; border-left: 1px solid var(--hairline); }
+  .readout:first-child { border-left: none; padding-left: 0; }
+  .readout dt {
+    font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .readout .value { font-family: var(--font-mono); font-weight: 300; font-size: 44px; line-height: 1; letter-spacing: -0.02em; }
+  .readout .unit { font-family: var(--font-mono); font-size: 16px; color: var(--text-2); margin-left: 4px; }
+  .readout .delta { margin-top: 10px; font-size: 13px; color: var(--text-3); }
+  .readout .delta b { color: var(--signal-text); font-weight: 500; }
+
+  /* ==========================================================
+     6. 区块通用
+     ========================================================== */
+  section { padding: 160px 0; }
+  .section-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(36px, 5.2vw, 72px);
+    line-height: 1.14;
+    letter-spacing: -0.03em;
+    max-width: 920px;
+    margin-bottom: 64px;
+  }
+  .js .reveal { opacity: 0; transform: translateY(14px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); transition-delay: var(--d, 0ms); }
+  .js .reveal.in { opacity: 1; transform: none; }
+
+  .index-list { border-top: 1px solid var(--hairline-strong); max-width: 1040px; }
+  .index-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 88px minmax(0, 0.9fr) minmax(0, 1.1fr) 32px;
+    gap: 24px; align-items: baseline;
+    padding: 40px 0;
+    border-bottom: 1px solid var(--hairline);
+    color: inherit; text-decoration: none;
+  }
+  .index-row::after {
+    content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+    background: linear-gradient(90deg, var(--accent) 0%, color-mix(in srgb, var(--accent) 0%, transparent) 70%);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 500ms var(--ease);
+  }
+  .index-row:hover::after { transform: scaleX(1); }
+  .index-row .no { font-family: var(--font-mono); font-size: 14px; color: var(--accent-text); letter-spacing: 0.08em; }
+  .index-row h3 { font-family: var(--font-display); font-weight: 500; font-size: 26px; letter-spacing: -0.01em; }
+  .index-row p { font-size: 16px; color: var(--text-2); }
+  .index-row .arr { color: var(--accent-text); justify-self: end; transition: transform 300ms var(--ease); }
+  .index-row:hover .arr { transform: translateX(6px); }
+
+  /* ==========================================================
+     7. 过渡区（seam）—— 前段车身交接给后段
+     ========================================================== */
+  .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  .seam .eyebrow { margin-bottom: 28px; }
+  .seam-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 7.4vw, 116px);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+    margin-bottom: 36px;
+  }
+  .seam p { max-width: 440px; color: var(--text-2); }
+  .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
+  .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
+  .tone-meter .fill {
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: calc(var(--surface-tone, 0) * 100%);
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* ==========================================================
+     8. 深度呈现
+     ========================================================== */
+  .feature-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; border-top: 1px solid var(--hairline-strong);
+    padding-top: 56px;
+  }
+  .feature-col h3 { font-family: var(--font-display); font-weight: 500; font-size: 22px; margin-bottom: 14px; color: var(--text-1); }
+  .feature-col p { font-size: 15px; color: var(--text-2); line-height: 1.6; }
+  .feature-col .tag { font-family: var(--font-mono); font-size: 11px; color: var(--signal-text); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; display: inline-block; }
+
+  /* 统计数字行 */
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 32px; margin-top: 80px;
+    padding-top: 48px; border-top: 1px solid var(--hairline);
+  }
+  .stat .value { font-family: var(--font-mono); font-weight: 300; font-size: 64px; line-height: 1; letter-spacing: -0.03em; color: var(--text-1); }
+  .stat .unit { font-family: var(--font-mono); font-size: 20px; color: var(--accent-text); margin-left: 4px; }
+  .stat .label { font-size: 14px; color: var(--text-3); margin-top: 10px; }
+
+  /* 引言 */
+  .quote { padding: 120px 0; }
+  .quote blockquote {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(28px, 3.6vw, 48px);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    color: var(--text-1);
+    max-width: 880px;
+  }
+  .quote cite { display: block; font-family: var(--font-mono); font-size: 12px; font-style: normal; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-3); margin-top: 28px; }
+
+  /* CTA */
+  .cta .wrap { border-top: 1px solid var(--hairline-strong); padding-top: 96px; }
+
+  /* 页脚 */
+  footer { padding: 64px 0 80px; border-top: 1px solid var(--hairline); }
+  footer .wrap { display: flex; justify-content: space-between; align-items: baseline; }
+  footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
+
+  @media (max-width: 900px) {
+    .wrap { padding: 0 24px; }
+    .hero-foot { grid-template-columns: 1fr; gap: 40px; }
+    .telemetry { grid-template-columns: 1fr; border-top: none; }
+    .readout { border-left: none; border-top: 1px solid var(--hairline); padding: 16px 0; }
+    .index-row { grid-template-columns: 56px 1fr; gap: 12px; }
+    .index-row p { grid-column: 2; }
+    .index-row .arr { display: none; }
+    .feature-grid, .stats { grid-template-columns: 1fr; gap: 40px; }
+    footer .wrap { flex-direction: column; gap: 20px; }
+    footer .note { text-align: left; }
+  }
+  /* ==========================================================
+     可读性：影棚主光带会扫过正文。给小字加一圈与压光同色的光晕，
+     大标题同理。金属字（background-clip: text）不加：text-shadow 会透过透明字形把它染暗，
+     filter: drop-shadow 在 Chrome 里也会让裁切背景发灰，所以金属字只靠自身的亮渐变
+     ========================================================== */
+  .hero-copy p, .readout dt, .readout .delta, .index-row p, .seam p, .feature-col p, .stat .label, .quote cite, footer .note {
+    text-shadow: 0 0 14px var(--veil), 0 0 4px color-mix(in srgb, var(--veil) 70%, transparent);
+  }
+  .hero-title .line > span:not(.metal-text), .section-title, .seam-title, .quote blockquote {
+    text-shadow: 0 0 28px color-mix(in srgb, var(--veil) 75%, transparent);
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .nav-cta .btn-ghost { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; animation: none !important; }
-    .js .reveal { opacity: 1 !important; transform: none !important; }
+    .js .reveal, .js .hero-title .line > span { opacity: 1; transform: none; animation: none; transition: none; }
   }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 120px; height: 16px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='16'%3E%3Cpath d='M0 8C10 0 20 16 30 8S50 0 60 8S80 16 90 8S110 0 118 8' fill='none' stroke='%230078C1' stroke-width='2'/%3E%3Ccircle cx='117' cy='8' r='3' fill='%23FD4BC7'/%3E%3C/svg%3E") no-repeat; }
@@ -400,120 +393,177 @@
 </head>
 <body>
 
-<canvas id="webgl-bg" aria-hidden="true"></canvas>
-<div class="paint-shade" aria-hidden="true"></div>
-<svg id="racing-line"></svg>
+<!-- 连续车漆 Canvas：全屏、WebGL PBR 物理反射 -->
+<canvas id="paint"></canvas>
 
-<header>
-  <div class="wrap nav-inner">
-    <div class="nav-logo">
-      <span>BWT Alpine F1 Team</span>
+<!-- 渐变灰镜压光 -->
+<div class="paint-shade" aria-hidden="true"></div>
+
+<!-- 贯穿全页的 SVG 涂装线 -->
+<svg id="racing-line" aria-hidden="true"></svg>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="nav-logo" href="#">Vertex</a>
+    <nav class="nav-links">
+      <a href="#features" aria-current="page">涂装细节</a>
+      <a href="#seam">车身过渡</a>
+      <a href="#performance">动力单元</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-sm btn-ghost" href="#">文档</a>
+      <a class="btn btn-sm btn-primary" href="#">申请试用</a>
     </div>
-    <div class="nav-tag">2026 A526 // ENSTONE</div>
   </div>
 </header>
 
 <main>
-  <!-- Hero -->
-  <section class="hero" data-line="18,15 45,50 82,85">
+  <!-- Hero：前段车身。涂装线走右侧边缘，不穿过标题 -->
+  <section class="hero" data-line="97,10 97,93 66,99">
     <div class="wrap">
-      <div class="badge reveal">
-        <span>CHASSIS A526 // ENSTONE &amp; VIRY-CHÂTILLON</span>
-      </div>
-      <h1 class="reveal" style="--d: 80ms">
-        Alpine Blue<br>
-        <span class="accent">Pink Accent</span> 2026
-      </h1>
-      <p class="hero-p reveal" style="--d: 160ms">
-        官方只说明 A526 的涂装与上一年相似。页面以 Alpine 蓝为车身，碳黑压住底盘，BWT 粉只做一条细线。
-      </p>
-      <div class="actions reveal" style="--d: 240ms">
-        <a href="#powertrain" class="btn btn-primary">动力单元</a>
-        <a href="#engineering" class="btn btn-ghost">涂装细节</a>
-      </div>
+      <p class="eyebrow" data-decrypt="BWT ALPINE F1 TEAM // A526 · ENSTONE">BWT ALPINE F1 TEAM // A526 · ENSTONE</p>
 
-      <div class="stats-bar reveal" style="--d: 320ms">
-        <div class="stat-box">
-          <div class="stat-val">2.10<span class="unit">s</span></div>
-          <div class="stat-lbl">恩斯通进站效率指数（示意）</div>
+      <h1 class="hero-title">
+        <span class="line"><span>Alpine</span></span>
+        <span class="line l2"><span class="metal-text">Blue</span></span>
+      </h1>
+
+      <div class="hero-foot">
+        <div class="hero-copy">
+          <p>官方只说明 A526 的涂装与上一年相似。页面以 Alpine 蓝为车身，碳黑压住底盘，BWT 粉只做一条细线。</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#features">查看涂装细节 <span class="arr" aria-hidden="true">→</span></a>
+            <a class="btn btn-ghost" href="#performance">动力单元</a>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-val">1040<span class="unit">bhp</span></div>
-          <div class="stat-lbl">维利-沙蒂永动力单元（示意）</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">347<span class="unit">km/h</span></div>
-          <div class="stat-lbl">低阻巡航尾速（示意）</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-val">2<span class="unit">Titles</span></div>
-          <div class="stat-lbl">恩斯通世界冠军传承（示意）</div>
-        </div>
+
+        <dl class="telemetry">
+          <div class="readout">
+            <dt>进站基准</dt>
+            <dd><span class="value num" data-count="2.10">2.10</span><span class="unit">s</span></dd>
+            <p class="delta">示意数据 <b>PIT STOP</b></p>
+          </div>
+          <div class="readout">
+            <dt>综合输出</dt>
+            <dd><span class="value num" data-count="1040">1040</span><span class="unit">bhp</span></dd>
+            <p class="delta">示意数据 <b>M17</b></p>
+          </div>
+          <div class="readout">
+            <dt>低阻尾速</dt>
+            <dd><span class="value num" data-count="347">347</span><span class="unit">km/h</span></dd>
+            <p class="delta">示意数据 <b>TOP SPEED</b></p>
+          </div>
+        </dl>
       </div>
     </div>
   </section>
-
-  <!-- 涂装插值接缝区 -->
-  <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
-    <div class="wrap">
-      <div class="seam-meta">Surface Seam // Transition Zone</div>
-      <div class="seam-title">ALPINE BLUE ➔ SHADOW CARBON</div>
-      <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
-        滚动经过此区域时，蓝色车身平滑过渡到碳黑后段，粉色细线沿过渡区收束。
-      </p>
-    </div>
-  </div>
 
   <!-- 涂装细节 -->
-  <section id="engineering" data-line="20,12 55,46 78,88">
+  <section id="features" data-line="30,2 3,5 3,94 24,99">
     <div class="wrap">
-      <div class="section-tag reveal">Livery Details</div>
-      <h2 class="section-title reveal">2026 涂装：蓝色体系与一点粉</h2>
-      <div class="grid-3">
-        <div class="card reveal" style="--d: 80ms">
-          <div class="card-code">// 01 · ALPINE BLUE</div>
-          <div class="card-title">Alpine 蓝金属漆</div>
-          <div class="card-desc">
-            蓝色带金属感，是车身与血统；受光水蓝只做高光，不做大面积底色。
-          </div>
+      <p class="eyebrow reveal" data-decrypt="LIVERY DETAILS">LIVERY DETAILS</p>
+      <h2 class="section-title reveal">2026 涂装：<br>蓝色体系与一点粉。</h2>
+
+      <div class="index-list">
+        <a class="index-row reveal" href="#">
+          <span class="no">01</span>
+          <h3>Alpine 蓝金属漆</h3>
+          <p>蓝色带金属感，是车身与血统；受光水蓝只做高光，不做大面积底色。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 60ms" href="#">
+          <span class="no">02</span>
+          <h3>BWT 粉点缀</h3>
+          <p>粉色只做细线与单点，面积约 4%；2027 年起冠名变为 Gucci，使用前请确认配色。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+        <a class="index-row reveal" style="--d: 120ms" href="#">
+          <span class="no">03</span>
+          <h3>暗影碳黑</h3>
+          <p>碳黑压住底盘与页面后段，文字保持冰白，不使用霓虹渐变。</p>
+          <span class="arr" aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 过渡区：前段车身 → 后段，文字少、留白多 -->
+  <section id="seam" class="seam" data-seam data-line="40,2 97,20 97,80 70,98">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="BODYWORK SEAM TRANSITION">BODYWORK SEAM TRANSITION</p>
+      <h2 class="seam-title reveal">从 Alpine 蓝，<br>过渡到暗影碳黑。</h2>
+      <p class="reveal" style="--d: 80ms">滚动经过这里时，蓝色车身平滑过渡到碳黑后段，粉色细线沿过渡区收束。</p>
+      <div class="tone-meter reveal" style="--d: 140ms">
+        <span>ALPINE BLUE</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>SHADOW CARBON</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 动力单元与数字 -->
+  <section id="performance" data-line="40,2 3,5 3,93 22,99">
+    <div class="wrap">
+      <p class="eyebrow reveal" data-decrypt="POWER UNIT · 2026">POWER UNIT · 2026</p>
+      <h2 class="section-title reveal">Mercedes-AMG M17<br>客户动力单元。</h2>
+
+      <div class="feature-grid">
+        <div class="feature-col reveal">
+          <span class="tag">POWER UNIT</span>
+          <h3>改用客户动力</h3>
+          <p>A526 使用 Mercedes-AMG F1 M17 动力单元，不再使用自家动力单元。</p>
         </div>
-        <div class="card reveal" style="--d: 160ms">
-          <div class="card-code">// 02 · BWT PINK</div>
-          <div class="card-title">BWT 粉点缀</div>
-          <div class="card-desc">
-            粉色只做细线与单点，面积约 4%；2027 年起冠名变为 Gucci，使用前请确认配色。
-          </div>
+        <div class="feature-col reveal" style="--d: 80ms">
+          <span class="tag">2026 RULES</span>
+          <h3>电能占比约一半</h3>
+          <p>新规把 MGU-K 输出提高到 350 kW，电能与内燃机输出接近对半。</p>
         </div>
-        <div class="card reveal" style="--d: 240ms">
-          <div class="card-code">// 03 · SHADOW CARBON</div>
-          <div class="card-title">暗影碳黑</div>
-          <div class="card-desc">
-            碳黑压住底盘与页面后段，文字保持冰白，不使用霓虹渐变。
-          </div>
+        <div class="feature-col reveal" style="--d: 160ms">
+          <span class="tag">FUEL</span>
+          <h3>100% 可持续燃料</h3>
+          <p>2026 规则要求全部使用可持续燃料。</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat reveal">
+          <div><span class="value" data-count="350">350</span><span class="unit">kW</span></div>
+          <p class="label">MGU-K 输出上限（2026 规则）</p>
+        </div>
+        <div class="stat reveal" style="--d: 80ms">
+          <div><span class="value" data-count="100">100</span><span class="unit">%</span></div>
+          <p class="label">可持续燃料（2026 规则）</p>
+        </div>
+        <div class="stat reveal" style="--d: 160ms">
+          <div><span class="value" data-count="2">2</span><span class="unit">x</span></div>
+          <p class="label">恩斯通车队冠军传承（示意）</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 动力总成 -->
-  <section id="powertrain" data-line="78,14 48,52 18,92">
+  <section class="quote" data-line="40,4 97,16 97,90">
     <div class="wrap">
-      <div class="section-tag reveal">Powertrain</div>
-      <h2 class="section-title reveal">Mercedes-AMG F1 M17 动力单元</h2>
-      <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
-        A526 使用 Mercedes-AMG F1 M17 动力单元。页面里的数字均为示意数据。
-      </p>
+      <blockquote class="reveal">“蓝色是车身，粉色只是一根线。”</blockquote>
+      <cite class="reveal" style="--d: 80ms">配色原则 // A526 SURFACE</cite>
+    </div>
+  </section>
+
+  <section class="cta" data-line="97,8 97,94 74,99">
+    <div class="wrap">
+      <h2 class="section-title reveal">把法式的蓝，<br>放进你的产品界面。</h2>
       <div class="actions reveal" style="--d: 80ms">
-        <a href="#" class="btn btn-primary">返回顶部 ↑</a>
+        <a class="btn btn-primary" href="#">立刻开始 <span class="arr" aria-hidden="true">→</span></a>
+        <a class="btn btn-ghost" href="#">查看配色规范</a>
       </div>
     </div>
   </section>
 </main>
 
-<footer>
-  <div class="wrap footer-inner">
-    <span>BWT Alpine F1 Team // A526 Continuous Surface UI</span>
-    <span>配色为网页复现值，非官方色号；页面数字为示意数据</span>
+<footer data-line="60,0 40,0">
+  <div class="wrap">
+    <span class="nav-logo">Vertex</span>
+    <span class="note">配色为网页复现值，非官方色号；页面数字为示意数据，与车队无关联</span>
   </div>
 </footer>
 
@@ -531,7 +581,9 @@
  *   livery   涂装阶段。页面滚动时 tone 从 0 走到 livery.length - 1，
  *            车漆在相邻两个阶段之间插值（颜色、金属度、粗糙度……）
  *   studio   摄影棚：几条长条柔光箱，决定反射带长什么样、在哪里
+ *            可选 blur（预滤波模糊，默认 0.04）；strip 可选 edge（渐变边宽度）与 falloff（长度方向中心加权）
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
+ *            可选 panel（凸面板件 + 圆角折线），见 paint-surface.js 顶部说明
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -570,27 +622,33 @@ export const MERCEDES = {
     },
   ],
 
+  // —— 影棚效果图布光：全部中性白光，颜色只来自车漆本身 ——
+  // PETRONAS 青绿不再打在灯上（官方影棚图里没有彩色灯），它留给贯穿全页的涂装线
   studio: {
-    sky: '#6E787C',            // 冷灰棚顶：银漆的"银"主要来自这里
-    horizon: '#262D30',
-    ground: '#0A0C0E',
+    sky: '#2A2C2E',            // 中性深灰棚顶
+    horizon: '#141516',
+    ground: '#050506',         // 黑色地面：板件下半部反射它，形成上亮下暗
+    blur: 0.012,               // 预滤波很轻，清漆上能看清柔光箱轮廓
     strips: [
-      { azimuth: 0, elevation: 32, w: 20, h: 1.4, color: '#FFFFFF', intensity: 14 },
-      { azimuth: 0, elevation: 13, w: 24, h: 0.3, color: '#FFFFFF', intensity: 10 },
-      { azimuth: 62, elevation: 6, w: 0.9, h: 16, color: '#DFE6EA', intensity: 5 },
-      // 低位 PETRONAS 青绿灯条（官方语义：PETRONAS green flow line 低位扫过车身）
-      { azimuth: -8, elevation: -28, w: 20, h: 0.22, color: '#00A19B', intensity: 11 },
+      // 顶部大面积光天幕：板件上半部的大片柔和银色渐变
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      // 主光条：板件上缘那道又长又利落的高光
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      // 侧面竖条柔光箱：给反射加一道纵向分割
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      // 低位轮廓光：板件下缘一条细亮线，勾出车身边界
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
+  // —— 车身：一块块绷紧的凸面板件 + 圆角折线，而不是丝绸般的交叉波纹 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.34, 0.28, -0.04],
-      [-0.78, 0.58, 0.11, 0.06],
-      [1.6, 1.15, 0.025, -0.08],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频的双曲率：让光带略微弯曲，不至于是死直线
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0.11 },
+    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -645,27 +703,28 @@ export const FERRARI = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#380B0E',            // 深红暗调天穹，衬托红色烤漆的色纯度
-    horizon: '#1A0708',
-    ground: '#0A0304',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 34, w: 20, h: 1.3, color: '#FFFFFF', intensity: 15 },
-      // 2026 结构白切光：模拟座舱与引擎盖侧翼的结构白切面
-      { azimuth: 52, elevation: 14, w: 22, h: 0.35, color: '#F4F2EE', intensity: 12 },
-      // 跃马黄点缀光（极少量血统微光）
-      { azimuth: -45, elevation: -22, w: 18, h: 0.2, color: '#F7D117', intensity: 4 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 激进高张力的雕塑肌肉曲线，更紧凑起伏
     waves: [
-      [0.0, 1.05, 0.38, 0.04],
-      [0.58, 0.42, 0.24, -0.03],
-      [-0.82, 0.62, 0.14, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0.14 },
+    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -720,29 +779,28 @@ export const MCLAREN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#463E38',            // 带有轻微暖钛调的灰调天穹
-    horizon: '#201D1A',
-    ground: '#0C0C0E',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 30, w: 22, h: 1.5, color: '#FFFFFF', intensity: 14 },
-      // 迈凯伦特有的一丝冰青蓝速度光晕（Teal Accent #4FD5D6）
-      { azimuth: 65, elevation: 10, w: 1.4, h: 18, color: '#4FD5D6', intensity: 9 },
-      // 下方暖橙受光补强
-      { azimuth: -12, elevation: -26, w: 20, h: 0.25, color: '#FF9B2F', intensity: 8 },
-      // 轮毂罩 Google Chrome 液态高光与微反射（Chrome Wheel Rim Specular #E2E8F0）
-      { azimuth: -58, elevation: 16, w: 1.2, h: 14, color: '#E2E8F0', intensity: 10 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 现代空气动力学锋面起伏
     waves: [
-      [0.0, 0.88, 0.32, 0.05],
-      [0.48, 0.36, 0.26, -0.04],
-      [-0.72, 0.54, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0.12 },
+    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -798,28 +856,28 @@ export const ASTON_MARTIN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#182C26',            // 墨绿冷调天穹
-    horizon: '#0C1815',
-    ground: '#050908',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部修长高亮白条：拉出英伦 GT 与 F1 赛车极其优雅平滑的背脊光
-      { azimuth: 0, elevation: 35, w: 24, h: 0.9, color: '#FFFFFF', intensity: 16 },
-      // 侧向车漆反射高光绿
-      { azimuth: 58, elevation: 8, w: 1.0, h: 18, color: '#037A68', intensity: 8 },
-      // 低位 Lime 荧光黄绿速度光带（2026 Works 细节）
-      { azimuth: -10, elevation: -26, w: 22, h: 0.20, color: '#A9D23E', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 沉稳克制、流线型更修长的起伏
     waves: [
-      [0.0, 0.78, 0.30, 0.03],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.64, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0.10 },
+    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0 },
+    panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -874,27 +932,30 @@ export const CADILLAC = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#64686C',            // 纯粹单色灰白高对比天穹，无多余彩色杂光
-    horizon: '#242628',
-    ground: '#080809',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 32, w: 22, h: 1.6, color: '#FFFFFF', intensity: 16 },
-      // 锐利工业几何切面银光（模拟 Cadillac Chevron 雕塑折面）
-      { azimuth: 60, elevation: 12, w: 1.0, h: 20, color: '#D9DDE1', intensity: 12 },
-      { azimuth: -8, elevation: -26, w: 22, h: 0.25, color: '#E4E7EA', intensity: 10 },
+      // 页面用白字：白车在暗棚里只给较弱的顶光，车身保持深灰，白字才压得住
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.0, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 10, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 工业几何 Chevron 切面导向起伏
     waves: [
-      [0.0, 0.95, 0.36, 0.04],
-      [0.60, 0.40, 0.30, -0.04],
-      [-0.80, 0.60, 0.12, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     // 锐利的 Chevron 几何棱线
-    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0.15 },
+    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0 },
+    panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -954,34 +1015,33 @@ export const WILLIAMS = {
     },
   ],
 
-  // —— 虚拟摄影棚：牛津郡 Grove 试车场清冷天穹与白色长条柔光箱 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#1E2D4A',             // 清冷英伦夜蓝天穹
-    horizon: '#0E1726',         // 地平线收束色
-    ground: '#050B14',          // 深邃吸光地表（营造底盘悬浮感）
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超宽纯白主柔光箱（模拟主展厅穹顶天幕反射，勾勒车脊轮廓）
-      { azimuth: 0, elevation: 34, w: 22, h: 1.4, color: '#F4F7FA', intensity: 16 },
-      // 侧向 58° 结构高光切线（刻画侧箱进气道导流折角）
-      { azimuth: 58, elevation: 14, w: 1.5, h: 18, color: '#FFFFFF', intensity: 12 },
-      // 低位蓝光漫射带（模拟地表受光反射，增强鲜蓝层次）
-      { azimuth: -24, elevation: -18, w: 20, h: 0.4, color: '#4089E5', intensity: 7 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 车身空气动力学微起伏：Grove 风洞低风阻导流槽与 Forward W 动量线 ——
   surface: {
     waves: [
-      [0, 0.94, 0.33, 0.05],
-      [0.55, 0.38, 0.25, -0.04],
-      [-0.8, 0.60, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     crease: {
       dir: [0.38, 0.93],        // 侧向导流折痕方向
       period: 8.2,
       sharpness: 4.8,           // 锐利的侧箱起伏
-      height: 0.12,
+      height: 0,
     },
+    panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -1037,29 +1097,28 @@ export const RED_BULL = {
     },
   ],
 
-  // —— 虚拟摄影棚：米尔顿凯恩斯冠军工坊的暗夜冷调柔光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#10224F',             // 深蓝天幕
-    horizon: '#060F1C',
-    ground: '#020509',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部主柔光箱（宽屏均匀柔和照射，呈现磨砂漆面弧度）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.6, color: '#F5F7FA', intensity: 13 },
-      // 侧向浅蓝光带（呼应提花浅蓝）
-      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#2F5FD6', intensity: 10 },
-      // 低位暖黄光晕（品牌太阳黄，极少量）
-      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFC20E', intensity: 5 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 侵略性风刀气动微起伏与向前俯冲刀锋切痕 ——
   surface: {
     waves: [
-      [0.0, 0.90, 0.35, 0.05],
-      [0.50, 0.32, 0.26, -0.04],
-      [-0.75, 0.55, 0.10, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0.13 },
+    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -1114,29 +1173,29 @@ export const AUDI = {
     },
   ],
 
-  // —— 虚拟摄影棚：因戈尔施塔特精密实验室的高亮冷白矩阵 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#2A323D',             // 冷钛天顶
-    horizon: '#14181F',
-    ground: '#050608',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超高亮条纹（模拟风洞主天幕，反射出冷冽钛合金光刃）
-      { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
-      // 侧向 55° 精密工业切光
-      { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位 Lava Red 细光带（官方点缀色）
-      { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
+      // 钛金属反射很强：顶光和主光调弱一档，避免 hero 标题落在过曝的光带上
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.6, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 德意志精密模块化折痕与微米级公差导流面 ——
   surface: {
     waves: [
-      [0.0, 0.85, 0.32, 0.04],
-      [0.46, 0.34, 0.25, -0.03],
-      [-0.70, 0.52, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0.11 },
+    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -1191,29 +1250,29 @@ export const ALPINE = {
     },
   ],
 
-  // —— 虚拟摄影棚：恩斯通风洞天幕，辅以 BWT 电气亮粉底光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#0C223A',             // 深邃阿尔派天顶
-    horizon: '#061220',
-    ground: '#04070A',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部大柔光箱
-      { azimuth: 0, elevation: 35, w: 22, h: 1.4, color: '#FFFFFF', intensity: 15 },
-      // 侧向水蓝高光条
-      { azimuth: 58, elevation: 10, w: 1.2, h: 18, color: '#2CE8FF', intensity: 10 },
-      // 低位 BWT 电气亮粉光晕（标志性蓝粉碰撞）
-      { azimuth: -12, elevation: -25, w: 22, h: 0.28, color: '#FD4BC7', intensity: 11 },
+      // 蓝色金属漆受光后很亮：调弱一档，粉色小字和标签才看得清
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.4, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 流线型气动起伏与侧箱下洗通道 ——
   surface: {
     waves: [
-      [0.0, 0.88, 0.32, 0.04],
-      [0.48, 0.32, 0.25, -0.04],
-      [-0.72, 0.56, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0.12 },
+    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -1251,11 +1310,11 @@ export const RACING_BULLS = {
     {
       // 阶段 0：Racing White 车身白（#F3F5F9）
       color: '#F3F5F9',
-      metalness: 0.10,
-      roughness: 0.24,
+      metalness: 0.0,          // 实色白漆：白来自漫反射，光泽全部来自清漆
+      roughness: 0.5,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      envIntensity: 1.15,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Deep Navy 深海军蓝（#0A1B4D），页面后段的节奏色
@@ -1268,29 +1327,28 @@ export const RACING_BULLS = {
     },
   ],
 
-  // —— 虚拟摄影棚：明快耀眼的纯白天幕与公牛火红点缀 ——
+  // —— 影棚效果图布光（与 Haas 同一套）：中性白光；白车的"白"靠大面积漫射光 ——
   studio: {
-    sky: '#B9C3DB',             // 冷灰蓝天幕：让白漆有层次而不过曝
-    horizon: '#7B88A8',
-    ground: '#0A0E1A',
+    sky: '#A6A8AB',
+    horizon: '#7A7C7F',
+    ground: '#18191A',
+    blur: 0.012,
     strips: [
-      // 顶部超宽白光条（呈现电光宝蓝的流线镜面）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 12 },
-      // 侧向电光蓝反光带
-      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#1E4FD8', intensity: 9 },
-      // 低位公牛活力红微光带
-      { azimuth: -16, elevation: -20, w: 20, h: 0.25, color: '#E51937', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 意式灵动敏捷的空气动力学导流微波 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.35, 0.26, -0.04],
-      [-0.76, 0.58, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0.12 },
+    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0 },
+    panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],
@@ -1326,13 +1384,14 @@ export const HAAS = {
   // —— 涂装阶段：2026 官方为白色与红色涂装（TGR 冠名合作）；HEX 为网页复现值 ——
   livery: [
     {
-      // 阶段 0：Haas White 车身白（#F4F5F7）
+      // 阶段 0：Haas White 车身白（#F4F5F7）。实色白漆：底漆不含金属（白来自漫反射），
+      // 光泽全部来自清漆 —— 这样白车是干净的白，高光是清漆上利落的灯带，而不是一层银灰色反光
       color: '#F4F5F7',
-      metalness: 0.12,
-      roughness: 0.26,
-      clearcoat: 0.9,
-      clearcoatRoughness: 0.08,
-      envIntensity: 1.15,
+      metalness: 0.0,
+      roughness: 0.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Carbon Ink 近黑（#101114），页面后段的数据面板底色（节奏选择，非官方涂装）
@@ -1345,29 +1404,29 @@ export const HAAS = {
     },
   ],
 
-  // —— 虚拟摄影棚：北卡罗来纳坎纳波利斯工业车间的硬朗光感 ——
+  // —— 影棚效果图布光：中性白光；白车的"白"靠大面积漫射光，而不是把天顶调成浅蓝灰 ——
+  // 去掉了原来的红色灯条：它在白漆上反射成粉红色污渍。Haas 红留给贯穿全页的涂装线
   studio: {
-    sky: '#BDC2CB',             // 冷灰天顶：白漆不过曝
-    horizon: '#80858F',
-    ground: '#060708',
+    sky: '#A6A8AB',             // 中性浅灰棚顶：白漆的漫反射亮度主要来自这里
+    horizon: '#7A7C7F',
+    ground: '#18191A',          // 深灰地面：板件下缘自然变暗，但不发黑发脏
+    blur: 0.012,
     strips: [
-      // 顶部大功率白光天幕
-      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 12 },
-      // 侧向机加工合金冷光
-      { azimuth: 56, elevation: 12, w: 1.2, h: 16, color: '#A4ABB6', intensity: 8 },
-      // 低位 Haas 红光带
-      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#E0201B', intensity: 8 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
-  // —— 美式机加工紧密公差切角与直角导流槽 ——
+  // —— 车身：绷紧的凸面板件 + 圆角折线（白漆是实色漆，不加金属闪粒） ——
   surface: {
     waves: [
-      [0.0, 0.82, 0.30, 0.04],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.68, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.5, 0.02],
+      [-0.12, 0.3, 0.12, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0.11 },
+    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -1433,6 +1492,12 @@ export const TEAM_PRESETS = {
  *   唯一的自定义着色器代码是"车身曲面法线"：几组低频正弦 + 腰线台阶，
  *   逐像素算出法线，让一块平面看起来像起伏的车身板件。
  *
+ * 两种观感（由预设决定，参数缺省时保持旧观感）：
+ *   - 流动丝绸：多组正弦交叉 + 彩色灯条 → 反射是 S 形流光（旧预设）
+ *   - 影棚效果图：surface.panel 把车身切成一块块绷紧的凸面板件，板件之间是带圆角的折线；
+ *     studio.strips 用中性白光、带 edge 渐变边的柔光箱 → 反射是又长又顺、边缘利落的光带，
+ *     接近车队发布会和影棚效果图里的车漆。
+ *
  * 滚动时发生什么：
  *   - 曲面以视差速度向上滑移 → 反射带在屏幕上移动
  *   - 灯光（环境贴图）绕水平轴缓慢旋转 → 光带从上往下扫过
@@ -1484,6 +1549,8 @@ uniform vec4 uCrease;                // 腰线：(方向 x, 方向 y, 间距, �
 uniform float uCreaseHeight;         // 腰线台阶高差
 uniform float uScrollY;              // 曲面滑移量（世界单位）
 uniform float uTime;                 // 秒，驱动极慢的起伏漂移
+uniform vec4 uPanel;                 // 板件：(方向 x, 方向 y, 板件宽度, 边缘最大倾斜)；倾斜为 0 时不启用
+uniform float uPanelFillet;          // 折线圆角占板件半宽的比例（0 ~ 1）
 varying vec2 vBodyPos;               // 片元在平面上的世界坐标
 
 // tanh 的导数 sech²：tanh 台阶的"坡度"。腰线正中坡度最大，反射偏折最强，形成一道亮线
@@ -1507,6 +1574,16 @@ vec3 bodyNormal( vec2 p ) {
   float along = dot( dir, p );
   float d = ( fract( along / uCrease.z + 0.5 ) - 0.5 ) * uCrease.z; // 到最近一道腰线的距离
   grad += uCreaseHeight * uCrease.w * bodySech2( uCrease.w * d ) * dir;
+  // 板件：沿 panelDir 每隔 period 一块凸面（h = -c·d²，坡度随离板件中心的距离线性增大），
+  // 相邻板件在交界处坡度方向相反 → 一道折线。fillet 让坡度在交界附近平滑归零，相当于折线的圆角，
+  // 避免硬边锯齿。凸面上不同高度的法线朝向不同 → 顶灯落在板件上半部，地面落在下半部，
+  // 形成影棚车身"上亮下暗、中间一道锐利光带"的经典观感。
+  if ( uPanel.w > 0.0 ) {
+    vec2 panelDir = normalize( uPanel.xy );
+    float t = ( fract( dot( panelDir, p ) / uPanel.z + 0.5 ) - 0.5 ) * 2.0; // 板件内位置：-1 ~ 1
+    float fillet = smoothstep( 1.0, 1.0 - uPanelFillet, abs( t ) );
+    grad -= uPanel.w * t * fillet * panelDir;
+  }
   return normalize( vec3( - grad, 1.0 ) );
 }
 `;
@@ -1536,6 +1613,29 @@ void main() {
     ? mix( uHorizon, uSky, smoothstep( 0.0, 0.8, y ) )
     : mix( uHorizon, uGround, smoothstep( 0.0, 0.5, - y ) );
   gl_FragColor = vec4( color, 1.0 );
+}
+`;
+
+// 柔光箱：中心亮、四边在 edge 宽度内渐暗，长度方向可再加一点中心加权（falloff）。
+// 真实柔光箱的扩散布就是这样发光的，清漆上因此能看到"有轮廓、内部有渐变"的光带，而不是一块死白
+const SOFTBOX_VERTEX = /* glsl */ `
+varying vec2 vUv;
+void main() {
+  vUv = uv;
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+}
+`;
+const SOFTBOX_FRAGMENT = /* glsl */ `
+uniform vec3 uColor;
+uniform vec2 uEdge;     // 渐变边宽度占宽、高的比例
+uniform float uFalloff; // 长度方向的中心加权（0 = 均匀）
+varying vec2 vUv;
+void main() {
+  float fx = smoothstep( 0.0, uEdge.x, vUv.x ) * smoothstep( 0.0, uEdge.x, 1.0 - vUv.x );
+  float fy = smoothstep( 0.0, uEdge.y, vUv.y ) * smoothstep( 0.0, uEdge.y, 1.0 - vUv.y );
+  float along = abs( vUv.x - 0.5 ) * 2.0;
+  float core = 1.0 - uFalloff * along * along;
+  gl_FragColor = vec4( uColor * fx * fy * core, 1.0 );
 }
 `;
 
@@ -1660,16 +1760,7 @@ export class PaintSurface {
     this._livery = this.preset.livery.map((stop) => ({ ...stop, color: new THREE.Color(stop.color) }));
 
     // 更新着色器 uniform 参数
-    const surface = this.preset.surface;
-    for (let i = 0; i < MAX_WAVES; i++) {
-      const w = surface.waves[i];
-      if (w) this.uniforms.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
-      else this.uniforms.uWaves.value[i].set(0, 0, 0, 0);
-    }
-    this.uniforms.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
-    const crease = surface.crease;
-    this.uniforms.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
-    this.uniforms.uCreaseHeight.value = crease.height;
+    this._syncSurfaceUniforms();
 
     this._applyLivery(this._state.tone);
     this._dirty = true;
@@ -1740,17 +1831,25 @@ export class PaintSurface {
 
     // 柔光箱：发光长条，摆在半径 12 的球面上并面朝车身（原点）。
     // 颜色乘以 intensity 得到 HDR 亮度，PMREM 用半浮点纹理保存，不会被截断到 1。
+    // strip.edge（世界单位）> 0 时用渐变边柔光箱，否则是旧的均匀发光长条。
     const radius = 12;
     for (const strip of studio.strips) {
       const azimuth = THREE.MathUtils.degToRad(strip.azimuth);
       const elevation = THREE.MathUtils.degToRad(strip.elevation);
-      const panel = new THREE.Mesh(
-        new THREE.PlaneGeometry(strip.w, strip.h),
-        new THREE.MeshBasicMaterial({
-          color: new THREE.Color(strip.color).multiplyScalar(strip.intensity),
-          side: THREE.DoubleSide,
-        }),
-      );
+      const color = new THREE.Color(strip.color).multiplyScalar(strip.intensity);
+      const material = strip.edge
+        ? new THREE.ShaderMaterial({
+            side: THREE.DoubleSide,
+            uniforms: {
+              uColor: { value: color },
+              uEdge: { value: new THREE.Vector2(Math.min(0.5, strip.edge / strip.w), Math.min(0.5, strip.edge / strip.h)) },
+              uFalloff: { value: strip.falloff ?? 0 },
+            },
+            vertexShader: SOFTBOX_VERTEX,
+            fragmentShader: SOFTBOX_FRAGMENT,
+          })
+        : new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide });
+      const panel = new THREE.Mesh(new THREE.PlaneGeometry(strip.w, strip.h), material);
       panel.position.set(
         radius * Math.cos(elevation) * Math.sin(azimuth),
         radius * Math.sin(elevation),
@@ -1761,7 +1860,8 @@ export class PaintSurface {
     }
 
     const pmrem = new THREE.PMREMGenerator(this.renderer);
-    this.envTarget = pmrem.fromScene(studioScene, 0.04, 0.1, 100);
+    // blur：预滤波模糊。旧预设 0.04；影棚效果图要看清柔光箱轮廓，用更小的值
+    this.envTarget = pmrem.fromScene(studioScene, studio.blur ?? 0.04, 0.1, 100);
     pmrem.dispose();
     studioScene.traverse((object) => {
       object.geometry?.dispose();
@@ -1787,19 +1887,17 @@ export class PaintSurface {
     });
 
     // 这些 uniform 对象会直接挂进着色器，之后改 .value 即可生效，无需重新编译
-    const waves = Array.from({ length: MAX_WAVES }, (_, i) => {
-      const w = surface.waves[i];
-      return w ? new THREE.Vector4(w[0], w[1], w[2], w[3]) : new THREE.Vector4();
-    });
-    const crease = surface.crease;
     this.uniforms = {
-      uWaves: { value: waves },
-      uWaveCount: { value: Math.min(surface.waves.length, MAX_WAVES) },
-      uCrease: { value: new THREE.Vector4(crease.dir[0], crease.dir[1], crease.period, crease.sharpness) },
-      uCreaseHeight: { value: crease.height },
+      uWaves: { value: Array.from({ length: MAX_WAVES }, () => new THREE.Vector4()) },
+      uWaveCount: { value: 0 },
+      uCrease: { value: new THREE.Vector4() },
+      uCreaseHeight: { value: 0 },
+      uPanel: { value: new THREE.Vector4() },
+      uPanelFillet: { value: 0 },
       uScrollY: { value: 0 },
       uTime: { value: 0 },
     };
+    this._syncSurfaceUniforms();
 
     this.material.onBeforeCompile = (shader) => {
       Object.assign(shader.uniforms, this.uniforms);
@@ -1813,6 +1911,25 @@ export class PaintSurface {
 
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
     this.scene.add(this.mesh);
+  }
+
+  /** 把 preset.surface 写进着色器 uniform（初始化和 setPreset 共用）；panel 缺省时倾斜为 0，即不启用 */
+  _syncSurfaceUniforms() {
+    const surface = this.preset.surface;
+    const u = this.uniforms;
+    for (let i = 0; i < MAX_WAVES; i++) {
+      const w = surface.waves[i];
+      if (w) u.uWaves.value[i].set(w[0], w[1], w[2], w[3]);
+      else u.uWaves.value[i].set(0, 0, 0, 0);
+    }
+    u.uWaveCount.value = Math.min(surface.waves.length, MAX_WAVES);
+    const crease = surface.crease;
+    u.uCrease.value.set(crease.dir[0], crease.dir[1], crease.period, crease.sharpness);
+    u.uCreaseHeight.value = crease.height;
+    const panel = surface.panel;
+    if (panel) u.uPanel.value.set(panel.dir[0], panel.dir[1], panel.period, panel.tilt);
+    else u.uPanel.value.set(0, 1, 1, 0);
+    u.uPanelFillet.value = panel?.fillet ?? 0;
   }
 
   /* ---------------- 每帧 ---------------- */
@@ -2301,34 +2418,75 @@ function smoothstepUnit(x) {
 // ===== assets/surface/surface-page.js 结束 =====
 
 
+  /* ==========================================================
+     页面脚本：连续车身 + 进场动效
+     ========================================================== */
   const root = document.documentElement;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // 车漆层不可用（无 WebGL / GPU 上下文丢失）时，换成预设里的 CSS 渐变
   document.body.style.backgroundImage = ALPINE.fallback;
 
   const page = mountSurfacePage({
-    canvas: document.getElementById('webgl-bg'),
+    canvas: document.getElementById('paint'),
     svg: document.getElementById('racing-line'),
     preset: ALPINE,
     seams: [document.querySelector('[data-seam]')],
     onFallback: () => root.classList.add('no-webgl'),
   });
-  window.__surface = page;  // 调试入口：控制台里可用 __surface.surface.setTone(1)
 
-  /* ---- 进入视口时淡入；减少动态效果时直接显示 ---- */
+  window.__surface = page;
+
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
       if (!entry.isIntersecting) continue;
-      entry.target.classList.add('active');
-      observer.unobserve(entry.target);
+      const el = entry.target;
+      observer.unobserve(el);
+      if (el.classList.contains('reveal')) el.classList.add('in');
+      if (el.hasAttribute('data-count')) countUp(el);
+      if (el.hasAttribute('data-decrypt')) decrypt(el);
     }
-  }, { threshold: 0.15 });
+  }, { threshold: 0.2 });
 
-  document.querySelectorAll('.reveal').forEach((el) => {
-    if (reducedMotion) el.classList.add('active');
+  document.querySelectorAll('.reveal, [data-count], [data-decrypt]').forEach((el) => {
+    if (reducedMotion) el.classList.add('in');
     else observer.observe(el);
   });
+
+  function countUp(el) {
+    const raw = el.dataset.count;
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1100;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = (target * eased).toFixed(decimals);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function decrypt(el) {
+    const final = el.dataset.decrypt || el.textContent;
+    const chars = '0123456789ABCDEF/_-';
+    const len = final.length;
+    let step = 0;
+    const total = 14;
+    const timer = setInterval(() => {
+      step++;
+      const locked = Math.floor((step / total) * len);
+      let out = final.slice(0, locked);
+      for (let i = locked; i < len; i++) {
+        out += final[i] === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)];
+      }
+      el.textContent = out;
+      if (step >= total) {
+        clearInterval(timer);
+        el.textContent = final;
+      }
+    }, 40);
+  }
 </script>
 </body>
 </html>
