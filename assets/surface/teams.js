@@ -12,7 +12,8 @@
  *   studio   摄影棚：几条长条柔光箱，决定反射带长什么样、在哪里
  *            可选 blur（预滤波模糊，默认 0.04）；strip 可选 edge（渐变边宽度）与 falloff（长度方向中心加权）
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
- *            可选 panel（凸面板件 + 圆角折线），见 paint-surface.js 顶部说明
+ *            可选 panel（凸面板件 + 圆角折线）、silhouette（车身轮廓）；studio 可选 backdrop（幕墙、地面、边缘光），
+ *            两者都给时启用"影棚空间"，见 paint-surface.js 顶部说明
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -57,7 +58,9 @@ export const MERCEDES = {
     sky: '#2A2C2E',            // 中性深灰棚顶
     horizon: '#141516',
     ground: '#050506',         // 黑色地面：板件下半部反射它，形成上亮下暗
-    blur: 0.012,               // 预滤波很轻，清漆上能看清柔光箱轮廓
+    blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },               // 预滤波很轻，清漆上能看清柔光箱轮廓
     strips: [
       // 顶部大面积光天幕：板件上半部的大片柔和银色渐变
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
@@ -78,6 +81,8 @@ export const MERCEDES = {
     ],
     crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0 },
     panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -138,6 +143,8 @@ export const FERRARI = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -154,6 +161,8 @@ export const FERRARI = {
     ],
     crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0 },
     panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -214,6 +223,8 @@ export const MCLAREN = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -230,6 +241,8 @@ export const MCLAREN = {
     ],
     crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -291,6 +304,8 @@ export const ASTON_MARTIN = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -307,6 +322,8 @@ export const ASTON_MARTIN = {
     ],
     crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0 },
     panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -367,6 +384,8 @@ export const CADILLAC = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       // 页面用白字：白车在暗棚里只给较弱的顶光，车身保持深灰，白字才压得住
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.0, edge: 4, falloff: 0.35 },
@@ -385,6 +404,8 @@ export const CADILLAC = {
     // 锐利的 Chevron 几何棱线
     crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0 },
     panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -450,6 +471,8 @@ export const WILLIAMS = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -471,6 +494,8 @@ export const WILLIAMS = {
       height: 0,
     },
     panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -532,6 +557,8 @@ export const RED_BULL = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -548,6 +575,8 @@ export const RED_BULL = {
     ],
     crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -608,6 +637,8 @@ export const AUDI = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       // 钛金属反射很强：顶光和主光调弱一档，避免 hero 标题落在过曝的光带上
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.6, edge: 4, falloff: 0.35 },
@@ -625,6 +656,8 @@ export const AUDI = {
     ],
     crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0 },
     panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -685,6 +718,8 @@ export const ALPINE = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
+    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       // 蓝色金属漆受光后很亮：调弱一档，粉色小字和标签才看得清
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.4, edge: 4, falloff: 0.35 },
@@ -702,6 +737,8 @@ export const ALPINE = {
     ],
     crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -762,6 +799,8 @@ export const RACING_BULLS = {
     horizon: '#7A7C7F',
     ground: '#18191A',
     blur: 0.012,
+    // 影棚空间：中灰无缝幕墙 + 浅灰地面。幕墙比白车暗一档，车身轮廓才分得出来；深色文字在上面仍可读
+    backdrop: { top: '#8C8E92', bottom: '#C4C6C9', floor: '#B3B5B8', rim: '#FFFFFF', rimIntensity: 1.6 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
@@ -778,6 +817,8 @@ export const RACING_BULLS = {
     ],
     crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0 },
     panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],
@@ -840,6 +881,8 @@ export const HAAS = {
     horizon: '#7A7C7F',
     ground: '#18191A',          // 深灰地面：板件下缘自然变暗，但不发黑发脏
     blur: 0.012,
+    // 影棚空间：中灰无缝幕墙 + 浅灰地面。幕墙比白车暗一档，车身轮廓才分得出来；深色文字在上面仍可读
+    backdrop: { top: '#8C8E92', bottom: '#C4C6C9', floor: '#B3B5B8', rim: '#FFFFFF', rimIntensity: 1.6 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
@@ -856,6 +899,8 @@ export const HAAS = {
     ],
     crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0 },
     panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
+    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
