@@ -1,0 +1,38 @@
+{
+  "id": "alpine",
+  "team": "BWT Alpine F1 Team",
+  "car": "A526",
+  "officialHex": false,
+  "basis": "官方只说明与上一年涂装相似；色阶为蓝色体系 + BWT 粉的复现建议（2027 年起冠名变为 Gucci）。",
+  "reference": "references/alpine.md",
+  "tokens": [
+    {
+      "name": "BWT Pink",
+      "role": "Accent Line & Single Point",
+      "hex": "#FD4BC7",
+      "usage": "赛道贯穿线、单个关键按钮（面积约 4%；2027 年起冠名变为 Gucci，使用前请确认配色）",
+      "scope": "web"
+    },
+    {
+      "name": "Alpine Blue",
+      "role": "Primary Blue Basecoat",
+      "hex": "#0078C1",
+      "usage": "蓝色车身、Hero 大面积金属车漆受光",
+      "scope": "web"
+    },
+    {
+      "name": "Shadow Carbon Black",
+      "role": "Chassis Undertray & Floor Downwash Weave",
+      "hex": "#080C11",
+      "usage": "底板暗区、后段收束、最深背景色",
+      "scope": "web"
+    },
+    {
+      "name": "Aero Cyan Highlight",
+      "role": "Specular Reflection & Pulse Tip",
+      "hex": "#2CE8FF",
+      "usage": "贯穿线高亮笔尖、微光折射、次要数据指示",
+      "scope": "web"
+    }
+  ]
+}

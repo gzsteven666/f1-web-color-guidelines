@@ -1,0 +1,38 @@
+{
+  "id": "red-bull",
+  "team": "Oracle Red Bull Racing",
+  "car": "RB22",
+  "officialHex": false,
+  "basis": "官方：蓝黑配色、浅蓝提花、回归高光泽。HEX 为复现值。",
+  "reference": "references/red-bull.md",
+  "tokens": [
+    {
+      "name": "Bull Blue",
+      "role": "Gloss Body Basecoat",
+      "hex": "#0B2B7E",
+      "usage": "车身主色、深色横带、品牌色块（网页复现值）",
+      "scope": "web"
+    },
+    {
+      "name": "Chassis Black",
+      "role": "Underbody & Page Canvas",
+      "hex": "#05070D",
+      "usage": "底盘、车身后段与页面画布",
+      "scope": "web"
+    },
+    {
+      "name": "Bull Red",
+      "role": "CTA & Track Line",
+      "hex": "#E4002B",
+      "usage": "主按钮、关键指标、赛道贯穿线（品牌点缀）",
+      "scope": "web"
+    },
+    {
+      "name": "Sun Yellow",
+      "role": "Pulse Tip Accent",
+      "hex": "#FFC20E",
+      "usage": "笔尖与单个高亮数据点（< 2%）",
+      "scope": "web"
+    }
+  ]
+}

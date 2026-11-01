@@ -42,6 +42,7 @@
 │     ├─ <team>-editorial.html  ← 11 队各一个浅色杂志模式（默认主参考）
 │     └─ aston-martin.html      ← 深色 Mission Control（dashboard 场景）
 ├─ showcase/                    ← React + Vite + Tailwind CSS + React Bits 动效工程化 Showcase
+├─ tokens/                      ← 色板单一来源：<team>.json，tokens.css 由脚本生成（[data-f1-team="…"] 作用域的 CSS 变量）
 ├─ scripts/
 │  ├─ build-templates.mjs       ← 递归内联生成单文件模板的构建脚本
 │  ├─ sync-showcase-templates.mjs ← 把模板同步到 showcase（predev/prebuild 自动调用）
@@ -106,7 +107,8 @@ Aston Martin、Mercedes、McLaren、Ferrari、Cadillac 按 2026-03-09 可核实�
 ```bash
 npm ci                          # 安装检查工具（仅 playwright）
 npm run build:templates         # 由 src + 共享核心生成单文件模板
-npm run check                   # 模板同步 + editorial 对比度（WCAG AA）
+npm run check                   # 模板同步 + editorial 对比度（WCAG AA）+ 色板一致性
+npm run tokens                  # 由 tokens/*.json 生成 tokens/tokens.css
 npm run check:screenshots       # 用浏览器打开每个模板（桌面 + 手机），检查首屏标题可见、无横向溢出、无 JS 异常、截图非空白
 ```
 
@@ -124,5 +126,7 @@ npm run check:screenshots       # 用浏览器打开每个模板（桌面 + 手�
 | WebdriverIO | ≈9.9k | 2026-11-01 | MIT | 社区较小，需要额外驱动配置 |
 
 ## 许可与说明
+
+**非官方声明**：本仓库是个人整理的网页视觉指引，与各 F1 车队、赞助商及其品牌权利人没有任何关联，也未获得其认可。队名、车型名、徽标与商标归各自权利人所有；本仓库不包含任何车队徽标。所有 HEX 都是依据公开发布的涂装信息得出的网页复现建议值，**不是官方色号**。
 
 这个仓库当前主要包含 skill 源码、打包产物和设计指引整理文件。若你准备公开发布，建议再补一份明确的许可证说明。

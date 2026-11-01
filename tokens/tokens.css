@@ -1,0 +1,86 @@
+/* 由 scripts/tokens.mjs 生成，请改 tokens/*.json 后重新生成。
+   HEX 为网页复现建议值，不是官方色号；非官方、与各车队无关联。 */
+
+/* BWT Alpine F1 Team · A526 */
+[data-f1-team="alpine"] {
+  --f1-bwt-pink: #fd4bc7;  /* Accent Line & Single Point */
+  --f1-alpine-blue: #0078c1;  /* Primary Blue Basecoat */
+  --f1-shadow-carbon-black: #080c11;  /* Chassis Undertray & Floor Downwash Weave */
+  --f1-aero-cyan-highlight: #2ce8ff;  /* Specular Reflection & Pulse Tip */
+}
+
+/* Aston Martin Aramco F1 Team · AMR26 */
+[data-f1-team="aston-martin"] {
+  --f1-green-accent-highlight: #037a68;  /* Specular Surface & Lighting Reflection */
+  --f1-lime-accent-line: #a9d23e;  /* Signal Velocity Line & Indicator Tip */
+}
+
+/* Audi Revolut F1 Team · R26 */
+[data-f1-team="audi"] {
+  --f1-lava-red: #f50537;  /* Accent Line & Status Point */
+  --f1-titanium: #d2d7df;  /* Front Titanium Basecoat */
+  --f1-carbon-black: #0b0e12;  /* Chassis Undertray & Exposed Carbon */
+  --f1-scale-white: #f0f3f6;  /* Typography & Metric Readouts */
+}
+
+/* Cadillac Formula 1 Team · MAC-26 */
+[data-f1-team="cadillac"] {
+  --f1-american-racing-white: #f7f8f9;  /* Primary Signature & Sculpted Basecoat */
+  --f1-technical-silver: #e4e7ea;  /* Chevron Edge & Precision Flow Line */
+  --f1-bold-attitude-black: #060606;  /* Rear Chassis & Dark Aerodynamic Frame */
+  --f1-sculpted-titanium-gray: #3d4247;  /* Mid-Tone Structural Facets */
+}
+
+/* Scuderia Ferrari HP · SF-26 */
+[data-f1-team="ferrari"] {
+  --f1-rosso-scuderia-base: #d3141c;  /* Primary Signature & High Gloss Basecoat */
+  --f1-ferrari-white: #f4f2ee;  /* Structural Flow Line & Cockpit Contour */
+  --f1-rosso-shadow: #6d0f13;  /* Chassis Underside & Aerodynamic Troughs */
+  --f1-giallo-modena-accent: #f7d117;  /* Heritage Tip & Warning Signals */
+}
+
+/* TGR Haas F1 Team · VF-26 */
+[data-f1-team="haas"] {
+  --f1-haas-white: #f4f5f7;  /* Semi-Gloss Body Basecoat */
+  --f1-haas-red: #e0201b;  /* Flat Structure Color & Track Line */
+  --f1-carbon-ink: #101114;  /* Rear Data Canvas & Text */
+  --f1-alloy-grey: #8e96a3;  /* Secondary Text & Hairlines */
+}
+
+/* McLaren Mastercard F1 Team · MCL40 */
+[data-f1-team="mclaren"] {
+  --f1-iconic-papaya-base: #ff8700;  /* Primary Signature & High-Visibility Front */
+  --f1-striking-anthracite: #1e1f22;  /* Chassis Structure & Rear Engine Frame */
+  --f1-teal-velocity-line: #4fd5d6;  /* Speed Hint & Dynamic Track Indicator */
+  --f1-chrome-wheel-rim-specular: #e2e8f0;  /* Google Chrome Wheel Cover & High-Luster Metallic Ring */
+}
+
+/* Mercedes-AMG PETRONAS · W17 */
+[data-f1-team="mercedes"] {
+  --f1-petronas-green: #00a19b;  /* Primary Signature & Flow Line */
+  --f1-liquid-silver-arrows: #c8ccce;  /* Front Chassis Metallic Basecoat */
+}
+
+/* Visa Cash App Racing Bulls · VCARB */
+[data-f1-team="racing-bulls"] {
+  --f1-racing-white: #f3f5f9;  /* Gloss Body Basecoat */
+  --f1-accent-blue: #1e4fd8;  /* Structure Lines & Buttons */
+  --f1-deep-navy: #0a1b4d;  /* Rear Section Canvas */
+  --f1-bull-red: #e51937;  /* Emblem Accent & Pulse Tip */
+}
+
+/* Oracle Red Bull Racing · RB22 */
+[data-f1-team="red-bull"] {
+  --f1-bull-blue: #0b2b7e;  /* Gloss Body Basecoat */
+  --f1-chassis-black: #05070d;  /* Underbody & Page Canvas */
+  --f1-bull-red: #e4002b;  /* CTA & Track Line */
+  --f1-sun-yellow: #ffc20e;  /* Pulse Tip Accent */
+}
+
+/* Atlassian Williams F1 Team · FW48 */
+[data-f1-team="williams"] {
+  --f1-fw48-gloss-blue: #0858c9;  /* Primary Signature & High-Gloss Basecoat */
+  --f1-flowing-carbon-black: #0a1220;  /* Chassis Downwash & Rear Structure */
+  --f1-wing-white: #f4f7fa;  /* Aerodynamic Structural Wing White */
+  --f1-heritage-red: #d6293e;  /* Championship Heritage Dual Keyline */
+}

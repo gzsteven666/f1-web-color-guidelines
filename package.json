@@ -10,7 +10,9 @@
     "package:quickshare": "node scripts/package-quickshare.mjs",
     "check:contrast": "node scripts/check-contrast.mjs",
     "check:screenshots": "node scripts/smoke-screenshots.mjs",
-    "check": "npm run build:templates:check && npm run check:contrast"
+    "check": "npm run build:templates:check && npm run check:contrast && npm run check:tokens",
+    "tokens": "node scripts/tokens.mjs",
+    "check:tokens": "node scripts/tokens.mjs --check"
   },
   "devDependencies": {
     "playwright": "^1.64.1"

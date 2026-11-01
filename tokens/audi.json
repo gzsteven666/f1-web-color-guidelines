@@ -1,0 +1,38 @@
+{
+  "id": "audi",
+  "team": "Audi Revolut F1 Team",
+  "car": "R26",
+  "officialHex": false,
+  "basis": "官方：钛金属饰面、外露碳纤维、Lava Red 点缀。HEX 为复现值。",
+  "reference": "references/audi.md",
+  "tokens": [
+    {
+      "name": "Lava Red",
+      "role": "Accent Line & Status Point",
+      "hex": "#F50537",
+      "usage": "赛道贯穿线、状态点、一个主按钮（面积 ≤ 3%；白字按钮底请加深一档至 #D90432）",
+      "scope": "web"
+    },
+    {
+      "name": "Titanium",
+      "role": "Front Titanium Basecoat",
+      "hex": "#D2D7DF",
+      "usage": "钛金属车身、受光面高光（偏冷，不偏黄）",
+      "scope": "web"
+    },
+    {
+      "name": "Carbon Black",
+      "role": "Chassis Undertray & Exposed Carbon",
+      "hex": "#0B0E12",
+      "usage": "碳黑底盘、页面后段、高对比背景",
+      "scope": "web"
+    },
+    {
+      "name": "Scale White",
+      "role": "Typography & Metric Readouts",
+      "hex": "#F0F3F6",
+      "usage": "标题、无衬线数据读数、刻度线",
+      "scope": "web"
+    }
+  ]
+}

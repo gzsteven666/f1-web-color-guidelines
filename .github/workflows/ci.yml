@@ -34,6 +34,10 @@ jobs:
       - name: 模板同步检查
         run: npm run build:templates:check
 
+      # 色板单一来源 tokens/*.json 与文档、车漆预设、showcase 数据、tokens.css 一致
+      - name: 色板一致性检查
+        run: npm run check:tokens
+
       # 浅色 editorial 模板的 WCAG AA 对比度
       - name: 对比度检查
         run: npm run check:contrast

@@ -235,6 +235,12 @@ description: F1 2026 team web color and styling guide (all 11 teams) for designi
 }
 ```
 
+## 声明
+
+- 所有 HEX 都是网页复现建议值，不是官方色号；输出给用户时要写明这一点。
+- 本 skill 与各车队及其品牌权利人无关联，不要生成或暗示官方背书，不要使用车队徽标。
+- 色板的单一来源是 `tokens/<team>.json`（及生成的 `tokens/tokens.css`），需要 CSS 变量时优先引用它。
+
 ## 风格底线
 
 - 不要把 11 支车队做成同一个深色模板换色。

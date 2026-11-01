@@ -1,0 +1,38 @@
+{
+  "id": "haas",
+  "team": "TGR Haas F1 Team",
+  "car": "VF-26",
+  "officialHex": false,
+  "basis": "官方：白色与红色涂装（TGR 冠名合作）。HEX 为复现值。",
+  "reference": "references/haas.md",
+  "tokens": [
+    {
+      "name": "Haas White",
+      "role": "Semi-Gloss Body Basecoat",
+      "hex": "#F4F5F7",
+      "usage": "车身主色、前段纸面与高对比留白（网页复现值）",
+      "scope": "web"
+    },
+    {
+      "name": "Haas Red",
+      "role": "Flat Structure Color & Track Line",
+      "hex": "#E0201B",
+      "usage": "主按钮、章节标签、赛道贯穿线；平面使用，不做发光渐变",
+      "scope": "web"
+    },
+    {
+      "name": "Carbon Ink",
+      "role": "Rear Data Canvas & Text",
+      "hex": "#101114",
+      "usage": "页面后段画布与前段墨色文字",
+      "scope": "web"
+    },
+    {
+      "name": "Alloy Grey",
+      "role": "Secondary Text & Hairlines",
+      "hex": "#8E96A3",
+      "usage": "次级文字与导轨",
+      "scope": "web"
+    }
+  ]
+}
