@@ -398,6 +398,11 @@
     .feature-grid, .stats { grid-template-columns: 1fr; }
     .index-row { grid-template-columns: 48px 1fr 32px; }
     .index-row p { grid-column: 2 / -1; }
+    /* 窄屏放不下导航链接：之前链接被挤成一字一行，直接收起（与其他车队页一致） */
+    .nav-links, .nav-badge { display: none; }
+  }
+  @media (max-width: 520px) {
+    .nav-cta .btn-ghost { display: none; }
   }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 88px; height: 7px; background: linear-gradient(#F4F7FA, #F4F7FA) 0 0 / 100% 3px no-repeat, linear-gradient(#D6293E, #D6293E) 0 6px / 100% 1px no-repeat; }
