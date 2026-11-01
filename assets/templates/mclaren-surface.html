@@ -654,27 +654,28 @@ export const FERRARI = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#380B0E',            // 深红暗调天穹，衬托红色烤漆的色纯度
-    horizon: '#1A0708',
-    ground: '#0A0304',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 34, w: 20, h: 1.3, color: '#FFFFFF', intensity: 15 },
-      // 2026 结构白切光：模拟座舱与引擎盖侧翼的结构白切面
-      { azimuth: 52, elevation: 14, w: 22, h: 0.35, color: '#F4F2EE', intensity: 12 },
-      // 跃马黄点缀光（极少量血统微光）
-      { azimuth: -45, elevation: -22, w: 18, h: 0.2, color: '#F7D117', intensity: 4 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 激进高张力的雕塑肌肉曲线，更紧凑起伏
     waves: [
-      [0.0, 1.05, 0.38, 0.04],
-      [0.58, 0.42, 0.24, -0.03],
-      [-0.82, 0.62, 0.14, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0.14 },
+    crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -729,29 +730,28 @@ export const MCLAREN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#463E38',            // 带有轻微暖钛调的灰调天穹
-    horizon: '#201D1A',
-    ground: '#0C0C0E',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 30, w: 22, h: 1.5, color: '#FFFFFF', intensity: 14 },
-      // 迈凯伦特有的一丝冰青蓝速度光晕（Teal Accent #4FD5D6）
-      { azimuth: 65, elevation: 10, w: 1.4, h: 18, color: '#4FD5D6', intensity: 9 },
-      // 下方暖橙受光补强
-      { azimuth: -12, elevation: -26, w: 20, h: 0.25, color: '#FF9B2F', intensity: 8 },
-      // 轮毂罩 Google Chrome 液态高光与微反射（Chrome Wheel Rim Specular #E2E8F0）
-      { azimuth: -58, elevation: 16, w: 1.2, h: 14, color: '#E2E8F0', intensity: 10 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 现代空气动力学锋面起伏
     waves: [
-      [0.0, 0.88, 0.32, 0.05],
-      [0.48, 0.36, 0.26, -0.04],
-      [-0.72, 0.54, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0.12 },
+    crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -807,28 +807,28 @@ export const ASTON_MARTIN = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#182C26',            // 墨绿冷调天穹
-    horizon: '#0C1815',
-    ground: '#050908',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部修长高亮白条：拉出英伦 GT 与 F1 赛车极其优雅平滑的背脊光
-      { azimuth: 0, elevation: 35, w: 24, h: 0.9, color: '#FFFFFF', intensity: 16 },
-      // 侧向车漆反射高光绿
-      { azimuth: 58, elevation: 8, w: 1.0, h: 18, color: '#037A68', intensity: 8 },
-      // 低位 Lime 荧光黄绿速度光带（2026 Works 细节）
-      { azimuth: -10, elevation: -26, w: 22, h: 0.20, color: '#A9D23E', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 沉稳克制、流线型更修长的起伏
     waves: [
-      [0.0, 0.78, 0.30, 0.03],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.64, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0.10 },
+    crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0 },
+    panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -883,27 +883,30 @@ export const CADILLAC = {
     },
   ],
 
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#64686C',            // 纯粹单色灰白高对比天穹，无多余彩色杂光
-    horizon: '#242628',
-    ground: '#080809',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      { azimuth: 0, elevation: 32, w: 22, h: 1.6, color: '#FFFFFF', intensity: 16 },
-      // 锐利工业几何切面银光（模拟 Cadillac Chevron 雕塑折面）
-      { azimuth: 60, elevation: 12, w: 1.0, h: 20, color: '#D9DDE1', intensity: 12 },
-      { azimuth: -8, elevation: -26, w: 22, h: 0.25, color: '#E4E7EA', intensity: 10 },
+      // 页面用白字：白车在暗棚里只给较弱的顶光，车身保持深灰，白字才压得住
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.0, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 10, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   surface: {
     // 工业几何 Chevron 切面导向起伏
     waves: [
-      [0.0, 0.95, 0.36, 0.04],
-      [0.60, 0.40, 0.30, -0.04],
-      [-0.80, 0.60, 0.12, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     // 锐利的 Chevron 几何棱线
-    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0.15 },
+    crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0 },
+    panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -963,34 +966,33 @@ export const WILLIAMS = {
     },
   ],
 
-  // —— 虚拟摄影棚：牛津郡 Grove 试车场清冷天穹与白色长条柔光箱 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#1E2D4A',             // 清冷英伦夜蓝天穹
-    horizon: '#0E1726',         // 地平线收束色
-    ground: '#050B14',          // 深邃吸光地表（营造底盘悬浮感）
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超宽纯白主柔光箱（模拟主展厅穹顶天幕反射，勾勒车脊轮廓）
-      { azimuth: 0, elevation: 34, w: 22, h: 1.4, color: '#F4F7FA', intensity: 16 },
-      // 侧向 58° 结构高光切线（刻画侧箱进气道导流折角）
-      { azimuth: 58, elevation: 14, w: 1.5, h: 18, color: '#FFFFFF', intensity: 12 },
-      // 低位蓝光漫射带（模拟地表受光反射，增强鲜蓝层次）
-      { azimuth: -24, elevation: -18, w: 20, h: 0.4, color: '#4089E5', intensity: 7 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 车身空气动力学微起伏：Grove 风洞低风阻导流槽与 Forward W 动量线 ——
   surface: {
     waves: [
-      [0, 0.94, 0.33, 0.05],
-      [0.55, 0.38, 0.25, -0.04],
-      [-0.8, 0.60, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
     crease: {
       dir: [0.38, 0.93],        // 侧向导流折痕方向
       period: 8.2,
       sharpness: 4.8,           // 锐利的侧箱起伏
-      height: 0.12,
+      height: 0,
     },
+    panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -1046,29 +1048,28 @@ export const RED_BULL = {
     },
   ],
 
-  // —— 虚拟摄影棚：米尔顿凯恩斯冠军工坊的暗夜冷调柔光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#10224F',             // 深蓝天幕
-    horizon: '#060F1C',
-    ground: '#020509',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部主柔光箱（宽屏均匀柔和照射，呈现磨砂漆面弧度）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.6, color: '#F5F7FA', intensity: 13 },
-      // 侧向浅蓝光带（呼应提花浅蓝）
-      { azimuth: 60, elevation: 12, w: 1.2, h: 18, color: '#2F5FD6', intensity: 10 },
-      // 低位暖黄光晕（品牌太阳黄，极少量）
-      { azimuth: -18, elevation: -22, w: 20, h: 0.25, color: '#FFC20E', intensity: 5 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 侵略性风刀气动微起伏与向前俯冲刀锋切痕 ——
   surface: {
     waves: [
-      [0.0, 0.90, 0.35, 0.05],
-      [0.50, 0.32, 0.26, -0.04],
-      [-0.75, 0.55, 0.10, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0.13 },
+    crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -1123,29 +1124,29 @@ export const AUDI = {
     },
   ],
 
-  // —— 虚拟摄影棚：因戈尔施塔特精密实验室的高亮冷白矩阵 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#2A323D',             // 冷钛天顶
-    horizon: '#14181F',
-    ground: '#050608',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部超高亮条纹（模拟风洞主天幕，反射出冷冽钛合金光刃）
-      { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
-      // 侧向 55° 精密工业切光
-      { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位 Lava Red 细光带（官方点缀色）
-      { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
+      // 钛金属反射很强：顶光和主光调弱一档，避免 hero 标题落在过曝的光带上
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.6, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 德意志精密模块化折痕与微米级公差导流面 ——
   surface: {
     waves: [
-      [0.0, 0.85, 0.32, 0.04],
-      [0.46, 0.34, 0.25, -0.03],
-      [-0.70, 0.52, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0.11 },
+    crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -1200,29 +1201,29 @@ export const ALPINE = {
     },
   ],
 
-  // —— 虚拟摄影棚：恩斯通风洞天幕，辅以 BWT 电气亮粉底光 ——
+  // —— 影棚效果图布光（与 Mercedes 同一套）：全部中性白光，颜色只来自车漆；品牌色留给涂装线 ——
   studio: {
-    sky: '#0C223A',             // 深邃阿尔派天顶
-    horizon: '#061220',
-    ground: '#04070A',
+    sky: '#2A2C2E',
+    horizon: '#141516',
+    ground: '#050506',
+    blur: 0.012,
     strips: [
-      // 顶部大柔光箱
-      { azimuth: 0, elevation: 35, w: 22, h: 1.4, color: '#FFFFFF', intensity: 15 },
-      // 侧向水蓝高光条
-      { azimuth: 58, elevation: 10, w: 1.2, h: 18, color: '#2CE8FF', intensity: 10 },
-      // 低位 BWT 电气亮粉光晕（标志性蓝粉碰撞）
-      { azimuth: -12, elevation: -25, w: 22, h: 0.28, color: '#FD4BC7', intensity: 11 },
+      // 蓝色金属漆受光后很亮：调弱一档，粉色小字和标签才看得清
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.4, edge: 4, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 流线型气动起伏与侧箱下洗通道 ——
   surface: {
     waves: [
-      [0.0, 0.88, 0.32, 0.04],
-      [0.48, 0.32, 0.25, -0.04],
-      [-0.72, 0.56, 0.11, 0.05],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0.12 },
+    crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0 },
+    panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -1260,11 +1261,11 @@ export const RACING_BULLS = {
     {
       // 阶段 0：Racing White 车身白（#F3F5F9）
       color: '#F3F5F9',
-      metalness: 0.10,
-      roughness: 0.24,
+      metalness: 0.0,          // 实色白漆：白来自漫反射，光泽全部来自清漆
+      roughness: 0.5,
       clearcoat: 1.0,
-      clearcoatRoughness: 0.05,
-      envIntensity: 1.15,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Deep Navy 深海军蓝（#0A1B4D），页面后段的节奏色
@@ -1277,29 +1278,28 @@ export const RACING_BULLS = {
     },
   ],
 
-  // —— 虚拟摄影棚：明快耀眼的纯白天幕与公牛火红点缀 ——
+  // —— 影棚效果图布光（与 Haas 同一套）：中性白光；白车的"白"靠大面积漫射光 ——
   studio: {
-    sky: '#B9C3DB',             // 冷灰蓝天幕：让白漆有层次而不过曝
-    horizon: '#7B88A8',
-    ground: '#0A0E1A',
+    sky: '#A6A8AB',
+    horizon: '#7A7C7F',
+    ground: '#18191A',
+    blur: 0.012,
     strips: [
-      // 顶部超宽白光条（呈现电光宝蓝的流线镜面）
-      { azimuth: 0, elevation: 34, w: 24, h: 1.5, color: '#FFFFFF', intensity: 12 },
-      // 侧向电光蓝反光带
-      { azimuth: 62, elevation: 12, w: 1.5, h: 18, color: '#1E4FD8', intensity: 9 },
-      // 低位公牛活力红微光带
-      { azimuth: -16, elevation: -20, w: 20, h: 0.25, color: '#E51937', intensity: 9 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
   // —— 意式灵动敏捷的空气动力学导流微波 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.35, 0.26, -0.04],
-      [-0.76, 0.58, 0.12, 0.06],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频双曲率，让光带略微弯曲
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0.12 },
+    crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0 },
+    panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],

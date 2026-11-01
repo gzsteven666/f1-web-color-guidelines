@@ -399,6 +399,11 @@
   /* IDENTITY: 队伍专属字体与版式元素 */
   .card, .stat-box { clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%); }
   .seam-banner { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M14 0L28 14L14 28L0 14Z' fill='none' stroke='%232F5FD6' stroke-opacity='0.18'/%3E%3C/svg%3E"); background-size: 28px 28px; }
+
+  /* 影棚主光带会扫过 hero：浅色标题与标签落在高光上时看不清。
+     给标题、导语加深色光晕，给标签垫一层半透明深底；不加大面积色块，车漆仍然透出来 */
+  .hero h1, .hero .hero-p { text-shadow: 0 0 28px rgba(3, 5, 9, 0.8), 0 0 6px rgba(3, 5, 9, 0.55); }
+  .hero .badge { background-color: rgba(3, 5, 9, 0.72); }
 </style>
 </head>
 <body>

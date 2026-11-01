@@ -395,6 +395,11 @@
   }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::after { content: ""; display: block; width: 200px; height: 11px; margin-top: 18px; background: repeating-linear-gradient(90deg, #D2D7DF 0 1px, transparent 1px 8px) 0 100% / 100% 5px no-repeat, repeating-linear-gradient(90deg, #D2D7DF 0 1px, transparent 1px 40px) 0 100% / 100% 11px no-repeat; }
+
+  /* 影棚主光带会扫过 hero：浅色标题与标签落在高光上时看不清。
+     给标题、导语加深色光晕，给标签垫一层半透明深底；不加大面积色块，车漆仍然透出来 */
+  .hero h1, .hero .hero-p { text-shadow: 0 0 28px rgba(3, 5, 9, 0.8), 0 0 6px rgba(3, 5, 9, 0.55); }
+  .hero .badge { background-color: rgba(3, 5, 9, 0.72); }
 </style>
 </head>
 <body>
