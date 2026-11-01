@@ -27,7 +27,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <script type="importmap">
 {
   "imports": {
@@ -57,8 +57,8 @@
     --hairline:        rgba(247, 247, 245, 0.14);
     --hairline-strong: rgba(247, 247, 245, 0.30);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Sora", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 3px;                           /* McLaren 风格：轻量化几何 */
@@ -342,6 +342,8 @@
     footer .wrap { flex-direction: column; gap: 20px; }
     footer .note { text-align: left; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 96px; height: 8px; background: linear-gradient(90deg, #FF8000 0 80%, #4FD5D6 80% 100%); clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); }
 </style>
 </head>
 <body>

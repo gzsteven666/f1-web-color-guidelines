@@ -28,7 +28,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <!--
   依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
 -->
@@ -62,8 +62,8 @@
     --hairline:        rgba(244, 247, 250, 0.14);
     --hairline-strong: rgba(244, 247, 250, 0.30);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Plus Jakarta Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 2px;                           /* 英国赛车精密机械公差：硬朗干练微圆角 */
@@ -399,6 +399,8 @@
     .index-row { grid-template-columns: 48px 1fr 32px; }
     .index-row p { grid-column: 2 / -1; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 88px; height: 7px; background: linear-gradient(#F4F7FA, #F4F7FA) 0 0 / 100% 3px no-repeat, linear-gradient(#D6293E, #D6293E) 0 6px / 100% 1px no-repeat; }
 </style>
 </head>
 <body>

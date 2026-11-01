@@ -9,14 +9,9 @@
   ============================================================
   Audi Revolut F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  依据 2026 规则赛车 R26 官方设计语汇与 references/audi.md：
-  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
-    航空级冰钛冷银（Titanium Ice Silver）高金属镜面反射贯穿整屏
-  - 钛银向玄武岩碳黑流动：首屏钛冷银车头，经过 [data-seam] 过渡区后
-    平滑流向车身后段的玄武岩碳黑底盘（Basalt Carbon Black）
-  - 德系工业理性：微米级公差网格与包豪斯模块化结构
-  - 高压电能猩红：奥迪运动高能猩红（High-Voltage Red）作为动能释放与主行动点
-  - 贯穿线：奥迪运动高能猩红线配纯白电弧笔尖（racing-line.js）穿透页面各段落
+  依据 2026 官方涂装发布（钛金属饰面、外露碳纤维、Lava Red 点缀；见
+  references/official-2026-sources.md）与 references/audi.md。HEX 为网页复现建议值。
+  - 前后段经过 [data-seam] 过渡区平滑插值；贯穿线由 racing-line.js 绘制
 
   ⚠ 本文件是生成物：共享核心已内联，可直接双击打开。
   ============================================================
@@ -30,7 +25,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <script type="importmap">
 {
   "imports": {
@@ -58,8 +53,8 @@
     --hairline:        rgba(210, 215, 223, 0.12);
     --hairline-strong: rgba(245, 5, 55, 0.40);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Manrope", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 2px;                           /* 德意志工业严谨公差：紧凑微倒角 */
@@ -398,6 +393,8 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal { opacity: 1 !important; transform: none !important; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::after { content: ""; display: block; width: 200px; height: 11px; margin-top: 18px; background: repeating-linear-gradient(90deg, #D2D7DF 0 1px, transparent 1px 8px) 0 100% / 100% 5px no-repeat, repeating-linear-gradient(90deg, #D2D7DF 0 1px, transparent 1px 40px) 0 100% / 100% 11px no-repeat; }
 </style>
 </head>
 <body>
@@ -411,7 +408,7 @@
     <div class="nav-logo">
       <span>Audi Revolut F1 Team</span>
     </div>
-    <div class="nav-tag">2026 R26 // VORSPRUNG 2026</div>
+    <div class="nav-tag">2026 R26 // TITANIUM &amp; CARBON</div>
   </div>
 </header>
 
@@ -420,36 +417,36 @@
   <section class="hero" data-line="18,15 45,50 82,85">
     <div class="wrap">
       <div class="badge reveal">
-        <span>CHASSIS R26 // NEUBURG & INGOLSTADT HQ</span>
+        <span>CHASSIS R26 // NEUBURG &amp; INGOLSTADT</span>
       </div>
       <h1 class="reveal" style="--d: 80ms">
-        Titanium Ice<br>
-        <span class="accent">Precision</span> 2026
+        Titanium Finish<br>
+        <span class="accent">Lava Red</span> 2026
       </h1>
       <p class="hero-p reveal" style="--d: 160ms">
-        以包豪斯德意志精密理性为基准，让航天级冰钛冷银金属车漆与玄武岩碳黑底盘包裹页面。奥迪运动高能猩红如 350kW 电能高压电弧贯穿全屏。
+        官方 2026 涂装以钛金属饰面搭配外露碳纤维，Lava Red 只作点缀。页面里钛银是车身，碳黑是底盘，红色只是一条细线。
       </p>
       <div class="actions reveal" style="--d: 240ms">
-        <a href="#engineering" class="btn btn-primary">探索钛金工程</a>
-        <a href="#powertrain" class="btn btn-ghost">350kW 电能系统</a>
+        <a href="#powertrain" class="btn btn-primary">动力单元</a>
+        <a href="#engineering" class="btn btn-ghost">涂装细节</a>
       </div>
 
       <div class="stats-bar reveal" style="--d: 320ms">
         <div class="stat-box">
           <div class="stat-val">1.95<span class="unit">s</span></div>
-          <div class="stat-lbl">因戈尔施塔特精密进站指数</div>
+          <div class="stat-lbl">因戈尔施塔特精密进站指数（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">1055<span class="unit">bhp</span></div>
-          <div class="stat-lbl">Neuburg Works 综合输出</div>
+          <div class="stat-lbl">Neuburg Works 综合输出（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">350<span class="unit">km/h</span></div>
-          <div class="stat-lbl">低风阻模式极速</div>
+          <div class="stat-lbl">低风阻模式极速（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">350<span class="unit">kW</span></div>
-          <div class="stat-lbl">MGU-K 瞬间电能输出</div>
+          <div class="stat-lbl">MGU-K 瞬间电能输出（示意）</div>
         </div>
       </div>
     </div>
@@ -459,38 +456,38 @@
   <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
     <div class="wrap">
       <div class="seam-meta">Surface Seam // Transition Zone</div>
-      <div class="seam-title">TITANIUM ICE SILVER ➔ BASALT CARBON BLACK</div>
+      <div class="seam-title">TITANIUM ➔ EXPOSED CARBON</div>
       <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
-        视口滚动经过此区域时，背景车身材质插值渐变，观察航空钛银高金属反射面平滑过渡至后半段玄武岩碳纤结构。
+        滚动经过此区域时，钛银车身平滑过渡到外露碳纤维的黑色后段，红色细线沿过渡区收束。
       </p>
     </div>
   </div>
 
-  <!-- 工程架构 -->
+  <!-- 涂装细节 -->
   <section id="engineering" data-line="20,12 55,46 78,88">
     <div class="wrap">
-      <div class="section-tag reveal">Aerospace Engineering</div>
-      <h2 class="section-title reveal">2026 规则德意志航天级精密公差</h2>
+      <div class="section-tag reveal">Livery Details</div>
+      <h2 class="section-title reveal">2026 涂装：钛金属、碳纤维与一点红</h2>
       <div class="grid-3">
         <div class="card reveal" style="--d: 80ms">
-          <div class="card-code">// 01 · TITANIUM PBR</div>
-          <div class="card-title">冰钛金属纯镜面</div>
+          <div class="card-code">// 01 · TITANIUM FINISH</div>
+          <div class="card-title">钛金属饰面</div>
           <div class="card-desc">
-            底漆金属度达 0.96，清漆粗糙度仅 0.04，带来清冷刀锋般的顶级钛合金反射质感，忠实呈现德国全厂队入局的王者气度。
+            钛银偏冷，金属度约 0.95、粗糙度 0.22，只出现在车头与受光面，不偏黄。
           </div>
         </div>
         <div class="card reveal" style="--d: 160ms">
-          <div class="card-code">// 02 · HIGH-VOLTAGE RED</div>
-          <div class="card-title">奥迪运动高能猩红</div>
+          <div class="card-code">// 02 · EXPOSED CARBON</div>
+          <div class="card-title">外露碳纤维</div>
           <div class="card-desc">
-            奥迪运动标志性高能猩红（#F50537）作为赛道贯穿线主色，纯白电弧笔尖如高压电能闪耀破空。
+            碳黑承担底盘与页面后段；斜纹纹理只用 5% 不透明度，不进入正文区。
           </div>
         </div>
         <div class="card reveal" style="--d: 240ms">
-          <div class="card-code">// 03 · BASALT CARBON</div>
-          <div class="card-title">玄武岩编织单体壳</div>
+          <div class="card-code">// 03 · LAVA RED</div>
+          <div class="card-title">Lava Red 点缀</div>
           <div class="card-desc">
-            底板与后部下洗区采用致密玄武岩碳纤维，坚实承托车体结构，并与钛银形成高反差双色对比。
+            红色是点缀：只做细线、状态点和一个主按钮，面积不超过 3%。
           </div>
         </div>
       </div>
@@ -500,10 +497,10 @@
   <!-- 动力总成 -->
   <section id="powertrain" data-line="78,14 48,52 18,92">
     <div class="wrap">
-      <div class="section-tag reveal">Power Unit Architecture</div>
-      <h2 class="section-title reveal">诺伊堡全厂队混合动力单元</h2>
+      <div class="section-tag reveal">Powertrain</div>
+      <h2 class="section-title reveal">Audi AFR 26 Hybrid 动力单元</h2>
       <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
-        突破科技，启迪未来。奥迪以自主研发的 2026 规程动力单元宣告新时代的到来。高度集成化电池、电控与动力单元，释放惊人的瞬间扭矩。
+        R26 使用 Audi AFR 26 Hybrid 动力单元。页面里的数字均为示意数据。
       </p>
       <div class="actions reveal" style="--d: 80ms">
         <a href="#" class="btn btn-primary">返回顶部 ↑</a>
@@ -515,7 +512,7 @@
 <footer>
   <div class="wrap footer-inner">
     <span>Audi Revolut F1 Team // R26 Continuous Surface UI</span>
-    <span>Based on FIA 2026 Technical Regulations</span>
+    <span>配色为网页复现值，非官方色号；页面数字为示意数据</span>
   </div>
 </footer>
 
@@ -1126,7 +1123,7 @@ export const AUDI = {
       { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
       // 侧向 55° 精密工业切光
       { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位奥迪运动高能猩红脉冲光（High-Voltage 350kW MGU-K 指示）
+      // 低位 Lava Red 细光带（官方点缀色）
       { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
     ],
   },
@@ -1144,7 +1141,7 @@ export const AUDI = {
     pointer: [0.09, 0.04],
   },
 
-  // —— 贯穿赛道线：奥迪运动高能猩红（High-Voltage Red），纯白电弧笔尖 ——
+  // —— 贯穿赛道线：Lava Red 细线，纯白笔尖 ——
   line: {
     color: '#F50537',           // 奥迪运动高能猩红
     tipColor: '#FFFFFF',        // 纯白电弧笔尖

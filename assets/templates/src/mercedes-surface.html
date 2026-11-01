@@ -29,7 +29,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <!--
   依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
   第二行是一个小技巧：jsDelivr 的 three.module.min.js 内部 import 的是未压缩的
@@ -65,8 +65,8 @@
     --hairline:        rgba(200, 204, 206, 0.16);
     --hairline-strong: rgba(200, 204, 206, 0.34);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Inter Tight", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 4px;                           /* Mercedes 圆角：精密、统一（web-craft.md） */
@@ -416,6 +416,9 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal, .js .hero-title .line > span { opacity: 1 !important; transform: none !important; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 96px; height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M6 0L12 6L6 12L0 6Z' fill='none' stroke='%2300A19B' stroke-opacity='1' stroke-width='1'/%3E%3C/svg%3E") repeat-x; }
+  .seam { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M6 0L12 6L6 12L0 6Z' fill='none' stroke='%23C8CCCE' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E"); background-size: 24px 12px; }
 </style>
 </head>
 <body>
