@@ -38,6 +38,9 @@ const VIEWPORTS = [
 ];
 // 表面页的入场动效有 3 秒兜底（见 SKILL 里的 failsafe），等它跑完再看
 const SETTLE_MS = 3800;
+// 无显卡的 CI 上软件渲染很慢，入场过渡可能在 SETTLE_MS 时仍走到一半（opacity 0.8~0.9），
+// 所以到点后再给一段轮询时间等标题完全不透明；真正卡在透明（黑屏 bug）的页面仍会超时失败
+const OPACITY_WAIT_MS = 10_000;
 
 const files = (await readdir(TEMPLATES))
   .filter((f) => f.endsWith('.html'))
@@ -61,6 +64,12 @@ for (const file of files) {
 
     await page.goto(pathToFileURL(path.join(TEMPLATES, file)).href, { waitUntil: 'load', timeout: 45_000 });
     await page.waitForTimeout(SETTLE_MS);
+    await page
+      .waitForFunction(() => {
+        const h = document.querySelector('h1, .hero-display, .hero-title');
+        return !h || Number(getComputedStyle(h).opacity) >= 0.99;
+      }, undefined, { timeout: OPACITY_WAIT_MS })
+      .catch(() => {});
 
     const info = await page.evaluate(() => {
       const h = document.querySelector('h1, .hero-display, .hero-title');
