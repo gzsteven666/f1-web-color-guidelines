@@ -10,7 +10,9 @@
  *   livery   涂装阶段。页面滚动时 tone 从 0 走到 livery.length - 1，
  *            车漆在相邻两个阶段之间插值（颜色、金属度、粗糙度……）
  *   studio   摄影棚：几条长条柔光箱，决定反射带长什么样、在哪里
+ *            可选 blur（预滤波模糊，默认 0.04）；strip 可选 edge（渐变边宽度）与 falloff（长度方向中心加权）
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
+ *            可选 panel（凸面板件 + 圆角折线），见 paint-surface.js 顶部说明
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -49,27 +51,33 @@ export const MERCEDES = {
     },
   ],
 
+  // —— 影棚效果图布光：全部中性白光，颜色只来自车漆本身 ——
+  // PETRONAS 青绿不再打在灯上（官方影棚图里没有彩色灯），它留给贯穿全页的涂装线
   studio: {
-    sky: '#6E787C',            // 冷灰棚顶：银漆的"银"主要来自这里
-    horizon: '#262D30',
-    ground: '#0A0C0E',
+    sky: '#2A2C2E',            // 中性深灰棚顶
+    horizon: '#141516',
+    ground: '#050506',         // 黑色地面：板件下半部反射它，形成上亮下暗
+    blur: 0.012,               // 预滤波很轻，清漆上能看清柔光箱轮廓
     strips: [
-      { azimuth: 0, elevation: 32, w: 20, h: 1.4, color: '#FFFFFF', intensity: 14 },
-      { azimuth: 0, elevation: 13, w: 24, h: 0.3, color: '#FFFFFF', intensity: 10 },
-      { azimuth: 62, elevation: 6, w: 0.9, h: 16, color: '#DFE6EA', intensity: 5 },
-      // 低位 PETRONAS 青绿灯条（官方语义：PETRONAS green flow line 低位扫过车身）
-      { azimuth: -8, elevation: -28, w: 20, h: 0.22, color: '#00A19B', intensity: 11 },
+      // 顶部大面积光天幕：板件上半部的大片柔和银色渐变
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
+      // 主光条：板件上缘那道又长又利落的高光
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
+      // 侧面竖条柔光箱：给反射加一道纵向分割
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F4F6F8', intensity: 4, edge: 0.6 },
+      // 低位轮廓光：板件下缘一条细亮线，勾出车身边界
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.6, edge: 0.12, falloff: 0.5 },
     ],
   },
 
+  // —— 车身：一块块绷紧的凸面板件 + 圆角折线，而不是丝绸般的交叉波纹 ——
   surface: {
     waves: [
-      [0.0, 0.92, 0.34, 0.05],
-      [0.52, 0.34, 0.28, -0.04],
-      [-0.78, 0.58, 0.11, 0.06],
-      [1.6, 1.15, 0.025, -0.08],
+      [0.2, 0.06, 0.55, 0.02],   // 极低频的双曲率：让光带略微弯曲，不至于是死直线
+      [-0.12, 0.3, 0.14, -0.015],
     ],
-    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0.11 },
+    crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0 },
+    panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -805,13 +813,14 @@ export const HAAS = {
   // —— 涂装阶段：2026 官方为白色与红色涂装（TGR 冠名合作）；HEX 为网页复现值 ——
   livery: [
     {
-      // 阶段 0：Haas White 车身白（#F4F5F7）
+      // 阶段 0：Haas White 车身白（#F4F5F7）。实色白漆：底漆不含金属（白来自漫反射），
+      // 光泽全部来自清漆 —— 这样白车是干净的白，高光是清漆上利落的灯带，而不是一层银灰色反光
       color: '#F4F5F7',
-      metalness: 0.12,
-      roughness: 0.26,
-      clearcoat: 0.9,
-      clearcoatRoughness: 0.08,
-      envIntensity: 1.15,
+      metalness: 0.0,
+      roughness: 0.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.04,
+      envIntensity: 1.0,
     },
     {
       // 阶段 1：Carbon Ink 近黑（#101114），页面后段的数据面板底色（节奏选择，非官方涂装）
@@ -824,29 +833,29 @@ export const HAAS = {
     },
   ],
 
-  // —— 虚拟摄影棚：北卡罗来纳坎纳波利斯工业车间的硬朗光感 ——
+  // —— 影棚效果图布光：中性白光；白车的"白"靠大面积漫射光，而不是把天顶调成浅蓝灰 ——
+  // 去掉了原来的红色灯条：它在白漆上反射成粉红色污渍。Haas 红留给贯穿全页的涂装线
   studio: {
-    sky: '#BDC2CB',             // 冷灰天顶：白漆不过曝
-    horizon: '#80858F',
-    ground: '#060708',
+    sky: '#A6A8AB',             // 中性浅灰棚顶：白漆的漫反射亮度主要来自这里
+    horizon: '#7A7C7F',
+    ground: '#18191A',          // 深灰地面：板件下缘自然变暗，但不发黑发脏
+    blur: 0.012,
     strips: [
-      // 顶部大功率白光天幕
-      { azimuth: 0, elevation: 35, w: 22, h: 1.3, color: '#FFFFFF', intensity: 12 },
-      // 侧向机加工合金冷光
-      { azimuth: 56, elevation: 12, w: 1.2, h: 16, color: '#A4ABB6', intensity: 8 },
-      // 低位 Haas 红光带
-      { azimuth: -14, elevation: -24, w: 20, h: 0.22, color: '#E0201B', intensity: 8 },
+      { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
+      { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
+      { azimuth: 58, elevation: 8, w: 1.6, h: 14, color: '#F6F6F6', intensity: 3, edge: 0.6 },
+      { azimuth: -4, elevation: -16, w: 24, h: 0.3, color: '#FFFFFF', intensity: 2.2, edge: 0.12, falloff: 0.5 },
     ],
   },
 
-  // —— 美式机加工紧密公差切角与直角导流槽 ——
+  // —— 车身：绷紧的凸面板件 + 圆角折线（白漆是实色漆，不加金属闪粒） ——
   surface: {
     waves: [
-      [0.0, 0.82, 0.30, 0.04],
-      [0.44, 0.30, 0.24, -0.03],
-      [-0.68, 0.50, 0.10, 0.04],
+      [0.2, 0.06, 0.5, 0.02],
+      [-0.12, 0.3, 0.12, -0.015],
     ],
-    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0.11 },
+    crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0 },
+    panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
