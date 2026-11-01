@@ -603,7 +603,7 @@ export const AUDI = {
       { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
       // 侧向 55° 精密工业切光
       { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位奥迪运动高能猩红脉冲光（High-Voltage 350kW MGU-K 指示）
+      // 低位 Lava Red 细光带（官方点缀色）
       { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
     ],
   },
@@ -621,7 +621,7 @@ export const AUDI = {
     pointer: [0.09, 0.04],
   },
 
-  // —— 贯穿赛道线：奥迪运动高能猩红（High-Voltage Red），纯白电弧笔尖 ——
+  // —— 贯穿赛道线：Lava Red 细线，纯白笔尖 ——
   line: {
     color: '#F50537',           // 奥迪运动高能猩红
     tipColor: '#FFFFFF',        // 纯白电弧笔尖

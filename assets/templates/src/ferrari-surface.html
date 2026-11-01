@@ -28,7 +28,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <!--
   依赖走 CDN 并锁定版本（与 showcase/ 的 npm 版本一致）。
 -->
@@ -61,8 +61,8 @@
     --hairline:        rgba(244, 242, 238, 0.16);
     --hairline-strong: rgba(244, 242, 238, 0.34);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Barlow Condensed", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 2px;                           /* Ferrari 风格：棱角锐利、紧绷雕塑感 */
@@ -364,6 +364,8 @@
     footer .wrap { flex-direction: column; gap: 20px; }
     footer .note { text-align: left; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 64px; height: 5px; background: linear-gradient(90deg, #D3141C 0 78%, transparent 78% 86%, #D3141C 86% 100%); }
 </style>
 </head>
 <body>

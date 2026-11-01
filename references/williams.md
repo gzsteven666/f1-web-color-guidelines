@@ -4,7 +4,7 @@
 
 做出 **坚定、明亮、纯粹且带有英国顶级工程传承与夺冠底蕴** 的网页视觉，彻底摆脱泛泛无奇的“企业蓝 SaaS 后台”或“普通科技蓝模板”。
 
-整体严格遵循 Atlassian Williams F1 Team 针对 2026 规则赛车 **FW48** 的官方设计语汇：**高光泽鲜蓝（Vibrant Gloss Blue）作为绝对主识别与车头曲面，从车身侧壁流向尾部的空气动力学流动黑色（Flowing Carbon Black）压稳机械重心，前翼、侧箱切口与端板的大面积结构白（Structural Wing White）形成极高对比的几何分区，以及在蓝黑相接的轮廓线上、仅有一笔极细的红白双色历史冠军描边（Championship Heritage Keyline）**。
+整体依据 Atlassian Williams F1 Team 针对 2026 规则赛车 **FW48** 公布的涂装信息：**高光泽鲜蓝（Vibrant Gloss Blue）作为绝对主识别与车头曲面，从车身侧壁流向尾部的空气动力学流动黑色（Flowing Carbon Black）压稳机械重心，前翼、侧箱切口与端板的大面积结构白（Structural Wing White）形成极高对比的几何分区，以及在蓝黑相接的轮廓线上、仅有一笔极细的红白双色历史冠军描边（Championship Heritage Keyline）**。
 
 2026 年是威廉姆斯迈向新时代的工程纪元，设计语言连接了 Frank Williams 爵士经典的“Forward W”向前动量与牛津郡格罗夫（Grove HQ）的尖端复合材料科技。网页转译时必须保持这四者的结构秩序：**蓝色是身份，黑色是机械骨架，白色是结构切面，红色是不可多得的历史勋印**。
 
@@ -34,7 +34,7 @@
 * **车漆受光蓝 / Blue Highlight**：`#4089E5`
   * 3D 曲面朝向摄影棚主光源时的反射亮带，以及交互激活高光。
 * **深海夜蓝底 / Deep Abyss Blue**：`#050B14`
-  * 页面的终极底色，比纯黑更深邃、带有冷蓝色调的太空暗部。
+  * 页面最深的底色，比纯黑更深、带冷蓝色调。
 * **流动车体碳黑 / Flowing Chassis Black**：`#0A1220`
   * 侧箱下洗区、扩散器与后半部结构收束色，承载机械体积感。
 * **结构羽白 / Wing White**：`#F4F7FA`

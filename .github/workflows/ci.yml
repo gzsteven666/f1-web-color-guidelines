@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# 同一分支上的新提交会取消还在跑的旧检查
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            showcase/package-lock.json
+
+      - name: 安装依赖
+        run: |
+          npm ci
+          npm --prefix showcase ci
+
+      # 单文件模板必须与 src + 共享核心同步（防止只改源文件、忘了重新生成）
+      - name: 模板同步检查
+        run: npm run build:templates:check
+
+      # 色板单一来源 tokens/*.json 与文档、车漆预设、showcase 数据、tokens.css 一致
+      - name: 色板一致性检查
+        run: npm run check:tokens
+
+      # 浅色 editorial 模板的 WCAG AA 对比度
+      - name: 对比度检查
+        run: npm run check:contrast
+
+      # tsc 类型检查 + vite 构建（prebuild 会把模板同步到 showcase）
+      - name: Showcase 构建
+        run: npm run build:showcase
+
+      # 打开每个模板的桌面 / 手机视口，检查标题可见、无横向溢出、无 JS 异常、截图非空白
+      - name: 安装浏览器
+        run: npx playwright install --with-deps chromium
+
+      - name: 模板截图冒烟检查
+        run: npm run check:screenshots
+
+      - name: 上传截图
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: template-screenshots
+          path: test-results/screenshots/
+          retention-days: 14

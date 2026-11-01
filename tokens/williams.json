@@ -1,0 +1,38 @@
+{
+  "id": "williams",
+  "team": "Atlassian Williams F1 Team",
+  "car": "FW48",
+  "officialHex": false,
+  "basis": "官方：高光泽蓝、流动黑、白色结构面、红白历史描边。HEX 为复现值。",
+  "reference": "references/williams.md",
+  "tokens": [
+    {
+      "name": "FW48 Gloss Blue",
+      "role": "Primary Signature & High-Gloss Basecoat",
+      "hex": "#0858C9",
+      "usage": "车头主漆、主行动按钮、Hero 镜面反射焦点",
+      "scope": "web"
+    },
+    {
+      "name": "Flowing Carbon Black",
+      "role": "Chassis Downwash & Rear Structure",
+      "hex": "#0A1220",
+      "usage": "侧箱下洗区、后扩散器与底盘机械暗部",
+      "scope": "web"
+    },
+    {
+      "name": "Wing White",
+      "role": "Aerodynamic Structural Wing White",
+      "hex": "#F4F7FA",
+      "usage": "前翼端板、侧箱切面白、赛道贯穿线主色",
+      "scope": "web"
+    },
+    {
+      "name": "Heritage Red",
+      "role": "Championship Heritage Dual Keyline",
+      "hex": "#D6293E",
+      "usage": "蓝黑接缝双轨细线、贯穿线笔尖端点（< 1% 极限量）",
+      "scope": "web"
+    }
+  ]
+}

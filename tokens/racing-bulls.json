@@ -1,0 +1,38 @@
+{
+  "id": "racing-bulls",
+  "team": "Visa Cash App Racing Bulls",
+  "car": "VCARB",
+  "officialHex": false,
+  "basis": "官方：白色设计 + 蓝色点缀。HEX 为复现值。",
+  "reference": "references/racing-bulls.md",
+  "tokens": [
+    {
+      "name": "Racing White",
+      "role": "Gloss Body Basecoat",
+      "hex": "#F3F5F9",
+      "usage": "车身主色、前段纸面与高对比留白（网页复现值）",
+      "scope": "web"
+    },
+    {
+      "name": "Accent Blue",
+      "role": "Structure Lines & Buttons",
+      "hex": "#1E4FD8",
+      "usage": "点缀蓝：按钮、结构线、图表主系列（呼应福特合作）",
+      "scope": "web"
+    },
+    {
+      "name": "Deep Navy",
+      "role": "Rear Section Canvas",
+      "hex": "#0A1B4D",
+      "usage": "页面后段画布、深色横带",
+      "scope": "web"
+    },
+    {
+      "name": "Bull Red",
+      "role": "Emblem Accent & Pulse Tip",
+      "hex": "#E51937",
+      "usage": "牛头徽标式点睛与笔尖（< 1%）",
+      "scope": "web"
+    }
+  ]
+}

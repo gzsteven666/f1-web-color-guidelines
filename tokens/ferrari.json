@@ -1,0 +1,38 @@
+{
+  "id": "ferrari",
+  "team": "Scuderia Ferrari HP",
+  "car": "SF-26",
+  "officialHex": false,
+  "basis": "官方：更亮的 Rosso Scuderia、白色结构角色、高光泽烤漆回归。HEX 为复现值。",
+  "reference": "references/ferrari.md",
+  "tokens": [
+    {
+      "name": "Rosso Scuderia Base",
+      "role": "Primary Signature & High Gloss Basecoat",
+      "hex": "#D3141C",
+      "usage": "主车身识别烤漆、高识别行动按钮、核心数据",
+      "scope": "web"
+    },
+    {
+      "name": "Ferrari White",
+      "role": "Structural Flow Line & Cockpit Contour",
+      "hex": "#F4F2EE",
+      "usage": "贯穿全页的赛道线、结构切面、卡片外沿边界",
+      "scope": "web"
+    },
+    {
+      "name": "Rosso Shadow",
+      "role": "Chassis Underside & Aerodynamic Troughs",
+      "hex": "#6D0F13",
+      "usage": "后段车身暗影、高对比卡片背景、深度过渡",
+      "scope": "web"
+    },
+    {
+      "name": "Giallo Modena Accent",
+      "role": "Heritage Tip & Warning Signals",
+      "hex": "#F7D117",
+      "usage": "赛道笔尖指示、极限量血统点睛、峰值提示",
+      "scope": "web"
+    }
+  ]
+}

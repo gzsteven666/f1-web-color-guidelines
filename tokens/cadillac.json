@@ -1,0 +1,38 @@
+{
+  "id": "cadillac",
+  "team": "Cadillac Formula 1 Team",
+  "car": "MAC-26",
+  "officialHex": false,
+  "basis": "官方：黑到白的 chevron 渐变（首发涂装为一侧黑一侧白，赛季中改为以白为主）。HEX 为复现值。",
+  "reference": "references/cadillac.md",
+  "tokens": [
+    {
+      "name": "American Racing White",
+      "role": "Primary Signature & Sculpted Basecoat",
+      "hex": "#F7F8F9",
+      "usage": "首屏雕塑冷白、主文字、纯净高反差标识",
+      "scope": "web"
+    },
+    {
+      "name": "Technical Silver",
+      "role": "Chevron Edge & Precision Flow Line",
+      "hex": "#E4E7EA",
+      "usage": "贯穿全页银白赛道线、几何边缘切角、辅助边线",
+      "scope": "web"
+    },
+    {
+      "name": "Bold Attitude Black",
+      "role": "Rear Chassis & Dark Aerodynamic Frame",
+      "hex": "#060606",
+      "usage": "后半段深色车身、钢琴黑清漆高光、极黑暗区",
+      "scope": "web"
+    },
+    {
+      "name": "Sculpted Titanium Gray",
+      "role": "Mid-Tone Structural Facets",
+      "hex": "#3D4247",
+      "usage": "Chevron 几何过渡块、中性数据图表基线",
+      "scope": "web"
+    }
+  ]
+}

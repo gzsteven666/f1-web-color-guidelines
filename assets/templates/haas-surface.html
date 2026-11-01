@@ -27,7 +27,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <script type="importmap">
 {
   "imports": {
@@ -56,8 +56,8 @@
     --hairline:        rgba(244, 245, 247, 0.12);
     --hairline-strong: rgba(224, 32, 27, 0.50);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Barlow", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 2px;
@@ -413,6 +413,8 @@
   @media (max-width: 760px) {
     .paint-shade { background: linear-gradient(180deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.24) 100%); }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 40px; height: 8px; background: linear-gradient(90deg, #E0201B 0 14px, transparent 14px 18px, #E0201B 18px 32px, transparent 32px 36px, #F4F5F7 36px 40px); }
 </style>
 </head>
 <body>
@@ -1141,7 +1143,7 @@ export const AUDI = {
       { azimuth: 0, elevation: 36, w: 22, h: 1.2, color: '#FFFFFF', intensity: 18 },
       // 侧向 55° 精密工业切光
       { azimuth: 55, elevation: 12, w: 1.4, h: 16, color: '#E5E9F0', intensity: 12 },
-      // 低位奥迪运动高能猩红脉冲光（High-Voltage 350kW MGU-K 指示）
+      // 低位 Lava Red 细光带（官方点缀色）
       { azimuth: -20, elevation: -24, w: 22, h: 0.25, color: '#F50537', intensity: 12 },
     ],
   },
@@ -1159,7 +1161,7 @@ export const AUDI = {
     pointer: [0.09, 0.04],
   },
 
-  // —— 贯穿赛道线：奥迪运动高能猩红（High-Voltage Red），纯白电弧笔尖 ——
+  // —— 贯穿赛道线：Lava Red 细线，纯白笔尖 ——
   line: {
     color: '#F50537',           // 奥迪运动高能猩红
     tipColor: '#FFFFFF',        // 纯白电弧笔尖

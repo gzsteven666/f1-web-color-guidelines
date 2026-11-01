@@ -8,13 +8,9 @@
   ============================================================
   BWT Alpine F1 Team 配色 · "Surface" 连续车身基准模板
   ============================================================
-  依据 2026 规则赛车 A526 官方设计语汇与 references/alpine.md：
-  - 车漆层：全屏 WebGL PBR 连续车漆（assets/surface/paint-surface.js），
-    高饱和度阿尔派金属蓝（Alpine Metallic Blue）与环境反射贯穿整屏
-  - 蓝向黑流动：首屏阿尔派金属蓝车身，经过 [data-seam] 过渡区后
-    平滑流向车身后段的暗影碳黑底盘（Shadow Carbon Black）
-  - 蓝粉气动碰撞：BWT 标志性电气亮粉（Electric BWT Pink）形成高张力气动刀锋
-  - 贯穿线：BWT 亮粉涂装线配水蓝电弧笔尖（racing-line.js）贯穿整页
+  官方只说明涂装与上一年相似（见 references/official-2026-sources.md）；
+  配色依据 references/alpine.md，HEX 为网页复现建议值。
+  - 前后段经过 [data-seam] 过渡区平滑插值；贯穿线由 racing-line.js 绘制
 
   ⚠ 本文件是源文件：通过 http 访问可直接运行。
     可双击打开的单文件版本由 `npm run build:templates` 生成到 assets/templates/。
@@ -29,7 +25,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
 <script type="importmap">
 {
   "imports": {
@@ -58,8 +54,8 @@
     --hairline:        rgba(246, 248, 251, 0.10);
     --hairline-strong: rgba(253, 75, 199, 0.45);
 
-    --font-display: "Space Grotesk", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
-    --font-sans:    "IBM Plex Sans", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-display: "Outfit", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+    --font-sans:    "IBM Plex Sans", "PingFang SC", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
     --font-mono:    "IBM Plex Mono", "Consolas", monospace;
 
     --r: 2px;
@@ -398,6 +394,8 @@
     *, *::before, *::after { transition: none !important; animation: none !important; }
     .js .reveal { opacity: 1 !important; transform: none !important; }
   }
+  /* IDENTITY: 队伍专属字体与版式元素 */
+  .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 120px; height: 16px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='16'%3E%3Cpath d='M0 8C10 0 20 16 30 8S50 0 60 8S80 16 90 8S110 0 118 8' fill='none' stroke='%230078C1' stroke-width='2'/%3E%3Ccircle cx='117' cy='8' r='3' fill='%23FD4BC7'/%3E%3C/svg%3E") no-repeat; }
 </style>
 </head>
 <body>
@@ -411,7 +409,7 @@
     <div class="nav-logo">
       <span>BWT Alpine F1 Team</span>
     </div>
-    <div class="nav-tag">2026 A526 // ENSTONE AERO</div>
+    <div class="nav-tag">2026 A526 // ENSTONE</div>
   </div>
 </header>
 
@@ -420,36 +418,36 @@
   <section class="hero" data-line="18,15 45,50 82,85">
     <div class="wrap">
       <div class="badge reveal">
-        <span>CHASSIS A526 // ENSTONE & VIRY-CHÂTILLON</span>
+        <span>CHASSIS A526 // ENSTONE &amp; VIRY-CHÂTILLON</span>
       </div>
       <h1 class="reveal" style="--d: 80ms">
-        Aerodynamic<br>
-        <span class="accent">Blue & Pink</span> 2026
+        Alpine Blue<br>
+        <span class="accent">Pink Accent</span> 2026
       </h1>
       <p class="hero-p reveal" style="--d: 160ms">
-        法式赛车浪漫碰撞现代潮流电气。以高光泽阿尔派皇家金属蓝为主体，BWT 标志性电气亮粉如气流刻刀贯穿侧箱下洗通道，暗影碳黑稳稳压牢底盘。
+        官方只说明 A526 的涂装与上一年相似。页面以 Alpine 蓝为车身，碳黑压住底盘，BWT 粉只做一条细线。
       </p>
       <div class="actions reveal" style="--d: 240ms">
-        <a href="#engineering" class="btn btn-primary">探索气动工程</a>
-        <a href="#powertrain" class="btn btn-ghost">法国赛车传奇</a>
+        <a href="#powertrain" class="btn btn-primary">动力单元</a>
+        <a href="#engineering" class="btn btn-ghost">涂装细节</a>
       </div>
 
       <div class="stats-bar reveal" style="--d: 320ms">
         <div class="stat-box">
           <div class="stat-val">2.10<span class="unit">s</span></div>
-          <div class="stat-lbl">恩斯通进站效率指数</div>
+          <div class="stat-lbl">恩斯通进站效率指数（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">1040<span class="unit">bhp</span></div>
-          <div class="stat-lbl">维利-沙蒂永动力单元</div>
+          <div class="stat-lbl">维利-沙蒂永动力单元（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">347<span class="unit">km/h</span></div>
-          <div class="stat-lbl">低阻巡航尾速</div>
+          <div class="stat-lbl">低阻巡航尾速（示意）</div>
         </div>
         <div class="stat-box">
           <div class="stat-val">2<span class="unit">Titles</span></div>
-          <div class="stat-lbl">恩斯通世界冠军传承</div>
+          <div class="stat-lbl">恩斯通世界冠军传承（示意）</div>
         </div>
       </div>
     </div>
@@ -459,38 +457,38 @@
   <div class="seam-banner" data-seam data-line="80,10 50,48 20,90">
     <div class="wrap">
       <div class="seam-meta">Surface Seam // Transition Zone</div>
-      <div class="seam-title">ALPINE METALLIC BLUE ➔ SHADOW CARBON BLACK</div>
+      <div class="seam-title">ALPINE BLUE ➔ SHADOW CARBON</div>
       <p style="font-size: 14px; color: var(--text-2); margin-top: 6px;">
-        滚动浏览，见证高光阿尔派皇家蓝向暗影底盘碳黑的流体交融，BWT 亮粉线勾勒气动通道。
+        滚动经过此区域时，蓝色车身平滑过渡到碳黑后段，粉色细线沿过渡区收束。
       </p>
     </div>
   </div>
 
-  <!-- 工程架构 -->
+  <!-- 涂装细节 -->
   <section id="engineering" data-line="20,12 55,46 78,88">
     <div class="wrap">
-      <div class="section-tag reveal">Aerodynamic Philosophy</div>
-      <h2 class="section-title reveal">2026 规则恩斯通流体动力学</h2>
+      <div class="section-tag reveal">Livery Details</div>
+      <h2 class="section-title reveal">2026 涂装：蓝色体系与一点粉</h2>
       <div class="grid-3">
         <div class="card reveal" style="--d: 80ms">
-          <div class="card-code">// 01 · CANDY METALLIC</div>
-          <div class="card-title">阿尔派皇家金属漆</div>
+          <div class="card-code">// 01 · ALPINE BLUE</div>
+          <div class="card-title">Alpine 蓝金属漆</div>
           <div class="card-desc">
-            金属度 0.85，双层清漆粗糙度 0.05，让阿尔派蓝在强光下呈现通透深邃的湖蓝色泽，展现经典高光法系质感。
+            蓝色带金属感，是车身与血统；受光水蓝只做高光，不做大面积底色。
           </div>
         </div>
         <div class="card reveal" style="--d: 160ms">
-          <div class="card-code">// 02 · ELECTRIC PINK</div>
-          <div class="card-title">BWT 电气亮粉动量</div>
+          <div class="card-code">// 02 · BWT PINK</div>
+          <div class="card-title">BWT 粉点缀</div>
           <div class="card-desc">
-            高饱和电气亮粉（#FD4BC7）作为赛道贯穿线主色，水蓝电弧高亮笔尖为界面注入极速动感与潮流电气张力。
+            粉色只做细线与单点，面积约 4%；2027 年起冠名变为 Gucci，使用前请确认配色。
           </div>
         </div>
         <div class="card reveal" style="--d: 240ms">
-          <div class="card-code">// 03 · FLUID DOWNWASH</div>
-          <div class="card-title">下洗气流导向槽</div>
+          <div class="card-code">// 03 · SHADOW CARBON</div>
+          <div class="card-title">暗影碳黑</div>
           <div class="card-desc">
-            侧箱表面呈现极具流体感的气流引导凹槽（Sharpness 4.4），紧凑下沉引导气流高速冲刷尾翼下部。
+            碳黑压住底盘与页面后段，文字保持冰白，不使用霓虹渐变。
           </div>
         </div>
       </div>
@@ -500,10 +498,10 @@
   <!-- 动力总成 -->
   <section id="powertrain" data-line="78,14 48,52 18,92">
     <div class="wrap">
-      <div class="section-tag reveal">French Racing Pedigree</div>
-      <h2 class="section-title reveal">轻量化与敏捷性的纯正法系传承</h2>
+      <div class="section-tag reveal">Powertrain</div>
+      <h2 class="section-title reveal">Mercedes-AMG F1 M17 动力单元</h2>
       <p style="max-width: 720px; color: var(--text-2); font-size: 16px; margin-bottom: 32px;" class="reveal">
-        源自阿尔卑斯山路的敏捷与轻量哲学，与现代一级方程式尖端科技融为一体。高抗扭单体壳搭配优化气动平衡，让每一寸车身都能高效劈开风阻。
+        A526 使用 Mercedes-AMG F1 M17 动力单元。页面里的数字均为示意数据。
       </p>
       <div class="actions reveal" style="--d: 80ms">
         <a href="#" class="btn btn-primary">返回顶部 ↑</a>
@@ -515,7 +513,7 @@
 <footer>
   <div class="wrap footer-inner">
     <span>BWT Alpine F1 Team // A526 Continuous Surface UI</span>
-    <span>Based on FIA 2026 Technical Regulations</span>
+    <span>配色为网页复现值，非官方色号；页面数字为示意数据</span>
   </div>
 </footer>
 

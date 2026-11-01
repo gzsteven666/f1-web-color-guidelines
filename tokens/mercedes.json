@@ -1,0 +1,38 @@
+{
+  "id": "mercedes",
+  "team": "Mercedes-AMG PETRONAS",
+  "car": "W17",
+  "officialHex": false,
+  "basis": "官方：前银后黑、PETRONAS 青绿点缀、AMG 菱形纹（见 official-2026-sources.md）。HEX 为复现值。",
+  "reference": "references/mercedes.md",
+  "tokens": [
+    {
+      "name": "PETRONAS Green",
+      "role": "Primary Signature & Flow Line",
+      "hex": "#00A19B",
+      "usage": "车身贯穿赛道线、交互主按钮、高光状态指示",
+      "scope": "web"
+    },
+    {
+      "name": "Liquid Silver Arrows",
+      "role": "Front Chassis Metallic Basecoat",
+      "hex": "#C8CCCE",
+      "usage": "首屏主体、金属曲面、大面积柔润高光反射",
+      "scope": "web"
+    },
+    {
+      "name": "Chassis Carbon Black",
+      "role": "Rear Engine Cover & Aero Weave",
+      "hex": "#090A0B",
+      "usage": "后半段车身、高对比度暗区底色、钢琴黑清漆高光",
+      "scope": "surface"
+    },
+    {
+      "name": "Electric Pulse Teal",
+      "role": "Telemetry Glow & Active HUD",
+      "hex": "#27F4D2",
+      "usage": "实时遥测峰值、赛道笔尖指示、高优先级报警",
+      "scope": "surface"
+    }
+  ]
+}

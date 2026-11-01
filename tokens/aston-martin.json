@@ -1,0 +1,38 @@
+{
+  "id": "aston-martin",
+  "team": "Aston Martin Aramco F1 Team",
+  "car": "AMR26",
+  "officialHex": false,
+  "basis": "官方：Aston Martin Racing Green、considered / deliberate 的工程秩序。HEX 为复现值。",
+  "reference": "references/aston-martin.md",
+  "tokens": [
+    {
+      "name": "Racing Green Base",
+      "role": "Primary Signature & Deep Metallic Basecoat",
+      "hex": "#002824",
+      "usage": "主车身识别底色、金属漆深层质感、深邃暗面",
+      "scope": "surface"
+    },
+    {
+      "name": "Green Accent Highlight",
+      "role": "Specular Surface & Lighting Reflection",
+      "hex": "#037A68",
+      "usage": "车身受光高光、主卡片高亮、关键数据",
+      "scope": "web"
+    },
+    {
+      "name": "Lime Accent Line",
+      "role": "Signal Velocity Line & Indicator Tip",
+      "hex": "#A9D23E",
+      "usage": "贯穿全页赛道流线、微量状态强调（< 3% 面积）",
+      "scope": "web"
+    },
+    {
+      "name": "Carbon Matrix Black",
+      "role": "Chassis Floor & Diffuser Shadow",
+      "hex": "#070B0A",
+      "usage": "后半段压暗碳纤维底板、背景层次稳固",
+      "scope": "surface"
+    }
+  ]
+}

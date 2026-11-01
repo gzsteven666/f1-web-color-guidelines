@@ -180,6 +180,9 @@
       linear-gradient(135deg, #06100F 0%, #002420 45%, #04554A 76%, #0B8A74 92%, #29A892 100%);
     clip-path: polygon(0 0, 100% 0, 100% calc(100% - 40px), 0 100%);
     padding: 72px 0 96px;
+    /* 流光层用 translateX 扫过 hero，clip-path 只裁剪绘制、不裁剪可滚动区域，
+       不加 overflow 会在动画期间撑出横向滚动条 */
+    overflow: clip;
   }
   /* 流光层：一条窄光带每 9 秒缓慢扫过车漆表面 */
   .hero::before {

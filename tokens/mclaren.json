@@ -1,0 +1,38 @@
+{
+  "id": "mclaren",
+  "team": "McLaren Mastercard F1 Team",
+  "car": "MCL40",
+  "officialHex": false,
+  "basis": "官方：papaya、anthracite、少量 teal。HEX 为复现值。",
+  "reference": "references/mclaren.md",
+  "tokens": [
+    {
+      "name": "Iconic Papaya Base",
+      "role": "Primary Signature & High-Visibility Front",
+      "hex": "#FF8700",
+      "usage": "前段车身、主行动呼吁、品牌核心身份",
+      "scope": "web"
+    },
+    {
+      "name": "Striking Anthracite",
+      "role": "Chassis Structure & Rear Engine Frame",
+      "hex": "#1E1F22",
+      "usage": "后半段车身、结构骨架、高质感深灰卡片底色",
+      "scope": "web"
+    },
+    {
+      "name": "Teal Velocity Line",
+      "role": "Speed Hint & Dynamic Track Indicator",
+      "hex": "#4FD5D6",
+      "usage": "贯穿全页的极速描线、速度光晕、尖峰指示",
+      "scope": "web"
+    },
+    {
+      "name": "Chrome Wheel Rim Specular",
+      "role": "Google Chrome Wheel Cover & High-Luster Metallic Ring",
+      "hex": "#E2E8F0",
+      "usage": "轮毂罩液态金属铬高光、Chrome 四色微环点缀、精密机械轮廓微反光（< 1% 极小面积）",
+      "scope": "web"
+    }
+  ]
+}
