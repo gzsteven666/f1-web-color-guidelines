@@ -22,6 +22,11 @@
  *     studio.strips 用中性白光、带 edge 渐变边的柔光箱 → 反射是又长又顺、边缘利落的光带，
  *     接近车队发布会和影棚效果图里的车漆。
  *
+ * 影棚空间（studio.backdrop + surface.silhouette，可选）：
+ *   车身不再铺满整页，而是一辆"摆在影棚里的车"。页顶是车身上沿的轮廓，轮廓之上是无缝背景幕墙，
+ *   轮廓线上有一道边缘光；页底是车身下沿，下面是带倒影的地面。轮廓跟着页面内容一起滚动，
+ *   所以读者是从车顶一路看到车底：hero 看到车停在幕墙前，中段是满屏车漆，页脚落到地面上。
+ *
  * 滚动时发生什么：
  *   - 曲面以视差速度向上滑移 → 反射带在屏幕上移动
  *   - 灯光（环境贴图）绕水平轴缓慢旋转 → 光带从上往下扫过
@@ -77,6 +82,26 @@ uniform vec4 uPanel;                 // 板件：(方向 x, 方向 y, 板件宽�
 uniform float uPanelFillet;          // 折线圆角占板件半宽的比例（0 ~ 1）
 varying vec2 vBodyPos;               // 片元在平面上的世界坐标
 
+// —— 影棚空间 ——
+uniform float uStage;                // 1 = 启用轮廓、幕墙与地面；0 = 旧的满屏车漆
+uniform float uPageY;                // 页面已滚动的距离（世界单位，与内容同步，不带惯性）
+uniform float uPageLen;              // 页面最大可滚动距离（世界单位）
+uniform float uHalfW;                // 画面半宽（世界单位），轮廓形状按它归一化，手机和桌面比例一致
+uniform float uPx;                   // 一个屏幕像素对应的世界单位，用来给轮廓边缘抗锯齿
+uniform vec4 uSil;                   // 车身上沿：(基准高度, 斜率, 隆起高度, 隆起位置)，位置按半宽归一化
+uniform vec2 uSilShape;              // (隆起宽度, 车身下沿在页底时的高度)
+uniform vec3 uBackTop;               // 幕墙上部（线性色）
+uniform vec3 uBackBottom;            // 幕墙靠近车身的下部
+uniform vec3 uFloor;                 // 地面
+uniform vec3 uRim;                   // 边缘光颜色 × 强度
+
+// 车身上沿在世界坐标里的高度：一条略微上扬的车身线，加一个像引擎盖 / 侧箱的平缓隆起
+float bodyTopEdge( float x ) {
+  float xn = x / uHalfW;
+  float d = ( xn - uSil.w ) / uSilShape.x;
+  return uSil.x + uSil.y * xn + uSil.z * exp( - d * d ) + uPageY;
+}
+
 // tanh 的导数 sech²：tanh 台阶的"坡度"。腰线正中坡度最大，反射偏折最强，形成一道亮线
 float bodySech2( float x ) {
   float t = tanh( x );
@@ -116,6 +141,41 @@ vec3 bodyNormal( vec2 p ) {
 const BODY_NORMAL_FRAGMENT = /* glsl */ `
 normal = normalize( ( viewMatrix * vec4( bodyNormal( vBodyPos ), 0.0 ) ).xyz ); // 世界空间 → 视图空间
 nonPerturbedNormal = normal;
+`;
+
+// 影棚空间：在 three.js 算完车漆光照之后、色调映射之前，按轮廓把画面分成幕墙 / 车身 / 地面
+const STAGE_FRAGMENT = /* glsl */ `
+if ( uStage > 0.5 ) {
+  vec2 q = vBodyPos;
+  float xn = q.x / uHalfW;
+  vec3 body = gl_FragColor.rgb;
+
+  // 上沿：dTop > 0 在轮廓之上（幕墙），< 0 在车身里
+  float dTop = q.y - bodyTopEdge( q.x );
+  float inBody = 1.0 - smoothstep( - uPx, uPx, dTop );
+  // 边缘光：车身上沿一条 1~2 像素的亮线（受光的车顶边），幕墙一侧带很淡的光晕
+  float rimCore = exp( - max( - dTop, 0.0 ) / ( 2.0 * uPx ) ) * inBody;
+  float rimGlow = exp( - max( dTop, 0.0 ) / 0.12 ) * ( 1.0 - inBody );
+  body += uRim * rimCore;
+
+  // 幕墙：靠近车身处最亮（无缝背景的弯角），往上变暗，左右两侧再压暗一点
+  float up = clamp( dTop / 2.6, 0.0, 1.0 );
+  vec3 back = mix( uBackBottom, uBackTop, smoothstep( 0.0, 1.0, up ) );
+  back *= 1.0 - 0.22 * xn * xn;
+  back += uRim * 0.06 * rimGlow;
+
+  // 下沿：页面滚到底时停在 uSilShape.y 高度，下面是地面
+  float bottom = uSilShape.y - uPageLen + uPageY + 0.06 * xn;
+  float dBot = bottom - q.y;                       // > 0 在地面上
+  float onFloor = smoothstep( - uPx, uPx, dBot );
+  // 地面：车身的模糊倒影随距离衰减，紧贴车底有一道接触阴影
+  float contact = smoothstep( 0.0, 0.05, dBot );
+  vec3 floorCol = uFloor * ( 0.55 + 0.45 * contact ) + body * 0.45 * exp( - dBot / 0.45 ) * contact;
+
+  vec3 col = mix( back, body, inBody );
+  col = mix( col, floorCol, onFloor );
+  gl_FragColor.rgb = col;
+}
 `;
 
 // 摄影棚背景球：上亮下暗的暗色渐变，给银漆一点"天光"
@@ -248,6 +308,9 @@ export class PaintSurface {
     // 页面每滚动一屏，曲面滑移 parallax 屏（换算成世界单位）
     this._target.scroll = (scrollY / vh) * VISIBLE_HEIGHT * this.preset.surface.parallax;
     this._target.progress = maxScroll > 0 ? clampRange(scrollY / maxScroll, 0, 1) : 0;
+    // 轮廓要和页面内容严丝合缝地一起移动：直接写 uniform，不经过惯性阻尼
+    this.uniforms.uPageY.value = (scrollY / vh) * VISIBLE_HEIGHT;
+    this.uniforms.uPageLen.value = (Math.max(0, maxScroll) / vh) * VISIBLE_HEIGHT;
     this._dirty = true;
   }
 
@@ -420,6 +483,17 @@ export class PaintSurface {
       uPanelFillet: { value: 0 },
       uScrollY: { value: 0 },
       uTime: { value: 0 },
+      uStage: { value: 0 },
+      uPageY: { value: 0 },
+      uPageLen: { value: 0 },
+      uHalfW: { value: 1 },
+      uPx: { value: 0.01 },
+      uSil: { value: new THREE.Vector4() },
+      uSilShape: { value: new THREE.Vector2(1, 0) },
+      uBackTop: { value: new THREE.Color() },
+      uBackBottom: { value: new THREE.Color() },
+      uFloor: { value: new THREE.Color() },
+      uRim: { value: new THREE.Color() },
     };
     this._syncSurfaceUniforms();
 
@@ -430,7 +504,8 @@ export class PaintSurface {
         .replace('#include <begin_vertex>', `#include <begin_vertex>\n${BODY_POS_VERTEX}`);
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>\n${BODY_PARS_FRAGMENT}`)
-        .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`);
+        .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`)
+        .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${STAGE_FRAGMENT}`);
     };
 
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
@@ -454,6 +529,19 @@ export class PaintSurface {
     if (panel) u.uPanel.value.set(panel.dir[0], panel.dir[1], panel.period, panel.tilt);
     else u.uPanel.value.set(0, 1, 1, 0);
     u.uPanelFillet.value = panel?.fillet ?? 0;
+
+    // 影棚空间：预设同时给了轮廓和幕墙才启用
+    const sil = surface.silhouette;
+    const backdrop = this.preset.studio.backdrop;
+    u.uStage.value = sil && backdrop ? 1 : 0;
+    if (sil && backdrop) {
+      u.uSil.value.set(sil.top, sil.slope ?? 0, sil.bump ?? 0, sil.bumpX ?? 0);
+      u.uSilShape.value.set(sil.bumpW ?? 0.5, sil.bottom ?? -1.3);
+      u.uBackTop.value.set(backdrop.top);
+      u.uBackBottom.value.set(backdrop.bottom);
+      u.uFloor.value.set(backdrop.floor);
+      u.uRim.value.set(backdrop.rim ?? '#FFFFFF').multiplyScalar(backdrop.rimIntensity ?? 2);
+    }
   }
 
   /* ---------------- 每帧 ---------------- */
@@ -518,6 +606,8 @@ export class PaintSurface {
     // 平面刚好铺满画面（多留 2% 余量）
     const visibleWidth = VISIBLE_HEIGHT * this.camera.aspect;
     this.mesh.scale.set(visibleWidth * 1.02, VISIBLE_HEIGHT * 1.02, 1);
+    this.uniforms.uHalfW.value = visibleWidth / 2;
+    this.uniforms.uPx.value = VISIBLE_HEIGHT / Math.max(1, height);
     this._dirty = true;
   }
 
