@@ -4,3 +4,4 @@ dist/
 .DS_Store
 showcase/public/templates/
 f1-surface-quickshare.zip
+test-results/
