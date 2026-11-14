@@ -19,7 +19,7 @@
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
      1. Design Tokens —— Steep 结构 × Haas
@@ -231,7 +231,7 @@
   }
   .mini-gauge .val small { font-size: 13px; color: var(--muted); }
   .mini-arc-progress {
-    stroke-dashoffset: 52;
+    stroke-dashoffset: 30.4;
     animation: miniSweep 1000ms ease 600ms backwards;
   }
   @keyframes miniSweep { from { stroke-dashoffset: 163.4; } }
@@ -447,6 +447,12 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* CN-TYPE: 中文标题字体 */
+  /* 窄体展示黑：工业标牌。中文标题不再一律宋体：字体、字重、字距按车队气质选 */
+  :root { --font-latin-serif: "Crimson Pro"; --font-latin-sans: "Archivo"; --font-cn-title: var(--font-latin-sans), "ZCOOL QingKe HuangYou", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif; --cn-title-weight: 400; --cn-title-spacing: 0.01em; }
+  .section-title, .data-note h3 { font-family: var(--font-cn-title); font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  .paint-band blockquote { font-family: var(--font-cn-title); font-style: normal; font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  /* /CN-TYPE */
   /* LAYOUT: 车队版式节奏 */
   /* 美式工业：硬边框卡片、粗线、直角。hero=compact · index=cards · title=top · band=full · data=reverse · charts=flat */
   @media (min-width: 821px) {
@@ -475,7 +481,7 @@
 
 <nav>
   <div class="wrap">
-    <div class="nav-logo">Scoperta</div>
+    <div class="nav-logo">Gauge</div>
     <div class="nav-links">
       <a href="#">产品</a>
       <a href="#">客户</a>
@@ -492,7 +498,7 @@
 <header class="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
-    <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
+    <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Shop Floor Ops</span>
     <div class="hero-display" role="heading" aria-level="1">Data, drawn<span class="l2">in <em>Red</em>.</span></div>
   </div>
   <div class="wrap hero-grid">
@@ -507,9 +513,9 @@
 
     <div class="artifacts" aria-label="产品界面残片示意">
       <div class="artifact artifact-1">
-        <div class="label">本月注册</div>
-        <div class="metric num"><span data-count="2.4">2.4</span>k</div>
-        <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
+        <div class="label">本班产量</div>
+        <div class="metric num"><span data-count="1.36">1.36</span>k</div>
+        <div class="delta num"><b>↑ 4.0%</b> vs 上一班</div>
         <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
           <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
                 fill="none" stroke="#E0201B" stroke-width="2" stroke-linecap="round"/>
@@ -517,7 +523,7 @@
         </svg>
       </div>
       <div class="artifact artifact-2">
-        <div class="label">System Load</div>
+        <div class="label">全厂 OEE</div>
         <div class="mini-gauge">
           <svg viewBox="0 0 150 84" aria-hidden="true">
             <path d="M 23 76 A 52 52 0 0 1 127 76"
@@ -526,15 +532,15 @@
                   fill="none" stroke="#E0201B" stroke-width="8" stroke-linecap="round"
                   stroke-dasharray="163.4"/>
           </svg>
-          <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
+          <div class="val num"><span data-count="81.4">81.4</span><small> %</small></div>
         </div>
       </div>
       <div class="artifact artifact-3">
-        <div class="label">实时协作</div>
+        <div class="label">交接班</div>
         <div class="bubbles">
-          <div class="bubble bubble-1">JB</div>
-          <div class="bubble bubble-2">AF</div>
-          <span>2 人正在编辑</span>
+          <div class="bubble bubble-1">RD</div>
+          <div class="bubble bubble-2">JS</div>
+          <span>2 人已签</span>
         </div>
       </div>
     </div>
@@ -547,20 +553,20 @@
     <div class="index-list">
       <a class="index-row" href="#">
         <span class="no">01</span>
-        <h3>问一句，看穿一层</h3>
-        <p>自然语言查询直接下钻到明细。图表是手势般的一根线，不是塞满坐标轴的报表。</p>
+        <h3>每台机床一条线</h3>
+        <p>运行、待机、停机三种状态，按分钟记。不靠手抄。</p>
         <span class="arr">→</span>
       </a>
       <a class="index-row" href="#">
         <span class="no">02</span>
-        <h3>让流程自己跑</h3>
-        <p>工作流在纸面之下安静运转，只有需要你决策的时刻才浮出一张卡片。</p>
+        <h3>停机必须有原因</h3>
+        <p>停机超过五分钟就要选原因。月底排出前五名，逐个解决。</p>
         <span class="arr">→</span>
       </a>
       <a class="index-row" href="#">
         <span class="no">03</span>
-        <h3>权限清晰到行</h3>
-        <p>行级权限与审计一体。红色只出现在你按下去的那个按钮上。</p>
+        <h3>换型时间看得见</h3>
+        <p>每次换型计时并和标准比。红色只标在超时的那一次上。</p>
         <span class="arr">→</span>
       </a>
     </div>
@@ -570,8 +576,8 @@
 <!-- 车漆横带：近黑 → Haas 红的横带，底缘一条白色结构切线 -->
 <section class="paint-band reveal">
   <div class="wrap">
-    <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
-    <cite>— Head of Operations, Vantage Team</cite>
+    <blockquote>"机床不会说谎。停了多久、为什么停、谁去处理，现在墙上的屏幕写得清清楚楚。"</blockquote>
+    <cite>— 车间主任，某机加工厂</cite>
   </div>
 </section>
 
@@ -579,18 +585,18 @@
   <div class="wrap">
     <div class="data-spread">
       <div class="data-note">
-        <h3>渠道，摊开在纸面上。</h3>
-        <p>数据不必装进盒子。发丝线、等宽数字和留白，就是它需要的全部结构。</p>
+        <h3>机床，按稼动率排开。</h3>
+        <p>谁在干活，谁在等料，谁在修。</p>
       </div>
       <table>
         <thead>
-          <tr><th>渠道</th><th class="num">访问</th><th class="num">转化</th><th></th></tr>
+          <tr><th>机床</th><th class="num">稼动率</th><th class="num">停机</th><th></th></tr>
         </thead>
         <tbody>
-          <tr><td>自然搜索</td><td class="num">8,204</td><td class="num">4.2%</td><td><span class="tag-pill">Top</span></td></tr>
-          <tr><td>直接访问</td><td class="num">5,113</td><td class="num">3.1%</td><td></td></tr>
-          <tr><td>社交媒体</td><td class="num">2,882</td><td class="num">2.4%</td><td></td></tr>
-          <tr><td>邮件营销</td><td class="num">1,997</td><td class="num">1.8%</td><td></td></tr>
+          <tr><td>VF-2 #03</td><td class="num">91.2%</td><td class="num">38 min</td><td><span class="tag-pill">Top</span></td></tr>
+          <tr><td>ST-20 #01</td><td class="num">87.5%</td><td class="num">61 min</td><td></td></tr>
+          <tr><td>UMC-750 #02</td><td class="num">84.0%</td><td class="num">79 min</td><td></td></tr>
+          <tr><td>VF-4 #05</td><td class="num">72.6%</td><td class="num">142 min</td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -599,15 +605,15 @@
 
 <section class="section-fog charts reveal">
   <div class="wrap">
-    <h2 class="section-title">图表也说同一种语言。</h2>
+    <h2 class="section-title">一张图只回答一个问题。</h2>
     <div class="chart-grid">
       <figure class="chart-card">
         <figcaption>折线：主数据 vs 对比</figcaption>
-        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据持续上升并高于对比数据">
+        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据（粗线）与对比数据（细线）的走势">
           <line class="grid-line" x1="20" x2="340" y1="28" y2="28"/><line class="grid-line" x1="20" x2="340" y1="68" y2="68"/><line class="grid-line" x1="20" x2="340" y1="108" y2="108"/><line class="grid-line" x1="20" x2="340" y1="148" y2="148"/>
-          <path d="M20.0 116.0 L49.1 110.0 L78.2 112.0 L107.3 104.0 L136.4 100.0 L165.5 96.0 L194.5 94.0 L223.6 88.0 L252.7 90.0 L281.8 82.0 L310.9 84.0 L340.0 78.0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M20.0 110.0 L49.1 102.0 L78.2 106.0 L107.3 88.0 L136.4 92.0 L165.5 80.0 L194.5 82.0 L223.6 68.0 L252.7 56.0 L281.8 50.0 L310.9 42.0 L340.0 28.0" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="340.0" cy="28.0" r="5" fill="var(--accent-2)" stroke="var(--ink)" stroke-width="1.5"/>
+          <path d="M20.0 62.0 L49.1 62.0 L78.2 62.0 L107.3 61.0 L136.4 61.0 L165.5 60.0 L194.5 60.0 L223.6 60.0 L252.7 59.0 L281.8 59.0 L310.9 58.0 L340.0 58.0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M20.0 60.0 L49.1 58.0 L78.2 80.0 L107.3 56.0 L136.4 54.0 L165.5 55.0 L194.5 90.0 L223.6 52.0 L252.7 50.0 L281.8 51.0 L310.9 48.0 L340.0 46.0" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="340.0" cy="46.0" r="5" fill="var(--accent-2)" stroke="var(--ink)" stroke-width="1.5"/>
         </svg>
         <ul class="legend"><li><i style="background:var(--accent)"></i>Haas 红</li><li><i style="background:var(--ink)"></i>墨色</li><li><i style="background:var(--accent-2);box-shadow:0 0 0 1.5px var(--ink)"></i>合金灰端点</li></ul>
       </figure>
@@ -615,7 +621,7 @@
         <figcaption>柱状：只高亮一根</figcaption>
         <svg viewBox="0 0 360 160" role="img" aria-label="柱状图示例：第四根柱子使用主色高亮，其余为灰色">
           <line class="grid-line" x1="20" x2="340" y1="28" y2="28"/><line class="grid-line" x1="20" x2="340" y1="68" y2="68"/><line class="grid-line" x1="20" x2="340" y1="108" y2="108"/><line class="grid-line" x1="20" x2="340" y1="148" y2="148"/>
-          <rect x="24" y="108" width="36" height="40" rx="3" fill="var(--ghost)"/><rect x="80" y="86" width="36" height="62" rx="3" fill="var(--ghost)"/><rect x="136" y="100" width="36" height="48" rx="3" fill="var(--ghost)"/><rect x="192" y="62" width="36" height="86" rx="3" fill="var(--accent)"/><rect x="248" y="78" width="36" height="70" rx="3" fill="var(--ghost)"/><rect x="304" y="94" width="36" height="54" rx="3" fill="var(--ghost)"/>
+          <rect x="24" y="56" width="36" height="92" rx="3" fill="var(--ghost)"/><rect x="80" y="60" width="36" height="88" rx="3" fill="var(--ghost)"/><rect x="136" y="64" width="36" height="84" rx="3" fill="var(--ghost)"/><rect x="192" y="75" width="36" height="73" rx="3" fill="var(--accent)"/><rect x="248" y="58" width="36" height="90" rx="3" fill="var(--ghost)"/><rect x="304" y="62" width="36" height="86" rx="3" fill="var(--ghost)"/>
         </svg>
         <p class="chart-note">高亮柱用主色，其余柱用中性灰：一张图只讲一件事。</p>
       </figure>
@@ -634,7 +640,7 @@
 
 <footer>
   <div class="wrap">
-    <div class="nav-logo" style="font-size:15px">Scoperta</div>
+    <div class="nav-logo" style="font-size:15px">Gauge</div>
     <div class="note">内容与赛车无关，仍应一眼认出 Haas 的白与红 —— 这是最终校验标准</div>
   </div>
 </footer>
