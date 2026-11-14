@@ -309,7 +309,7 @@
   .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
   .tone-meter .fill {
     position: absolute; left: 0; top: 0; bottom: 0;
-    width: calc(var(--surface-tone, 0) * 100%);
+    width: calc(var(--surface-progress, 0) * 100%);
     background: var(--accent);
     box-shadow: 0 0 8px var(--accent);
   }
@@ -389,6 +389,17 @@
   }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 96px; height: 10px; background: repeating-linear-gradient(135deg, #4A7BFF 0 6px, transparent 6px 12px); }
+
+  /* SPLIT-TONE: 涂装分色启用后，surface-page.js 给每个区块写入固定的 --surface-tone。
+     自定义属性里的 var() 在声明它的元素上求值，所以这些配色要在区块上再声明一次才会跟着变 */
+  main > * {
+    --veil:          color-mix(in srgb, #F3F5F9 calc((1 - var(--surface-tone)) * 100%), #0A1B4D);
+    --accent-text:   color-mix(in srgb, #1E4FD8 calc((1 - var(--surface-tone)) * 100%), #8FB0FF);
+    --signal-text:   color-mix(in srgb, #1E4FD8 calc((1 - var(--surface-tone)) * 100%), #8FB0FF);
+    --text-1:        color-mix(in srgb, #0A0E1A calc((1 - var(--surface-tone)) * 100%), #F3F5F9);
+    --text-2:        color-mix(in srgb, #2B3350 calc((1 - var(--surface-tone)) * 100%), #B4C1E2);
+    --text-3:        color-mix(in srgb, #46506E calc((1 - var(--surface-tone)) * 100%), #8C9BC3);
+  }
 </style>
 </head>
 <body>
