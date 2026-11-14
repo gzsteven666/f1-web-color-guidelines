@@ -63,7 +63,19 @@ export const HeroSection: React.FC = () => {
           </span>
         </h1>
 
-        <div className="text-lg sm:text-xl text-[#E2E6E8] font-normal max-w-2xl mt-4 leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+        {/*
+          副标题压在车漆渲染上，背后可能是暗的影棚背景，也可能是银、白、橙车身上最亮的高光带，
+          而且随车队和滚动位置变化。按车队切换深浅文字色不可靠（同一队首屏里明暗都有），
+          所以固定用浅色字，再用三层文字阴影在字的四周铺一圈暗晕：
+          紧贴笔画的一层保证笔画边缘清晰，外面两层把高光压暗，任何底色上都能读。
+        */}
+        <div
+          className="text-lg sm:text-xl text-[#F4F6F7] font-medium max-w-2xl mt-4 leading-relaxed"
+          style={{
+            textShadow:
+              '0 0 2px rgba(0,0,0,0.95), 0 1px 10px rgba(0,0,0,0.9), 0 2px 28px rgba(0,0,0,0.8)',
+          }}
+        >
           {currentTeam.heroDescription}
         </div>
       </div>

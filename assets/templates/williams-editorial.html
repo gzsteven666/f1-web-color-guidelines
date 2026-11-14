@@ -19,7 +19,7 @@
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@300;400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
      1. Design Tokens —— 结构羽白纸面 × 鲜蓝识别 × 碳黑墨色
@@ -294,6 +294,32 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* CN-TYPE: 中文标题字体 */
+  /* 细宋：学院克制、工程尊严。传统英系车队的沉稳节奏，以微扩字距模拟蓝图铭文 */
+  :root { --font-latin-serif: "Libre Caslon Text"; --font-latin-sans: "Archivo"; --font-cn-title: "Noto Serif SC", var(--font-latin-serif), "PingFang SC", "Songti SC", "Microsoft YaHei", serif; --cn-title-weight: 300; --cn-title-spacing: 0.025em; }
+  .section-title, .data-note h3 { font-family: var(--font-cn-title); font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  .quote-section blockquote { font-family: var(--font-cn-title); font-style: normal; font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  /* /CN-TYPE */
+  /* LAYOUT: 车队版式节奏 */
+  /* 蓝图规格表：大版块留白、工程卡片顶线、全出血漆带、图表主次分层。hero=narrow-col · index=cards-topline · band=full-bleed · charts=feature-2+1 */
+  @media (min-width: 821px) {
+    section { padding: 96px 0; }
+    .hero { padding: 72px 0 120px; }
+    .hero-display { white-space: normal; font-size: clamp(60px, 8vw, 124px); line-height: 0.98; letter-spacing: -0.03em; margin-bottom: 40px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 0.6fr 1.4fr; gap: 56px; }
+    .card-grid { gap: 0; margin-bottom: 96px; }
+    .card { border-radius: 0; border-top: 2px solid var(--accent); border-left: 0; border-right: 0; border-bottom: 1px solid var(--hairline); padding: 32px 24px 36px; box-shadow: none; }
+    .card::before { display: none; }
+    .card:not(:first-child) { border-left: 1px solid var(--hairline); }
+    .paint-strip { border-radius: 0; margin: 0 0 96px; }
+    .paint-strip .wrap { grid-template-columns: 1.45fr 0.55fr; gap: 64px; align-items: end; }
+    .quote-section { padding: 96px 0; }
+    .quote-section .wrap { max-width: 760px; }
+    .chart-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+  }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

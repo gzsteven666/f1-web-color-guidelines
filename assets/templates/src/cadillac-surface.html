@@ -11,7 +11,7 @@
   与 editorial 模板的根本区别：页面不再是一段段色带，而是一块连续的车身。
   - 车漆层：position: fixed 的全屏 WebGL（assets/surface/paint-surface.js），
     所有区块背景透明，极致黑白对冲与工业金属雕塑反光贯穿整页
-  - 黑白切割渐变：页顶纯黑碳纤底漆，经过 [data-seam] 过渡区后过渡为亮银白几何锋面
+  - 白黑切割渐变：页顶亮银白几何锋面，经过 [data-seam] 过渡区后过渡为纯黑碳纤底漆
     （2026 MAC-26 官方语义：Black-and-white dual-color livery / Chevron geometry）
   - 贯穿线：一条精密银白高光流线（racing-line.js）从页顶描到页底
   - 动效等级 L2（产品官网）：连续车漆 + 涂装线 + 文字进场，冷峻、现代、力量感
@@ -271,7 +271,7 @@
   .index-row .arr { color: var(--white); justify-self: end; transition: transform 300ms var(--ease); }
   .index-row:hover .arr { transform: translateX(6px); }
 
-  /* 过渡区（seam）：黑向白切割过渡 */
+  /* 过渡区（seam）：白向黑切割过渡 */
   .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
   .seam .eyebrow { margin-bottom: 28px; }
   .seam-title {
@@ -448,15 +448,15 @@
 
   <section id="seam" class="seam" data-seam data-line="40,2 97,20 97,80 70,98">
     <div class="wrap">
-      <p class="eyebrow reveal" data-decrypt="BLACK TO WHITE CHEVRON SPLIT">BLACK TO WHITE CHEVRON SPLIT</p>
-      <h2 class="seam-title reveal">从深邃暗夜黑，<br>平滑过渡到赛车白。</h2>
+      <p class="eyebrow reveal" data-decrypt="WHITE TO BLACK CHEVRON SPLIT">WHITE TO BLACK CHEVRON SPLIT</p>
+      <h2 class="seam-title reveal">从赛车冷白，<br>平滑过渡到深邃暗夜黑。</h2>
       <p class="reveal" style="--d: 80ms">
-        随视口滚动，PBR 材质在全屏 Mesh 上插值流动，展现黑白对冲从 Bold Attitude 到 American Racing White 的渐变过渡。
+        随视口滚动，PBR 材质在全屏 Mesh 上插值流动，展现黑白对冲从 American Racing White 到 Bold Attitude 的渐变过渡。
       </p>
       <div class="tone-meter reveal" style="--d: 140ms">
-        <span>BLACK BASE</span>
-        <div class="bar"><div class="fill"></div></div>
         <span>RACING WHITE</span>
+        <div class="bar"><div class="fill"></div></div>
+        <span>BLACK BASE</span>
       </div>
     </div>
   </section>
