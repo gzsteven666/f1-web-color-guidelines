@@ -37,6 +37,7 @@
  *   if (!surface) { ...切换 CSS 回退背景... }
  *   surface.setScroll(scrollY, innerHeight, maxScroll); // 每次滚动调用
  *   surface.setTone(0 ~ livery.length - 1);             // 涂装阶段
+ *   surface.setSeams([过渡区中线的文档纵坐标]);         // 涂装分色线的位置（预设有 surface.split 时生效）
  *   surface.setPointer(x, y);                           // 鼠标位置，-1 ~ 1
  *   surface.dispose();                                  // 销毁后 canvas 不能再复用
  *
@@ -46,6 +47,13 @@
  *   - 像素比封顶（默认 1.5），标签页隐藏时不渲染
  */
 import * as THREE from 'three';
+
+// 涂装分色：着色器里涂装阶段、分色线、分色线上的饰条各自的数组长度
+const MAX_STOPS = 4;
+const MAX_SEAMS = 3;
+const MAX_STRIPES = 2;
+// 进场扫光：页面打开时灯光从偏转位置回到静止位置所用的时间（秒）
+const INTRO_SWEEP_SECONDS = 2.4;
 
 // 着色器里正弦波 uniform 数组的长度（预设里最多写这么多组）
 const MAX_WAVES = 6;
@@ -95,6 +103,81 @@ uniform vec3 uBackBottom;            // 幕墙靠近车身的下部
 uniform vec3 uFloor;                 // 地面
 uniform vec3 uRim;                   // 边缘光颜色 × 强度
 
+// —— 涂装分色 ——
+// 旧做法是整屏在两个涂装阶段之间渐变（像调色，不像车）。分色启用后，每个过渡区变成一条
+// 固定在页面上的斜切分色线：线上方是前一阶段的漆，下方是后一阶段的漆，和真车的色块分割一样。
+uniform float uSplit;                          // 1 = 启用逐像素分色；0 = 旧的整屏渐变
+uniform int uStopCount;
+uniform vec3 uStopColor[ ${MAX_STOPS} ];       // 各阶段底色（线性色）
+uniform vec4 uStopMat[ ${MAX_STOPS} ];         // (金属度, 粗糙度, 清漆强度, 清漆粗糙度)
+uniform float uStopWeave[ ${MAX_STOPS} ];      // 碳纤维编织纹强度（0 = 普通漆面）
+uniform int uSeamCount;
+uniform float uSeamY[ ${MAX_SEAMS} ];          // 分色线在页面坐标里的高度（世界单位）
+uniform vec3 uSeamShape;                       // (斜切 rake, 弧度 bend, V 形 chevron)：画面边缘处的纵向偏移，世界单位
+uniform int uStripeCount;
+uniform vec4 uStripe[ ${MAX_STRIPES} ];        // 饰条：(离分色线的偏移, 宽度, 0, 0)，世界单位
+uniform vec3 uStripeColor[ ${MAX_STRIPES} ];
+
+// 当前像素的漆面参数，由 bodyLivery() 在 main 开头算一次，后面几处注入点共用
+vec3 lvColor;
+vec4 lvMat;
+float lvWeave;
+
+// 2×2 斜纹碳布：返回 (明暗, 纱束走向)。纱束宽度只有几个像素，太小时由调用方淡出，避免摩尔纹
+vec2 carbonTwill( vec2 p ) {
+  vec2 c = p / 0.05;
+  vec2 cell = floor( c );
+  vec2 f = fract( c ) - 0.5;
+  float warp = step( 2.0, mod( cell.x + cell.y, 4.0 ) ); // 1 = 经纱在上（沿 y 走），0 = 纬纱在上
+  float across = mix( f.y, f.x, warp );                  // 纱束截面方向上的位置
+  return vec2( 1.0 - 2.6 * across * across, warp );
+}
+
+void bodyLivery( vec2 q ) {
+  float xn = q.x / uHalfW;
+  float py = q.y - uPageY; // 页面坐标：和页面内容一起滚动
+  float tone = 0.0;
+  float stripe = 0.0;
+  vec3 stripeColor = vec3( 0.0 );
+  for ( int i = 0; i < ${MAX_SEAMS}; i ++ ) {
+    if ( i >= uSeamCount ) break;
+    // f > 0 在分色线上方（前一阶段），< 0 在下方（后一阶段）
+    float f = py - uSeamY[ i ] - uSeamShape.x * xn - uSeamShape.y * xn * xn - uSeamShape.z * abs( xn );
+    tone += smoothstep( uPx, - uPx, f );
+    for ( int k = 0; k < ${MAX_STRIPES}; k ++ ) {
+      if ( k >= uStripeCount ) break;
+      float a = uStripe[ k ].x;
+      float b = a + uStripe[ k ].y;
+      float m = smoothstep( a - uPx, a + uPx, f ) * smoothstep( b + uPx, b - uPx, f );
+      stripeColor = mix( stripeColor, uStripeColor[ k ], m );
+      stripe = max( stripe, m );
+    }
+  }
+  float last = float( uStopCount - 1 );
+  tone = clamp( tone, 0.0, last );
+  int i0 = int( floor( min( tone, last - 0.001 ) ) );
+  float t = tone - float( i0 );
+  vec3 c0 = vec3( 0.0 ); vec3 c1 = vec3( 0.0 );
+  vec4 m0 = vec4( 0.0 ); vec4 m1 = vec4( 0.0 );
+  float w0 = 0.0; float w1 = 0.0;
+  // 用循环 + 比较代替变量下标：部分移动端驱动对变量下标取 uniform 数组支持不好
+  for ( int j = 0; j < ${MAX_STOPS}; j ++ ) {
+    if ( j == i0 ) { c0 = uStopColor[ j ]; m0 = uStopMat[ j ]; w0 = uStopWeave[ j ]; }
+    if ( j == i0 + 1 ) { c1 = uStopColor[ j ]; m1 = uStopMat[ j ]; w1 = uStopWeave[ j ]; }
+  }
+  lvColor = mix( c0, c1, t );
+  lvMat = mix( m0, m1, t );
+  lvWeave = mix( w0, w1, t );
+  // 饰条：实色高光漆，盖在分色线旁边
+  lvColor = mix( lvColor, stripeColor, stripe );
+  lvMat = mix( lvMat, vec4( 0.0, 0.3, 1.0, 0.05 ), stripe );
+  lvWeave *= 1.0 - stripe;
+  // 裸碳是半哑光：粗糙度抬高、清漆减弱，和旁边的高光漆形成"哑光对亮面"
+  lvMat = mix( lvMat, vec4( lvMat.x, 0.5, 0.3, 0.35 ), lvWeave );
+  // 纱束小于约 4 个像素时淡出编织纹，只留哑光
+  lvWeave *= smoothstep( 2.5, 5.0, 0.05 / uPx );
+}
+
 // 车身上沿在世界坐标里的高度：一条略微上扬的车身线，加一个像引擎盖 / 侧箱的平缓隆起
 float bodyTopEdge( float x ) {
   float xn = x / uHalfW;
@@ -133,8 +216,39 @@ vec3 bodyNormal( vec2 p ) {
     float fillet = smoothstep( 1.0, 1.0 - uPanelFillet, abs( t ) );
     grad -= uPanel.w * t * fillet * panelDir;
   }
+  if ( uSplit > 0.5 && lvWeave > 0.0 ) {
+    vec2 wp = vec2( vBodyPos.x, vBodyPos.y - uPageY );
+    vec2 f = fract( wp / 0.05 ) - 0.5;
+    float warp = carbonTwill( wp ).y;
+    grad += lvWeave * 0.9 * mix( vec2( 0.0, f.y ), vec2( f.x, 0.0 ), warp );
+  }
   return normalize( vec3( - grad, 1.0 ) );
 }
+`;
+
+// 涂装分色的四处注入：底色 → 粗糙度 → 金属度 → 清漆。分别插在 three.js 对应代码块之后，
+// 这样后面的光照计算（lights_physical_fragment）拿到的就是逐像素的漆面参数
+const LIVERY_COLOR_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) {
+  bodyLivery( vBodyPos );
+  // 碳布：按纱束明暗调制底色。碳本身很黑，稍微提亮才看得出编织
+  float twill = carbonTwill( vec2( vBodyPos.x, vBodyPos.y - uPageY ) ).x;
+  diffuseColor.rgb = lvColor * ( 1.0 + lvWeave * 0.55 * ( twill - 0.6 ) ) + lvWeave * 0.012 * twill;
+}
+`;
+const LIVERY_ROUGHNESS_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) roughnessFactor = lvMat.y;
+`;
+const LIVERY_METALNESS_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) metalnessFactor = lvMat.x;
+`;
+const LIVERY_CLEARCOAT_FRAGMENT = /* glsl */ `
+#ifdef USE_CLEARCOAT
+if ( uSplit > 0.5 ) {
+  material.clearcoat = saturate( lvMat.z );
+  material.clearcoatRoughness = min( max( lvMat.w, 0.0525 ) + geometryRoughness, 1.0 );
+}
+#endif
 `;
 
 // 插在 three.js 的 normal_fragment_begin 之后：用车身曲面法线替换平面自身的法线
@@ -280,6 +394,8 @@ export class PaintSurface {
     this._dirty = true; // 是否需要重绘（减少动态效果模式下只在变化时渲染）
     this._lastTime = 0;
     this._raf = 0;
+    this._seams = [];        // 分色线位置（文档 px），由 setSeams 写入
+    this._sweepStart = null; // 进场扫光的起始时间戳
 
     this._initRenderer();
     this._initStudio();
@@ -311,6 +427,32 @@ export class PaintSurface {
     // 轮廓要和页面内容严丝合缝地一起移动：直接写 uniform，不经过惯性阻尼
     this.uniforms.uPageY.value = (scrollY / vh) * VISIBLE_HEIGHT;
     this.uniforms.uPageLen.value = (Math.max(0, maxScroll) / vh) * VISIBLE_HEIGHT;
+    // 文档纵坐标 → 页面坐标（世界单位）：滚动为 0 时视口中线是 0，往下为负
+    for (let i = 0; i < Math.min(this._seams.length, MAX_SEAMS); i++) {
+      this.uniforms.uSeamY.value[i] = (0.5 - this._seams[i] / vh) * VISIBLE_HEIGHT;
+    }
+    this._dirty = true;
+  }
+
+  /**
+   * 分色线的位置：每个过渡区中线在文档里的纵坐标（px）。
+   * 为什么传文档坐标：分色线要钉在页面内容上，随内容一起滚动；视口高度变化时由 setScroll 重新换算。
+   * @param {number[]} centers 按页面顺序
+   */
+  setSeams(centers) {
+    this._seams = centers.slice();
+    this._syncSplit();
+    this._dirty = true;
+  }
+
+  /** 逐像素分色是否生效。页面据此决定文字配色是按区块固定，还是跟着整屏渐变走 */
+  get splitActive() {
+    return this.uniforms.uSplit.value > 0.5;
+  }
+
+  /** 重放进场扫光（页面打开、切换车队时各放一次） */
+  playSweep() {
+    this._sweepStart = null; // 下一帧开始计时
     this._dirty = true;
   }
 
@@ -350,6 +492,7 @@ export class PaintSurface {
     this._syncSurfaceUniforms();
 
     this._applyLivery(this._state.tone);
+    this.playSweep();
     this._dirty = true;
   }
 
@@ -494,6 +637,17 @@ export class PaintSurface {
       uBackBottom: { value: new THREE.Color() },
       uFloor: { value: new THREE.Color() },
       uRim: { value: new THREE.Color() },
+      uSplit: { value: 0 },
+      uStopCount: { value: 1 },
+      uStopColor: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Color()) },
+      uStopMat: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Vector4()) },
+      uStopWeave: { value: new Array(MAX_STOPS).fill(0) },
+      uSeamCount: { value: 0 },
+      uSeamY: { value: new Array(MAX_SEAMS).fill(0) },
+      uSeamShape: { value: new THREE.Vector3() },
+      uStripeCount: { value: 0 },
+      uStripe: { value: Array.from({ length: MAX_STRIPES }, () => new THREE.Vector4()) },
+      uStripeColor: { value: Array.from({ length: MAX_STRIPES }, () => new THREE.Color()) },
     };
     this._syncSurfaceUniforms();
 
@@ -504,6 +658,10 @@ export class PaintSurface {
         .replace('#include <begin_vertex>', `#include <begin_vertex>\n${BODY_POS_VERTEX}`);
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>\n${BODY_PARS_FRAGMENT}`)
+        .replace('#include <color_fragment>', `#include <color_fragment>\n${LIVERY_COLOR_FRAGMENT}`)
+        .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\n${LIVERY_ROUGHNESS_FRAGMENT}`)
+        .replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>\n${LIVERY_METALNESS_FRAGMENT}`)
+        .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>\n${LIVERY_CLEARCOAT_FRAGMENT}`)
         .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`)
         .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${STAGE_FRAGMENT}`);
     };
@@ -542,6 +700,32 @@ export class PaintSurface {
       u.uFloor.value.set(backdrop.floor);
       u.uRim.value.set(backdrop.rim ?? '#FFFFFF').multiplyScalar(backdrop.rimIntensity ?? 2);
     }
+
+    // 涂装分色：各阶段的漆面参数 + 分色线形状 + 饰条。预设没写 surface.split 时保持旧的整屏渐变
+    const split = surface.split;
+    const stops = this._livery.slice(0, MAX_STOPS);
+    u.uStopCount.value = stops.length;
+    stops.forEach((stop, i) => {
+      u.uStopColor.value[i].copy(stop.color);
+      u.uStopMat.value[i].set(stop.metalness, stop.roughness, stop.clearcoat, stop.clearcoatRoughness);
+      u.uStopWeave.value[i] = stop.weave ?? 0;
+    });
+    u.uSeamShape.value.set(split?.rake ?? 0, split?.bend ?? 0, split?.chevron ?? 0);
+    const stripes = (split?.stripes ?? []).slice(0, MAX_STRIPES);
+    u.uStripeCount.value = stripes.length;
+    stripes.forEach((stripe, i) => {
+      u.uStripe.value[i].set(stripe.offset, stripe.width, 0, 0);
+      u.uStripeColor.value[i].set(stripe.color);
+    });
+    this._syncSplit();
+  }
+
+  /** 分色只在"预设给了 split、页面给了分色线位置、阶段不止一个"时启用，否则退回整屏渐变 */
+  _syncSplit() {
+    const u = this.uniforms;
+    const seams = this._seams.slice(0, MAX_SEAMS);
+    u.uSeamCount.value = seams.length;
+    u.uSplit.value = this.preset.surface.split && seams.length > 0 && this._livery.length > 1 ? 1 : 0;
   }
 
   /* ---------------- 每帧 ---------------- */
@@ -568,7 +752,15 @@ export class PaintSurface {
     this.uniforms.uTime.value = reduced ? 0 : now / 1000;
     const sweep = reduced ? surface.sweep[0] : lerpNumber(surface.sweep[0], surface.sweep[1], state.progress);
     const [pointerX, pointerY] = surface.pointer ?? [0, 0];
-    this.scene.environmentRotation.set(sweep + state.py * pointerY, state.px * pointerX, 0);
+    // 进场扫光：灯光从偏转位置缓缓回正，反射带整体扫过车身一次，像发布会揭幕时的追光。
+    // 只转环境贴图，不加额外光源，所以扫光的形状和强度与静止时的布光完全一致
+    let intro = 0;
+    if (!reduced) {
+      if (this._sweepStart == null) this._sweepStart = now;
+      const k = clampRange((now - this._sweepStart) / (INTRO_SWEEP_SECONDS * 1000), 0, 1);
+      intro = (surface.introSweep ?? 0.9) * Math.pow(1 - k, 3); // easeOutCubic：起步快、收尾慢
+    }
+    this.scene.environmentRotation.set(sweep + intro + state.py * pointerY, state.px * pointerX, 0);
 
     this._applyLivery(state.tone);
     this.renderer.render(this.scene, this.camera);

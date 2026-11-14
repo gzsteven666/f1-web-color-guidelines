@@ -14,6 +14,8 @@
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
  *            可选 panel（凸面板件 + 圆角折线）、silhouette（车身轮廓）；studio 可选 backdrop（幕墙、地面、边缘光），
  *            两者都给时启用"影棚空间"，见 paint-surface.js 顶部说明
+ *            surface.split（涂装分色线：rake 斜切 / bend 弧度 / chevron V 形 / stripes 饰条）与 livery[i].weave（碳纤维）
+ *            让过渡区从整屏渐变变成一条固定在页面上的分色线；可选 introSweep（进场扫光幅度，弧度，默认 0.9）
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -83,6 +85,8 @@ export const MERCEDES = {
     panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：银黑斜切，银漆一侧压一道 PETRONAS 青绿细线
+    split: { rake: 1.1, bend: 0.0, chevron: 0.0, stripes: [{ color: '#00A19B', offset: 0.1, width: 0.05 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -163,6 +167,8 @@ export const FERRARI = {
     panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：红与深红之间一道白色结构线，略带弧度
+    split: { rake: 0.8, bend: -0.5, chevron: 0.0, stripes: [{ color: '#F4F2EE', offset: -0.045, width: 0.09 }] },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -243,6 +249,8 @@ export const MCLAREN = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：papaya 对 anthracite 的陡斜切，青色发丝线
+    split: { rake: -0.9, bend: 0.3, chevron: 0.0, stripes: [{ color: '#4FD5D6', offset: 0.08, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -324,6 +332,8 @@ export const ASTON_MARTIN = {
     panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：平缓弧线，lime 发丝线
+    split: { rake: 0.6, bend: 0.9, chevron: 0.0, stripes: [{ color: '#A9D23E', offset: 0.06, width: 0.025 }] },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -375,6 +385,7 @@ export const CADILLAC = {
       clearcoat: 1.0,
       clearcoatRoughness: 0.03, // 钢琴镜面黑
       envIntensity: 1.15,
+      weave: 1.0,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -406,6 +417,8 @@ export const CADILLAC = {
     panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：chevron V 形黑白对切，后段裸碳
+    split: { rake: 0.0, bend: 0.0, chevron: 1.2, stripes: [{ color: '#E4E7EA', offset: -0.14, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -462,6 +475,7 @@ export const WILLIAMS = {
       clearcoat: 0.95,
       clearcoatRoughness: 0.06, // 略微柔和的高光
       envIntensity: 1.05,
+      weave: 0.7,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -496,6 +510,8 @@ export const WILLIAMS = {
     panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：蓝黑流线，白线 + 红色细线，后段碳纤维
+    split: { rake: 1.0, bend: -0.7, chevron: 0.0, stripes: [{ color: '#F4F7FA', offset: 0.0, width: 0.06 }, { color: '#D6293E', offset: 0.1, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -577,6 +593,8 @@ export const RED_BULL = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：反向陡斜切，红色粗线 + 黄色细线
+    split: { rake: -1.2, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E4002B', offset: 0.0, width: 0.08 }, { color: '#FFC20E', offset: 0.12, width: 0.03 }] },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -628,6 +646,7 @@ export const AUDI = {
       clearcoat: 0.95,
       clearcoatRoughness: 0.06,
       envIntensity: 1.10,
+      weave: 0.9,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -658,6 +677,8 @@ export const AUDI = {
     panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：近乎水平的直线切分，一道红线，后段裸碳
+    split: { rake: 0.35, bend: 0.0, chevron: 0.0, stripes: [{ color: '#F50537', offset: 0.0, width: 0.06 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -709,6 +730,7 @@ export const ALPINE = {
       clearcoat: 0.90,
       clearcoatRoughness: 0.08,
       envIntensity: 1.05,
+      weave: 0.8,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -739,6 +761,8 @@ export const ALPINE = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：蓝与碳黑之间一道 BWT 粉色弧线
+    split: { rake: 0.9, bend: 0.8, chevron: 0.0, stripes: [{ color: '#FD4BC7', offset: 0.0, width: 0.08 }] },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -819,6 +843,8 @@ export const RACING_BULLS = {
     panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：白与海军蓝反向斜切，蓝色粗线 + 红色细线
+    split: { rake: -1.0, bend: 0.0, chevron: 0.0, stripes: [{ color: '#1E4FD8', offset: 0.0, width: 0.1 }, { color: '#E51937', offset: 0.14, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],
@@ -871,6 +897,7 @@ export const HAAS = {
       clearcoat: 0.85,
       clearcoatRoughness: 0.10,
       envIntensity: 0.95,
+      weave: 0.7,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -901,6 +928,8 @@ export const HAAS = {
     panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：白与碳黑之间一道红色粗线 + 墨色细线
+    split: { rake: 0.7, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E0201B', offset: 0.0, width: 0.12 }, { color: '#101114', offset: 0.16, width: 0.03 }] },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],

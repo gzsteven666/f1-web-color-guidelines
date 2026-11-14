@@ -319,15 +319,17 @@
     letter-spacing: -0.04em;
     margin-bottom: 36px;
   }
-  .seam p { max-width: 440px; color: var(--text-2); }
-  /* 涂装读数：随 --surface-tone（0 = 冷银，1 = 碳黑）实时变化 */
+  .seam p { max-width: 440px; color: var(--text-1); }
+  /* 涂装分色后过渡区整段停在银色漆面上（以前会随滚动整屏变暗），小字加一圈深色光晕保证可读 */
+  .seam p, .seam .eyebrow, .seam .tone-meter { text-shadow: 0 0 12px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.65); }
+  /* 涂装读数：随 --surface-progress（过渡区的滚动进度，0 ~ 1）实时变化 */
   .tone-meter { display: flex; align-items: center; gap: 14px; margin-top: 48px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; color: var(--text-3); }
   .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
   .tone-meter .bar::after {
     content: ""; position: absolute; inset: 0;
     background: var(--teal);
     transform-origin: left;
-    transform: scaleX(var(--surface-tone, 0));
+    transform: scaleX(var(--surface-progress, 0));
   }
 
   /* ==========================================================

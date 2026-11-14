@@ -288,7 +288,7 @@
   .tone-meter .bar { position: relative; width: 160px; height: 2px; background: var(--hairline-strong); }
   .tone-meter .fill {
     position: absolute; left: 0; top: 0; bottom: 0;
-    width: calc(var(--surface-tone, 0) * 100%);
+    width: calc(var(--surface-progress, 0) * 100%);
     background: var(--papaya);
     box-shadow: 0 0 8px var(--papaya);
   }
@@ -542,6 +542,8 @@
  *   surface  车身曲面：几组低频起伏 + 腰线，决定反射带怎么弯、怎么流动
  *            可选 panel（凸面板件 + 圆角折线）、silhouette（车身轮廓）；studio 可选 backdrop（幕墙、地面、边缘光），
  *            两者都给时启用"影棚空间"，见 paint-surface.js 顶部说明
+ *            surface.split（涂装分色线：rake 斜切 / bend 弧度 / chevron V 形 / stripes 饰条）与 livery[i].weave（碳纤维）
+ *            让过渡区从整屏渐变变成一条固定在页面上的分色线；可选 introSweep（进场扫光幅度，弧度，默认 0.9）
  *   line     贯穿全页的涂装线（颜色、笔尖高光色、线宽）
  *   render   渲染参数（色调映射、曝光、像素比上限）
  *   fallback 不支持 WebGL 时的纯 CSS 双层方向性受光回退渐变
@@ -611,6 +613,8 @@ export const MERCEDES = {
     panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：银黑斜切，银漆一侧压一道 PETRONAS 青绿细线
+    split: { rake: 1.1, bend: 0.0, chevron: 0.0, stripes: [{ color: '#00A19B', offset: 0.1, width: 0.05 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -691,6 +695,8 @@ export const FERRARI = {
     panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：红与深红之间一道白色结构线，略带弧度
+    split: { rake: 0.8, bend: -0.5, chevron: 0.0, stripes: [{ color: '#F4F2EE', offset: -0.045, width: 0.09 }] },
     parallax: 0.45,
     sweep: [-0.10, 0.60],
     pointer: [0.1, 0.05],
@@ -771,6 +777,8 @@ export const MCLAREN = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：papaya 对 anthracite 的陡斜切，青色发丝线
+    split: { rake: -0.9, bend: 0.3, chevron: 0.0, stripes: [{ color: '#4FD5D6', offset: 0.08, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.1, 0.05],
@@ -852,6 +860,8 @@ export const ASTON_MARTIN = {
     panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：平缓弧线，lime 发丝线
+    split: { rake: 0.6, bend: 0.9, chevron: 0.0, stripes: [{ color: '#A9D23E', offset: 0.06, width: 0.025 }] },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -903,6 +913,7 @@ export const CADILLAC = {
       clearcoat: 1.0,
       clearcoatRoughness: 0.03, // 钢琴镜面黑
       envIntensity: 1.15,
+      weave: 1.0,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -934,6 +945,8 @@ export const CADILLAC = {
     panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：chevron V 形黑白对切，后段裸碳
+    split: { rake: 0.0, bend: 0.0, chevron: 1.2, stripes: [{ color: '#E4E7EA', offset: -0.14, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -990,6 +1003,7 @@ export const WILLIAMS = {
       clearcoat: 0.95,
       clearcoatRoughness: 0.06, // 略微柔和的高光
       envIntensity: 1.05,
+      weave: 0.7,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -1024,6 +1038,8 @@ export const WILLIAMS = {
     panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：蓝黑流线，白线 + 红色细线，后段碳纤维
+    split: { rake: 1.0, bend: -0.7, chevron: 0.0, stripes: [{ color: '#F4F7FA', offset: 0.0, width: 0.06 }, { color: '#D6293E', offset: 0.1, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.1, 0.05],
@@ -1105,6 +1121,8 @@ export const RED_BULL = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：反向陡斜切，红色粗线 + 黄色细线
+    split: { rake: -1.2, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E4002B', offset: 0.0, width: 0.08 }, { color: '#FFC20E', offset: 0.12, width: 0.03 }] },
     parallax: 0.44,
     sweep: [-0.14, 0.56],
     pointer: [0.11, 0.05],
@@ -1156,6 +1174,7 @@ export const AUDI = {
       clearcoat: 0.95,
       clearcoatRoughness: 0.06,
       envIntensity: 1.10,
+      weave: 0.9,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -1186,6 +1205,8 @@ export const AUDI = {
     panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：近乎水平的直线切分，一道红线，后段裸碳
+    split: { rake: 0.35, bend: 0.0, chevron: 0.0, stripes: [{ color: '#F50537', offset: 0.0, width: 0.06 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.52],
     pointer: [0.09, 0.04],
@@ -1237,6 +1258,7 @@ export const ALPINE = {
       clearcoat: 0.90,
       clearcoatRoughness: 0.08,
       envIntensity: 1.05,
+      weave: 0.8,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -1267,6 +1289,8 @@ export const ALPINE = {
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：蓝与碳黑之间一道 BWT 粉色弧线
+    split: { rake: 0.9, bend: 0.8, chevron: 0.0, stripes: [{ color: '#FD4BC7', offset: 0.0, width: 0.08 }] },
     parallax: 0.46,
     sweep: [-0.12, 0.54],
     pointer: [0.10, 0.05],
@@ -1347,6 +1371,8 @@ export const RACING_BULLS = {
     panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：白与海军蓝反向斜切，蓝色粗线 + 红色细线
+    split: { rake: -1.0, bend: 0.0, chevron: 0.0, stripes: [{ color: '#1E4FD8', offset: 0.0, width: 0.1 }, { color: '#E51937', offset: 0.14, width: 0.03 }] },
     parallax: 0.45,
     sweep: [-0.12, 0.55],
     pointer: [0.10, 0.05],
@@ -1399,6 +1425,7 @@ export const HAAS = {
       clearcoat: 0.85,
       clearcoatRoughness: 0.10,
       envIntensity: 0.95,
+      weave: 0.7,             // 裸碳纤维：斜纹编织 + 半哑光
     },
   ],
 
@@ -1429,6 +1456,8 @@ export const HAAS = {
     panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
     // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 涂装分色：白与碳黑之间一道红色粗线 + 墨色细线
+    split: { rake: 0.7, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E0201B', offset: 0.0, width: 0.12 }, { color: '#101114', offset: 0.16, width: 0.03 }] },
     parallax: 0.42,
     sweep: [-0.10, 0.50],
     pointer: [0.08, 0.04],
@@ -1515,6 +1544,7 @@ export const TEAM_PRESETS = {
  *   if (!surface) { ...切换 CSS 回退背景... }
  *   surface.setScroll(scrollY, innerHeight, maxScroll); // 每次滚动调用
  *   surface.setTone(0 ~ livery.length - 1);             // 涂装阶段
+ *   surface.setSeams([过渡区中线的文档纵坐标]);         // 涂装分色线的位置（预设有 surface.split 时生效）
  *   surface.setPointer(x, y);                           // 鼠标位置，-1 ~ 1
  *   surface.dispose();                                  // 销毁后 canvas 不能再复用
  *
@@ -1524,6 +1554,13 @@ export const TEAM_PRESETS = {
  *   - 像素比封顶（默认 1.5），标签页隐藏时不渲染
  */
 import * as THREE from 'three';
+
+// 涂装分色：着色器里涂装阶段、分色线、分色线上的饰条各自的数组长度
+const MAX_STOPS = 4;
+const MAX_SEAMS = 3;
+const MAX_STRIPES = 2;
+// 进场扫光：页面打开时灯光从偏转位置回到静止位置所用的时间（秒）
+const INTRO_SWEEP_SECONDS = 2.4;
 
 // 着色器里正弦波 uniform 数组的长度（预设里最多写这么多组）
 const MAX_WAVES = 6;
@@ -1573,6 +1610,81 @@ uniform vec3 uBackBottom;            // 幕墙靠近车身的下部
 uniform vec3 uFloor;                 // 地面
 uniform vec3 uRim;                   // 边缘光颜色 × 强度
 
+// —— 涂装分色 ——
+// 旧做法是整屏在两个涂装阶段之间渐变（像调色，不像车）。分色启用后，每个过渡区变成一条
+// 固定在页面上的斜切分色线：线上方是前一阶段的漆，下方是后一阶段的漆，和真车的色块分割一样。
+uniform float uSplit;                          // 1 = 启用逐像素分色；0 = 旧的整屏渐变
+uniform int uStopCount;
+uniform vec3 uStopColor[ ${MAX_STOPS} ];       // 各阶段底色（线性色）
+uniform vec4 uStopMat[ ${MAX_STOPS} ];         // (金属度, 粗糙度, 清漆强度, 清漆粗糙度)
+uniform float uStopWeave[ ${MAX_STOPS} ];      // 碳纤维编织纹强度（0 = 普通漆面）
+uniform int uSeamCount;
+uniform float uSeamY[ ${MAX_SEAMS} ];          // 分色线在页面坐标里的高度（世界单位）
+uniform vec3 uSeamShape;                       // (斜切 rake, 弧度 bend, V 形 chevron)：画面边缘处的纵向偏移，世界单位
+uniform int uStripeCount;
+uniform vec4 uStripe[ ${MAX_STRIPES} ];        // 饰条：(离分色线的偏移, 宽度, 0, 0)，世界单位
+uniform vec3 uStripeColor[ ${MAX_STRIPES} ];
+
+// 当前像素的漆面参数，由 bodyLivery() 在 main 开头算一次，后面几处注入点共用
+vec3 lvColor;
+vec4 lvMat;
+float lvWeave;
+
+// 2×2 斜纹碳布：返回 (明暗, 纱束走向)。纱束宽度只有几个像素，太小时由调用方淡出，避免摩尔纹
+vec2 carbonTwill( vec2 p ) {
+  vec2 c = p / 0.05;
+  vec2 cell = floor( c );
+  vec2 f = fract( c ) - 0.5;
+  float warp = step( 2.0, mod( cell.x + cell.y, 4.0 ) ); // 1 = 经纱在上（沿 y 走），0 = 纬纱在上
+  float across = mix( f.y, f.x, warp );                  // 纱束截面方向上的位置
+  return vec2( 1.0 - 2.6 * across * across, warp );
+}
+
+void bodyLivery( vec2 q ) {
+  float xn = q.x / uHalfW;
+  float py = q.y - uPageY; // 页面坐标：和页面内容一起滚动
+  float tone = 0.0;
+  float stripe = 0.0;
+  vec3 stripeColor = vec3( 0.0 );
+  for ( int i = 0; i < ${MAX_SEAMS}; i ++ ) {
+    if ( i >= uSeamCount ) break;
+    // f > 0 在分色线上方（前一阶段），< 0 在下方（后一阶段）
+    float f = py - uSeamY[ i ] - uSeamShape.x * xn - uSeamShape.y * xn * xn - uSeamShape.z * abs( xn );
+    tone += smoothstep( uPx, - uPx, f );
+    for ( int k = 0; k < ${MAX_STRIPES}; k ++ ) {
+      if ( k >= uStripeCount ) break;
+      float a = uStripe[ k ].x;
+      float b = a + uStripe[ k ].y;
+      float m = smoothstep( a - uPx, a + uPx, f ) * smoothstep( b + uPx, b - uPx, f );
+      stripeColor = mix( stripeColor, uStripeColor[ k ], m );
+      stripe = max( stripe, m );
+    }
+  }
+  float last = float( uStopCount - 1 );
+  tone = clamp( tone, 0.0, last );
+  int i0 = int( floor( min( tone, last - 0.001 ) ) );
+  float t = tone - float( i0 );
+  vec3 c0 = vec3( 0.0 ); vec3 c1 = vec3( 0.0 );
+  vec4 m0 = vec4( 0.0 ); vec4 m1 = vec4( 0.0 );
+  float w0 = 0.0; float w1 = 0.0;
+  // 用循环 + 比较代替变量下标：部分移动端驱动对变量下标取 uniform 数组支持不好
+  for ( int j = 0; j < ${MAX_STOPS}; j ++ ) {
+    if ( j == i0 ) { c0 = uStopColor[ j ]; m0 = uStopMat[ j ]; w0 = uStopWeave[ j ]; }
+    if ( j == i0 + 1 ) { c1 = uStopColor[ j ]; m1 = uStopMat[ j ]; w1 = uStopWeave[ j ]; }
+  }
+  lvColor = mix( c0, c1, t );
+  lvMat = mix( m0, m1, t );
+  lvWeave = mix( w0, w1, t );
+  // 饰条：实色高光漆，盖在分色线旁边
+  lvColor = mix( lvColor, stripeColor, stripe );
+  lvMat = mix( lvMat, vec4( 0.0, 0.3, 1.0, 0.05 ), stripe );
+  lvWeave *= 1.0 - stripe;
+  // 裸碳是半哑光：粗糙度抬高、清漆减弱，和旁边的高光漆形成"哑光对亮面"
+  lvMat = mix( lvMat, vec4( lvMat.x, 0.5, 0.3, 0.35 ), lvWeave );
+  // 纱束小于约 4 个像素时淡出编织纹，只留哑光
+  lvWeave *= smoothstep( 2.5, 5.0, 0.05 / uPx );
+}
+
 // 车身上沿在世界坐标里的高度：一条略微上扬的车身线，加一个像引擎盖 / 侧箱的平缓隆起
 float bodyTopEdge( float x ) {
   float xn = x / uHalfW;
@@ -1611,8 +1723,39 @@ vec3 bodyNormal( vec2 p ) {
     float fillet = smoothstep( 1.0, 1.0 - uPanelFillet, abs( t ) );
     grad -= uPanel.w * t * fillet * panelDir;
   }
+  if ( uSplit > 0.5 && lvWeave > 0.0 ) {
+    vec2 wp = vec2( vBodyPos.x, vBodyPos.y - uPageY );
+    vec2 f = fract( wp / 0.05 ) - 0.5;
+    float warp = carbonTwill( wp ).y;
+    grad += lvWeave * 0.9 * mix( vec2( 0.0, f.y ), vec2( f.x, 0.0 ), warp );
+  }
   return normalize( vec3( - grad, 1.0 ) );
 }
+`;
+
+// 涂装分色的四处注入：底色 → 粗糙度 → 金属度 → 清漆。分别插在 three.js 对应代码块之后，
+// 这样后面的光照计算（lights_physical_fragment）拿到的就是逐像素的漆面参数
+const LIVERY_COLOR_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) {
+  bodyLivery( vBodyPos );
+  // 碳布：按纱束明暗调制底色。碳本身很黑，稍微提亮才看得出编织
+  float twill = carbonTwill( vec2( vBodyPos.x, vBodyPos.y - uPageY ) ).x;
+  diffuseColor.rgb = lvColor * ( 1.0 + lvWeave * 0.55 * ( twill - 0.6 ) ) + lvWeave * 0.012 * twill;
+}
+`;
+const LIVERY_ROUGHNESS_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) roughnessFactor = lvMat.y;
+`;
+const LIVERY_METALNESS_FRAGMENT = /* glsl */ `
+if ( uSplit > 0.5 ) metalnessFactor = lvMat.x;
+`;
+const LIVERY_CLEARCOAT_FRAGMENT = /* glsl */ `
+#ifdef USE_CLEARCOAT
+if ( uSplit > 0.5 ) {
+  material.clearcoat = saturate( lvMat.z );
+  material.clearcoatRoughness = min( max( lvMat.w, 0.0525 ) + geometryRoughness, 1.0 );
+}
+#endif
 `;
 
 // 插在 three.js 的 normal_fragment_begin 之后：用车身曲面法线替换平面自身的法线
@@ -1758,6 +1901,8 @@ export class PaintSurface {
     this._dirty = true; // 是否需要重绘（减少动态效果模式下只在变化时渲染）
     this._lastTime = 0;
     this._raf = 0;
+    this._seams = [];        // 分色线位置（文档 px），由 setSeams 写入
+    this._sweepStart = null; // 进场扫光的起始时间戳
 
     this._initRenderer();
     this._initStudio();
@@ -1789,6 +1934,32 @@ export class PaintSurface {
     // 轮廓要和页面内容严丝合缝地一起移动：直接写 uniform，不经过惯性阻尼
     this.uniforms.uPageY.value = (scrollY / vh) * VISIBLE_HEIGHT;
     this.uniforms.uPageLen.value = (Math.max(0, maxScroll) / vh) * VISIBLE_HEIGHT;
+    // 文档纵坐标 → 页面坐标（世界单位）：滚动为 0 时视口中线是 0，往下为负
+    for (let i = 0; i < Math.min(this._seams.length, MAX_SEAMS); i++) {
+      this.uniforms.uSeamY.value[i] = (0.5 - this._seams[i] / vh) * VISIBLE_HEIGHT;
+    }
+    this._dirty = true;
+  }
+
+  /**
+   * 分色线的位置：每个过渡区中线在文档里的纵坐标（px）。
+   * 为什么传文档坐标：分色线要钉在页面内容上，随内容一起滚动；视口高度变化时由 setScroll 重新换算。
+   * @param {number[]} centers 按页面顺序
+   */
+  setSeams(centers) {
+    this._seams = centers.slice();
+    this._syncSplit();
+    this._dirty = true;
+  }
+
+  /** 逐像素分色是否生效。页面据此决定文字配色是按区块固定，还是跟着整屏渐变走 */
+  get splitActive() {
+    return this.uniforms.uSplit.value > 0.5;
+  }
+
+  /** 重放进场扫光（页面打开、切换车队时各放一次） */
+  playSweep() {
+    this._sweepStart = null; // 下一帧开始计时
     this._dirty = true;
   }
 
@@ -1828,6 +1999,7 @@ export class PaintSurface {
     this._syncSurfaceUniforms();
 
     this._applyLivery(this._state.tone);
+    this.playSweep();
     this._dirty = true;
   }
 
@@ -1972,6 +2144,17 @@ export class PaintSurface {
       uBackBottom: { value: new THREE.Color() },
       uFloor: { value: new THREE.Color() },
       uRim: { value: new THREE.Color() },
+      uSplit: { value: 0 },
+      uStopCount: { value: 1 },
+      uStopColor: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Color()) },
+      uStopMat: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Vector4()) },
+      uStopWeave: { value: new Array(MAX_STOPS).fill(0) },
+      uSeamCount: { value: 0 },
+      uSeamY: { value: new Array(MAX_SEAMS).fill(0) },
+      uSeamShape: { value: new THREE.Vector3() },
+      uStripeCount: { value: 0 },
+      uStripe: { value: Array.from({ length: MAX_STRIPES }, () => new THREE.Vector4()) },
+      uStripeColor: { value: Array.from({ length: MAX_STRIPES }, () => new THREE.Color()) },
     };
     this._syncSurfaceUniforms();
 
@@ -1982,6 +2165,10 @@ export class PaintSurface {
         .replace('#include <begin_vertex>', `#include <begin_vertex>\n${BODY_POS_VERTEX}`);
       shader.fragmentShader = shader.fragmentShader
         .replace('#include <common>', `#include <common>\n${BODY_PARS_FRAGMENT}`)
+        .replace('#include <color_fragment>', `#include <color_fragment>\n${LIVERY_COLOR_FRAGMENT}`)
+        .replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>\n${LIVERY_ROUGHNESS_FRAGMENT}`)
+        .replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>\n${LIVERY_METALNESS_FRAGMENT}`)
+        .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>\n${LIVERY_CLEARCOAT_FRAGMENT}`)
         .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`)
         .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${STAGE_FRAGMENT}`);
     };
@@ -2020,6 +2207,32 @@ export class PaintSurface {
       u.uFloor.value.set(backdrop.floor);
       u.uRim.value.set(backdrop.rim ?? '#FFFFFF').multiplyScalar(backdrop.rimIntensity ?? 2);
     }
+
+    // 涂装分色：各阶段的漆面参数 + 分色线形状 + 饰条。预设没写 surface.split 时保持旧的整屏渐变
+    const split = surface.split;
+    const stops = this._livery.slice(0, MAX_STOPS);
+    u.uStopCount.value = stops.length;
+    stops.forEach((stop, i) => {
+      u.uStopColor.value[i].copy(stop.color);
+      u.uStopMat.value[i].set(stop.metalness, stop.roughness, stop.clearcoat, stop.clearcoatRoughness);
+      u.uStopWeave.value[i] = stop.weave ?? 0;
+    });
+    u.uSeamShape.value.set(split?.rake ?? 0, split?.bend ?? 0, split?.chevron ?? 0);
+    const stripes = (split?.stripes ?? []).slice(0, MAX_STRIPES);
+    u.uStripeCount.value = stripes.length;
+    stripes.forEach((stripe, i) => {
+      u.uStripe.value[i].set(stripe.offset, stripe.width, 0, 0);
+      u.uStripeColor.value[i].set(stripe.color);
+    });
+    this._syncSplit();
+  }
+
+  /** 分色只在"预设给了 split、页面给了分色线位置、阶段不止一个"时启用，否则退回整屏渐变 */
+  _syncSplit() {
+    const u = this.uniforms;
+    const seams = this._seams.slice(0, MAX_SEAMS);
+    u.uSeamCount.value = seams.length;
+    u.uSplit.value = this.preset.surface.split && seams.length > 0 && this._livery.length > 1 ? 1 : 0;
   }
 
   /* ---------------- 每帧 ---------------- */
@@ -2046,7 +2259,15 @@ export class PaintSurface {
     this.uniforms.uTime.value = reduced ? 0 : now / 1000;
     const sweep = reduced ? surface.sweep[0] : lerpNumber(surface.sweep[0], surface.sweep[1], state.progress);
     const [pointerX, pointerY] = surface.pointer ?? [0, 0];
-    this.scene.environmentRotation.set(sweep + state.py * pointerY, state.px * pointerX, 0);
+    // 进场扫光：灯光从偏转位置缓缓回正，反射带整体扫过车身一次，像发布会揭幕时的追光。
+    // 只转环境贴图，不加额外光源，所以扫光的形状和强度与静止时的布光完全一致
+    let intro = 0;
+    if (!reduced) {
+      if (this._sweepStart == null) this._sweepStart = now;
+      const k = clampRange((now - this._sweepStart) / (INTRO_SWEEP_SECONDS * 1000), 0, 1);
+      intro = (surface.introSweep ?? 0.9) * Math.pow(1 - k, 3); // easeOutCubic：起步快、收尾慢
+    }
+    this.scene.environmentRotation.set(sweep + intro + state.py * pointerY, state.px * pointerX, 0);
 
     this._applyLivery(state.tone);
     this.renderer.render(this.scene, this.camera);
@@ -2379,6 +2600,13 @@ function catmullRomToBezier(points) {
  * 车漆从第 i 个涂装阶段过渡到第 i+1 个（Mercedes 只有一个过渡区：前银 → 后黑）。
  * 过渡区里应该留白多、文字少 —— 两种涂装混合的中间态不适合承载大段正文。
  *
+ * 涂装分色（预设有 surface.split 时）：过渡区不再整屏渐变，而是在它下部的留白里出现一条钉在页面上的
+ * 分色线，线上是前一阶段的漆、线下是后一阶段的漆。这时：
+ *   - 各区块的 --surface-tone 固定为它所在的涂装阶段（写在区块自己的 style 上），文字颜色不再随滚动渐变；
+ *   - 根元素的 --surface-tone 只在分色线滑过导航栏时翻转，给固定在视口顶部的导航用；
+ *   - --surface-progress 是过渡区的滚动进度（0 ~ 1 连续），给进度条读数用。
+ * 过渡区的文字要放在上半部，下部至少留 30% 高度的空白给分色线。
+ *
  * 用法：
  *   const page = mountSurfacePage({
  *     canvas, svg, preset: MERCEDES,
@@ -2388,6 +2616,11 @@ function catmullRomToBezier(points) {
  *   page.destroy(); // React 卸载组件时调用
  */
 import Lenis from 'lenis';
+
+// 分色线在过渡区里的位置（0 = 上沿，1 = 下沿）。过渡区下部约 30% 是留白，分色线连同斜切幅度都落在里面
+const SPLIT_ANCHOR = 0.84;
+// 导航栏高度的近似值（px）：分色线滑过这段距离时，导航的配色完成翻转
+const NAV_BAND = 64;
 
 /**
  * @param {object} config
@@ -2409,6 +2642,8 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
   const line = svg ? new RacingLine(svg, preset.line) : null;
 
   let seamRects = []; // 过渡区在文档中的位置：{ top, height }
+  let splitLines = []; // 涂装分色线在文档中的纵坐标（px）
+  let splitActive = false; // 车漆层是否启用了逐像素分色（预设有 surface.split 且 WebGL 可用）
 
   /** 滚动时调用：把滚动位置分发给车漆层和涂装线 */
   function applyScroll(scrollY) {
@@ -2422,8 +2657,18 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
       surface.setScroll(scrollY, vh, maxScroll);
       surface.setTone(tone);
     }
+    const root = document.documentElement.style;
+    // 过渡区的滚动进度（0 ~ 1 连续变化），给进度条之类的读数用
+    root.setProperty('--surface-progress', tone.toFixed(3));
+    // 分色启用时车漆是按位置切开的，不再整屏渐变：各区块的文字颜色已在 measure() 里按"在分色线哪一侧"固定，
+    // 这里的根变量只管固定在视口顶部的导航——分色线滑过导航栏那一刻才翻转
+    if (splitActive) {
+      tone = 0;
+      // 分色线在视口里的高度从 NAV_BAND 走到 0 时，tone 从 0 走到 1
+      for (const y of splitLines) tone += smoothstepUnit((scrollY + NAV_BAND - y) / NAV_BAND);
+    }
     // 同步给 CSS：页面上想跟着涂装变化的元素可以读 var(--surface-tone)
-    document.documentElement.style.setProperty('--surface-tone', tone.toFixed(3));
+    root.setProperty('--surface-tone', tone.toFixed(3));
     line?.update(scrollY, vh);
   }
 
@@ -2433,6 +2678,22 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
       const rect = el.getBoundingClientRect();
       return { top: rect.top + window.scrollY, height: Math.max(1, rect.height) };
     });
+    // 涂装分色线落在每个过渡区靠下的留白里（文字在上半部），这样没有文字会被分色线切成两种底色
+    splitLines = seamRects.map((rect) => rect.top + rect.height * SPLIT_ANCHOR);
+    surface?.setSeams(splitLines);
+    splitActive = Boolean(surface?.splitActive);
+    // 各区块的文字颜色按位置固定：过渡区及之前用前一阶段的配色，之后用后一阶段的。
+    // 只处理过渡区的同级元素；页脚等不在其中的元素继承根变量（滚到那里时早已翻转）
+    const seamEls = seams.filter(Boolean);
+    const parent = seamEls[0]?.parentElement;
+    if (parent) {
+      let passed = 0; // 已经走过的过渡区个数 = 这个区块所在的涂装阶段
+      for (const el of parent.children) {
+        if (splitActive) el.style.setProperty('--surface-tone', String(passed));
+        else el.style.removeProperty('--surface-tone');
+        if (seamEls.includes(el)) passed += 1;
+      }
+    }
     line?.layout();
     applyScroll(window.scrollY);
   }
@@ -2487,7 +2748,7 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
       if (newPreset.fallback) {
         document.documentElement.style.setProperty('--surface-fallback', newPreset.fallback);
       }
-      applyScroll(window.scrollY);
+      measure(); // 新预设可能启用或关闭涂装分色，各区块的 --surface-tone 要重新分配
     },
     destroy() {
       clearTimeout(resizeTimer);
