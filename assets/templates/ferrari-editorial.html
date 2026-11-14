@@ -447,6 +447,14 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 意式杂志：保留巨字出血，引言横带加高放大。hero=bleed · index=rows · title=top · band=tall · data=note-left · charts=row */
+  @media (min-width: 821px) {
+    section { padding: 96px 0; }
+    .paint-band { padding: 144px 0; }
+    .paint-band blockquote { font-size: clamp(36px, 5.4vw, 72px); max-width: 1120px; text-wrap: balance; }
+  }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

@@ -448,6 +448,26 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 包豪斯理性：左栏标题 + 右栏内容、全部直角。hero=compact · index=rows · title=rail · band=inset · data=note-left · charts=flat */
+  @media (min-width: 821px) {
+    section { padding: 88px 0; }
+    .hero { padding-bottom: 96px; }
+    .hero-display { white-space: normal; font-size: clamp(56px, 8.4vw, 128px); line-height: 0.98; margin-bottom: 36px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 0.8fr 1.2fr; }
+    .section-fog:not(.charts) > .wrap { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 56px; align-items: start; }
+    .section-fog:not(.charts) .section-title { position: sticky; top: 40px; margin: 0; font-size: clamp(32px, 3.4vw, 48px); }
+    .paint-band { max-width: 1136px; margin: 24px auto; border-radius: var(--layout-band-r, 8px); padding: 96px 32px; }
+    .paint-band > .wrap { padding: 0 32px; }
+    .chart-card { border-radius: 0; }
+    .paint-band { --layout-band-r: 0; }
+    /* 右栏变窄，巨号序号缩小并让出第一列，避免压住标题 */
+    .index-row { grid-template-columns: 88px 0.9fr 1.1fr 32px; }
+    .index-row .no { font-size: 84px; }
+  }
+  @media (max-width: 820px) { .paint-band { margin: 0 16px; border-radius: var(--layout-band-r, 8px); } }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

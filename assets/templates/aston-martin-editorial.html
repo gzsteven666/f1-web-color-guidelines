@@ -494,6 +494,34 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 英伦奢华：居中对称、大留白、窄栏阅读。hero=center · index=rows · title=center · band=tall-center · data=stacked · charts=row */
+  @media (min-width: 821px) {
+    section { padding: 128px 0; }
+    .hero { padding: 56px 0 120px; }
+    .hero > .wrap:not(.hero-grid) { text-align: center; }
+    .hero-display { white-space: normal; font-size: clamp(56px, 9.6vw, 148px); line-height: 1; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 48px; }
+    .hero p { margin-left: auto; margin-right: auto; }
+    .hero-actions { justify-content: center; }
+    /* 三张残片排成一行落在车漆场上，像展台上的三件展品 */
+    .artifacts { min-height: 0; width: 100%; display: flex; justify-content: center; align-items: flex-start; gap: 28px; }
+    .artifact { position: relative; top: auto; right: auto; bottom: auto; left: auto; text-align: left; }
+    .artifact-2 { margin-top: 40px; }
+    .hero::before, .hero-glow { width: 100%; height: 34%; border-top-left-radius: 0; border-radius: 50% 50% 0 0 / 96px 96px 0 0; }
+    .section-title { margin-left: auto; margin-right: auto; text-align: center; }
+    .section-title::before, .section-title::after { margin-left: auto; margin-right: auto; }
+    .paint-band { padding: 136px 0; }
+    .paint-band blockquote { margin: 0 auto; text-align: center; max-width: 920px; text-wrap: balance; }
+    .paint-band cite { text-align: center; }
+    .data-spread { grid-template-columns: 1fr; max-width: 880px; margin: 0 auto; gap: 36px; }
+    .data-note p { max-width: 560px; }
+    .index-list { max-width: 960px; margin: 0 auto; }
+    /* 车漆场收窄成展台：两侧留出纸面 */
+    .hero::before, .hero-glow { left: 10%; right: 10%; width: auto; border-radius: 48px 48px 0 0; }
+  }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

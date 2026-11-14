@@ -453,6 +453,31 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 精密工程：三栏规格表、窄圆角面板、表格优先。hero=compact · index=spec · title=top · band=inset · data=reverse · charts=feature */
+  @media (min-width: 821px) {
+    section { padding: 72px 0; }
+    .hero { padding-bottom: 96px; }
+    .hero-display { white-space: normal; font-size: clamp(56px, 8.4vw, 128px); line-height: 0.98; margin-bottom: 36px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 0.8fr 1.2fr; }
+    .index-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; border-top: 0; }
+    .index-row { grid-template-columns: 1fr; align-content: start; gap: 14px; padding: 28px 0 36px; border-top: 2px solid var(--ink); border-bottom: 0; }
+    .index-row:hover { background: none; }
+    .index-row .no { position: static; transform: none; font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.08em; color: var(--muted); opacity: 1; }
+    .index-row:hover .no { transform: none; opacity: 1; }
+    .index-row h3 { grid-column: 1; }
+    .index-row .arr { justify-self: start; }
+    .paint-band { max-width: 1136px; margin: 24px auto; border-radius: var(--layout-band-r, 8px); padding: 96px 32px; }
+    .paint-band > .wrap { padding: 0 32px; }
+    .data-spread { grid-template-columns: 1.25fr 0.75fr; }
+    .data-note { order: 2; padding-top: 8px; }
+    .chart-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+    .paint-band { --layout-band-r: 4px; }
+  }
+  @media (max-width: 820px) { .paint-band { margin: 0 16px; border-radius: var(--layout-band-r, 8px); } }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

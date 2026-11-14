@@ -446,6 +446,29 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 年轻街头：卡片错落、反向斜切。hero=rail · index=cards · title=top · band=skew-rev · data=note-left · charts=feature */
+  @media (min-width: 821px) {
+    section { padding: 72px 0; }
+    .hero > .wrap:not(.hero-grid) { display: grid; grid-template-columns: 36px 1fr; column-gap: 20px; }
+    /* 竖排小标签贴左缘，像车身侧面的贴标 */
+    .hero .ghost-tag { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0 !important; align-self: end; letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; }
+    .hero-display { white-space: normal; font-size: clamp(64px, 11.5vw, 176px); line-height: 0.9; letter-spacing: -0.045em; }
+    .hero-display .l2 { padding-left: 0; text-align: right; }
+    .index-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; border-top: 0; }
+    .index-row { grid-template-columns: 1fr; align-content: start; gap: 14px; min-height: 280px; padding: 32px 28px 28px; background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--layout-card-r, 16px); }
+    .index-row .no { position: static; transform: none; font-size: 80px; line-height: 0.9; opacity: 0.2; }
+    .index-row:hover .no { transform: translateX(6px); opacity: 0.34; }
+    .index-row h3 { grid-column: 1; }
+    .index-row .arr { justify-self: start; align-self: end; }
+    .paint-band { clip-path: polygon(0 0, 100% var(--layout-skew, 56px), 100% 100%, 0 calc(100% - var(--layout-skew, 56px))); padding: 144px 0; }
+    .chart-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+    .index-row { --layout-card-r: 20px; }
+    .index-row:nth-child(2) { transform: translateY(40px); }
+  }
+  @media (max-width: 820px) { .paint-band { --layout-skew: 24px; clip-path: polygon(0 0, 100% var(--layout-skew), 100% 100%, 0 calc(100% - var(--layout-skew))); } }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

@@ -447,6 +447,28 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 美式工业：硬边框卡片、粗线、直角。hero=compact · index=cards · title=top · band=full · data=reverse · charts=flat */
+  @media (min-width: 821px) {
+    section { padding: 64px 0; }
+    .hero { padding-bottom: 96px; }
+    .hero-display { white-space: normal; font-size: clamp(56px, 8.4vw, 128px); line-height: 0.98; margin-bottom: 36px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 0.8fr 1.2fr; }
+    .index-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; border-top: 0; }
+    .index-row { grid-template-columns: 1fr; align-content: start; gap: 14px; min-height: 280px; padding: 32px 28px 28px; background: var(--paper); border: 1px solid var(--hairline); border-radius: var(--layout-card-r, 16px); }
+    .index-row .no { position: static; transform: none; font-size: 80px; line-height: 0.9; opacity: 0.2; }
+    .index-row:hover .no { transform: translateX(6px); opacity: 0.34; }
+    .index-row h3 { grid-column: 1; }
+    .index-row .arr { justify-self: start; align-self: end; }
+    .data-spread { grid-template-columns: 1.25fr 0.75fr; }
+    .data-note { order: 2; padding-top: 8px; }
+    .chart-card { border-radius: 0; }
+    .index-row { --layout-card-r: 0; border: 2px solid var(--ink); }
+    .chart-card { border: 2px solid var(--ink); }
+    .paint-band blockquote { font-family: var(--font-sans); font-style: normal; font-weight: 600; border-left: 6px solid currentColor; padding-left: 28px; text-wrap: balance; }
+  }
+  /* /LAYOUT */
 </style>
 </head>
 <body>

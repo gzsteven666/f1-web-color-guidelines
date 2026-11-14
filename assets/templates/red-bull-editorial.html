@@ -448,6 +448,29 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* LAYOUT: 车队版式节奏 */
+  /* 冲击力：竖排贴标、紧凑节奏、陡斜横带。hero=rail · index=spec · title=top · band=skew · data=reverse · charts=row */
+  @media (min-width: 821px) {
+    section { padding: 64px 0; }
+    .hero > .wrap:not(.hero-grid) { display: grid; grid-template-columns: 36px 1fr; column-gap: 20px; }
+    /* 竖排小标签贴左缘，像车身侧面的贴标 */
+    .hero .ghost-tag { writing-mode: vertical-rl; transform: rotate(180deg); margin: 0 !important; align-self: end; letter-spacing: 0.14em; text-transform: uppercase; font-size: 12px; }
+    .hero-display { white-space: normal; font-size: clamp(64px, 11.5vw, 176px); line-height: 0.9; letter-spacing: -0.045em; }
+    .hero-display .l2 { padding-left: 0; text-align: right; }
+    .index-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; border-top: 0; }
+    .index-row { grid-template-columns: 1fr; align-content: start; gap: 14px; padding: 28px 0 36px; border-top: 2px solid var(--ink); border-bottom: 0; }
+    .index-row:hover { background: none; }
+    .index-row .no { position: static; transform: none; font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.08em; color: var(--muted); opacity: 1; }
+    .index-row:hover .no { transform: none; opacity: 1; }
+    .index-row h3 { grid-column: 1; }
+    .index-row .arr { justify-self: start; }
+    .paint-band { clip-path: polygon(0 var(--layout-skew, 56px), 100% 0, 100% calc(100% - var(--layout-skew, 56px)), 0 100%); padding: 144px 0; }
+    .data-spread { grid-template-columns: 1.25fr 0.75fr; }
+    .data-note { order: 2; padding-top: 8px; }
+    .paint-band { --layout-skew: 72px; }
+  }
+  @media (max-width: 820px) { .paint-band { --layout-skew: 24px; clip-path: polygon(0 var(--layout-skew), 100% 0, 100% calc(100% - var(--layout-skew)), 0 100%); } }
+  /* /LAYOUT */
 </style>
 </head>
 <body>
