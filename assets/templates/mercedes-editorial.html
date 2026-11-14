@@ -20,7 +20,7 @@
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
      1. Design Tokens —— Steep 结构 × Mercedes 黑银青绿
@@ -236,7 +236,7 @@
   }
   .mini-gauge .val small { font-size: 13px; color: var(--muted); }
   .mini-arc-progress {
-    stroke-dashoffset: 52;
+    stroke-dashoffset: 1.3;
     animation: miniSweep 1000ms ease 600ms backwards;
   }
   @keyframes miniSweep { from { stroke-dashoffset: 163.4; } }
@@ -453,6 +453,37 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* CN-TYPE: 中文标题字体 */
+  /* 细黑体：精密、冷静。中文标题不再一律宋体：字体、字重、字距按车队气质选 */
+  :root { --font-latin-serif: "Newsreader"; --font-latin-sans: "Archivo"; --font-cn-title: var(--font-latin-sans), "Noto Sans SC", "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif; --cn-title-weight: 300; --cn-title-spacing: -0.01em; }
+  .section-title, .data-note h3 { font-family: var(--font-cn-title); font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  .paint-band blockquote { font-family: var(--font-cn-title); font-style: normal; font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  /* /CN-TYPE */
+  /* LAYOUT: 车队版式节奏 */
+  /* 精密工程：三栏规格表、窄圆角面板、表格优先。hero=compact · index=spec · title=top · band=inset · data=reverse · charts=feature */
+  @media (min-width: 821px) {
+    section { padding: 72px 0; }
+    .hero { padding-bottom: 96px; }
+    .hero-display { white-space: normal; font-size: clamp(56px, 8.4vw, 128px); line-height: 0.98; margin-bottom: 36px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero-grid { grid-template-columns: 0.8fr 1.2fr; }
+    .index-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 40px; border-top: 0; }
+    .index-row { grid-template-columns: 1fr; align-content: start; gap: 14px; padding: 28px 0 36px; border-top: 2px solid var(--ink); border-bottom: 0; }
+    .index-row:hover { background: none; }
+    .index-row .no { position: static; transform: none; font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.08em; color: var(--muted); opacity: 1; }
+    .index-row:hover .no { transform: none; opacity: 1; }
+    .index-row h3 { grid-column: 1; }
+    .index-row .arr { justify-self: start; }
+    .paint-band { max-width: 1136px; margin: 24px auto; border-radius: var(--layout-band-r, 8px); padding: 96px 32px; }
+    .paint-band > .wrap { padding: 0 32px; }
+    .data-spread { grid-template-columns: 1.25fr 0.75fr; }
+    .data-note { order: 2; padding-top: 8px; }
+    .chart-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+    .paint-band { --layout-band-r: 4px; }
+  }
+  @media (max-width: 820px) { .paint-band { margin: 0 16px; border-radius: var(--layout-band-r, 8px); } }
+  /* /LAYOUT */
 </style>
 </head>
 <body>
@@ -476,7 +507,7 @@
 <header class="hero">
   <div class="hero-glow" aria-hidden="true"></div>
   <div class="wrap">
-    <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Quarterly Review</span>
+    <span class="ghost-tag" style="display:block;margin-bottom:16px">2026 · Precision Telemetry</span>
     <div class="hero-display" role="heading" aria-level="1">Data, forged<span class="l2">in <em>Silver Arrows</em>.</span></div>
   </div>
   <div class="wrap hero-grid">
@@ -491,9 +522,9 @@
 
     <div class="artifacts" aria-label="产品界面残片示意">
       <div class="artifact artifact-1">
-        <div class="label">本月注册</div>
-        <div class="metric num"><span data-count="2.4">2.4</span>k</div>
-        <div class="delta num"><b>↑ 5.5×</b> vs 上周</div>
+        <div class="label">采集点在线</div>
+        <div class="metric num"><span data-count="18.6">18.6</span>k</div>
+        <div class="delta num"><b>↑ 0.4%</b> vs 昨日</div>
         <svg class="gesture-chart" viewBox="0 0 210 56" aria-hidden="true">
           <path d="M 4 44 C 30 40, 48 24, 74 28 S 122 12, 150 16 S 192 8, 206 10"
                 fill="none" stroke="#00A19B" stroke-width="2" stroke-linecap="round"/>
@@ -501,7 +532,7 @@
         </svg>
       </div>
       <div class="artifact artifact-2">
-        <div class="label">System Load</div>
+        <div class="label">采样完整度</div>
         <div class="mini-gauge">
           <svg viewBox="0 0 150 84" aria-hidden="true">
             <path d="M 23 76 A 52 52 0 0 1 127 76"
@@ -510,15 +541,15 @@
                   fill="none" stroke="#00A19B" stroke-width="8" stroke-linecap="round"
                   stroke-dasharray="163.4"/>
           </svg>
-          <div class="val num"><span data-count="72.4">72.4</span><small> %</small></div>
+          <div class="val num"><span data-count="99.2">99.2</span><small> %</small></div>
         </div>
       </div>
       <div class="artifact artifact-3">
-        <div class="label">实时协作</div>
+        <div class="label">值班交接</div>
         <div class="bubbles">
-          <div class="bubble bubble-1">JB</div>
-          <div class="bubble bubble-2">AF</div>
-          <span>2 人正在编辑</span>
+          <div class="bubble bubble-1">LW</div>
+          <div class="bubble bubble-2">KR</div>
+          <span>2 人在线</span>
         </div>
       </div>
     </div>
@@ -531,20 +562,20 @@
     <div class="index-list">
       <a class="index-row" href="#">
         <span class="no">01</span>
-        <h3>问一句，看穿一层</h3>
-        <p>自然语言查询直接下钻到明细。图表是手势般的一根线，不是塞满坐标轴的报表。</p>
+        <h3>一个指标，一个出处</h3>
+        <p>每个数字都能追到采集点、口径和负责人。口径改了，所有引用它的图表同时更新。</p>
         <span class="arr">→</span>
       </a>
       <a class="index-row" href="#">
         <span class="no">02</span>
-        <h3>让流程自己跑</h3>
-        <p>工作流在纸面之下安静运转，只有需要你决策的时刻才浮出一张卡片。</p>
+        <h3>误差也是数据</h3>
+        <p>置信区间和采样率与数值并排显示，不藏在脚注里。</p>
         <span class="arr">→</span>
       </a>
       <a class="index-row" href="#">
         <span class="no">03</span>
-        <h3>权限清晰到行</h3>
-        <p>行级权限与审计一体。青绿只出现在你按下去的那个按钮上。</p>
+        <h3>告警只说一次</h3>
+        <p>同一根因的告警合并成一条。青绿只留给那条需要你处理的流线。</p>
         <span class="arr">→</span>
       </a>
     </div>
@@ -554,8 +585,8 @@
 <!-- 车漆横带：黑碳底 + 低位 PETRONAS 流线（2026 官方语义的版面化） -->
 <section class="paint-band reveal">
   <div class="wrap">
-    <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
-    <cite>— Head of Operations, Vantage Team</cite>
+    <blockquote>"我们不再争论哪个数字是对的。每一个指标只有一个出处，误差写在旁边。"</blockquote>
+    <cite>— 平台工程负责人，某制造业客户</cite>
   </div>
 </section>
 
@@ -563,18 +594,18 @@
   <div class="wrap">
     <div class="data-spread">
       <div class="data-note">
-        <h3>渠道，摊开在纸面上。</h3>
-        <p>数据不必装进盒子。发丝线、等宽数字和留白，就是它需要的全部结构。</p>
+        <h3>延迟，按百分位摊开。</h3>
+        <p>平均值会骗人。把 P50 到 P99 排在一起，问题在哪一档一眼可见。</p>
       </div>
       <table>
         <thead>
-          <tr><th>渠道</th><th class="num">访问</th><th class="num">转化</th><th></th></tr>
+          <tr><th>服务</th><th class="num">P50</th><th class="num">P99</th><th></th></tr>
         </thead>
         <tbody>
-          <tr><td>自然搜索</td><td class="num">8,204</td><td class="num">4.2%</td><td><span class="tag-pill">Top</span></td></tr>
-          <tr><td>直接访问</td><td class="num">5,113</td><td class="num">3.1%</td><td></td></tr>
-          <tr><td>社交媒体</td><td class="num">2,882</td><td class="num">2.4%</td><td></td></tr>
-          <tr><td>邮件营销</td><td class="num">1,997</td><td class="num">1.8%</td><td></td></tr>
+          <tr><td>网关</td><td class="num">12 ms</td><td class="num">48 ms</td><td></td></tr>
+          <tr><td>鉴权</td><td class="num">8 ms</td><td class="num">31 ms</td><td><span class="tag-pill">Top</span></td></tr>
+          <tr><td>查询</td><td class="num">41 ms</td><td class="num">212 ms</td><td></td></tr>
+          <tr><td>写入</td><td class="num">19 ms</td><td class="num">77 ms</td><td></td></tr>
         </tbody>
       </table>
     </div>
@@ -583,23 +614,23 @@
 
 <section class="section-fog charts reveal">
   <div class="wrap">
-    <h2 class="section-title">图表也说同一种语言。</h2>
+    <h2 class="section-title">图表先讲口径，再讲结论。</h2>
     <div class="chart-grid">
       <figure class="chart-card">
         <figcaption>折线：主数据 vs 对比</figcaption>
-        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据持续上升并高于对比数据">
+        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据（粗线）与对比数据（细线）的走势">
           <line class="grid-line" x1="20" x2="340" y1="28" y2="28"/><line class="grid-line" x1="20" x2="340" y1="68" y2="68"/><line class="grid-line" x1="20" x2="340" y1="108" y2="108"/><line class="grid-line" x1="20" x2="340" y1="148" y2="148"/>
-          <path d="M20.0 116.0 L49.1 110.0 L78.2 112.0 L107.3 104.0 L136.4 100.0 L165.5 96.0 L194.5 94.0 L223.6 88.0 L252.7 90.0 L281.8 82.0 L310.9 84.0 L340.0 78.0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-          <path d="M20.0 110.0 L49.1 102.0 L78.2 106.0 L107.3 88.0 L136.4 92.0 L165.5 80.0 L194.5 82.0 L223.6 68.0 L252.7 56.0 L281.8 50.0 L310.9 42.0 L340.0 28.0" fill="none" stroke="var(--accent-display, var(--accent))" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
-          <circle cx="340.0" cy="28.0" r="5" fill="var(--signal)" stroke="var(--ink)" stroke-width="1.5"/>
+          <path d="M20.0 82.0 L49.1 81.0 L78.2 80.0 L107.3 80.0 L136.4 78.0 L165.5 77.0 L194.5 77.0 L223.6 75.0 L252.7 74.0 L281.8 74.0 L310.9 72.0 L340.0 71.0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M20.0 80.0 L49.1 78.0 L78.2 79.0 L107.3 76.0 L136.4 74.0 L165.5 75.0 L194.5 70.0 L223.6 68.0 L252.7 66.0 L281.8 61.0 L310.9 56.0 L340.0 50.0" fill="none" stroke="var(--accent-display, var(--accent))" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+          <circle cx="340.0" cy="50.0" r="5" fill="var(--signal)" stroke="var(--ink)" stroke-width="1.5"/>
         </svg>
         <ul class="legend"><li><i style="background:var(--accent-display, var(--accent))"></i>PETRONAS 青绿</li><li><i style="background:var(--ink)"></i>碳黑</li><li><i style="background:var(--signal);box-shadow:0 0 0 1.5px var(--ink)"></i>信号青端点</li></ul>
       </figure>
       <figure class="chart-card">
         <figcaption>柱状：只高亮一根</figcaption>
-        <svg viewBox="0 0 360 160" role="img" aria-label="柱状图示例：第四根柱子使用主色高亮，其余为灰色">
+        <svg viewBox="0 0 360 160" role="img" aria-label="柱状图示例：第五根柱子使用主色高亮，其余为灰色">
           <line class="grid-line" x1="20" x2="340" y1="28" y2="28"/><line class="grid-line" x1="20" x2="340" y1="68" y2="68"/><line class="grid-line" x1="20" x2="340" y1="108" y2="108"/><line class="grid-line" x1="20" x2="340" y1="148" y2="148"/>
-          <rect x="24" y="108" width="36" height="40" rx="3" fill="var(--ghost)"/><rect x="80" y="86" width="36" height="62" rx="3" fill="var(--ghost)"/><rect x="136" y="100" width="36" height="48" rx="3" fill="var(--ghost)"/><rect x="192" y="62" width="36" height="86" rx="3" fill="var(--accent-display, var(--accent))"/><rect x="248" y="78" width="36" height="70" rx="3" fill="var(--ghost)"/><rect x="304" y="94" width="36" height="54" rx="3" fill="var(--ghost)"/>
+          <rect x="24" y="96" width="36" height="52" rx="3" fill="var(--ghost)"/><rect x="80" y="90" width="36" height="58" rx="3" fill="var(--ghost)"/><rect x="136" y="99" width="36" height="49" rx="3" fill="var(--ghost)"/><rect x="192" y="87" width="36" height="61" rx="3" fill="var(--ghost)"/><rect x="248" y="60" width="36" height="88" rx="3" fill="var(--accent-display, var(--accent))"/><rect x="304" y="91" width="36" height="57" rx="3" fill="var(--ghost)"/>
         </svg>
         <p class="chart-note">高亮柱用主色，其余柱用中性灰：一张图只讲一件事。</p>
       </figure>

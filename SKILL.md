@@ -64,6 +64,7 @@ description: F1 2026 team web color and styling guide (all 11 teams) for designi
 - 用户要完整页面实现或视觉基准对照
 - 每队有 `<team>-editorial.html`（浅色杂志模式，默认主参考）；Aston Martin 另有 `aston-martin.html`（深色 Mission Control，dashboard 场景用）
 - 模板是参考不是固定骨架：参考其 token 与手法，不要整页照抄
+- 各队 editorial 的版式节奏不同（模板末尾 `/* LAYOUT: 车队版式节奏 */` 注明组合），例如 Mercedes 三栏规格表、Aston Martin 居中大留白、Audi 左栏标题、Haas 硬边卡片；为用户做页面时也按车队气质选构图，不要只换颜色
 
 遇到以下场景时，再额外读取 `references/cross-team-methodology.md`：
 

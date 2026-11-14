@@ -20,7 +20,7 @@
 -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
 <style>
   /* ==========================================================
      1. Design Tokens —— Steep 结构 × Ferrari 红白
@@ -231,7 +231,7 @@
   }
   .mini-gauge .val small { font-size: 13px; color: var(--muted); }
   .mini-arc-progress {
-    stroke-dashoffset: 52;
+    stroke-dashoffset: 45.1;
     animation: miniSweep 1000ms ease 600ms backwards;
   }
   @keyframes miniSweep { from { stroke-dashoffset: 163.4; } }
@@ -447,6 +447,19 @@
   .status-list .val { font-family: var(--font-mono); font-size: 14px; color: var(--muted); }
   .chart-note { font-size: 13px; color: var(--muted); margin-top: 16px; line-height: 1.5; }
   @media (max-width: 960px) { .chart-grid { grid-template-columns: 1fr; } }
+  /* CN-TYPE: 中文标题字体 */
+  /* 宋体：意式杂志。中文标题不再一律宋体：字体、字重、字距按车队气质选 */
+  :root { --font-latin-serif: "Playfair Display"; --font-latin-sans: "Archivo"; --font-cn-title: var(--font-latin-serif), "Noto Serif SC", "Songti SC", "Source Han Serif SC", "SimSun", serif; --cn-title-weight: 400; --cn-title-spacing: -0.02em; }
+  .section-title, .data-note h3 { font-family: var(--font-cn-title); font-weight: var(--cn-title-weight); letter-spacing: var(--cn-title-spacing); }
+  /* /CN-TYPE */
+  /* LAYOUT: 车队版式节奏 */
+  /* 意式杂志：保留巨字出血，引言横带加高放大。hero=bleed · index=rows · title=top · band=tall · data=note-left · charts=row */
+  @media (min-width: 821px) {
+    section { padding: 96px 0; }
+    .paint-band { padding: 144px 0; }
+    .paint-band blockquote { font-size: clamp(36px, 5.4vw, 72px); max-width: 1120px; text-wrap: balance; }
+  }
+  /* /LAYOUT */
 </style>
 </head>
 <body>
@@ -549,7 +562,7 @@
 <section class="paint-band reveal">
   <div class="wrap">
     <blockquote>"它安静得不像一个数据产品——直到你注意到，每个数字都停在该停的位置上。"</blockquote>
-    <cite>— Head of Operations, Vantage Team</cite>
+    <cite>— 品牌总监，某消费品集团</cite>
   </div>
 </section>
 
@@ -581,7 +594,7 @@
     <div class="chart-grid">
       <figure class="chart-card">
         <figcaption>折线：主数据 vs 对比</figcaption>
-        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据持续上升并高于对比数据">
+        <svg viewBox="0 0 360 160" role="img" aria-label="折线图示例：主数据（粗线）与对比数据（细线）的走势">
           <line class="grid-line" x1="20" x2="340" y1="28" y2="28"/><line class="grid-line" x1="20" x2="340" y1="68" y2="68"/><line class="grid-line" x1="20" x2="340" y1="108" y2="108"/><line class="grid-line" x1="20" x2="340" y1="148" y2="148"/>
           <path d="M20.0 116.0 L49.1 110.0 L78.2 112.0 L107.3 104.0 L136.4 100.0 L165.5 96.0 L194.5 94.0 L223.6 88.0 L252.7 90.0 L281.8 82.0 L310.9 84.0 L340.0 78.0" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
           <path d="M20.0 110.0 L49.1 102.0 L78.2 106.0 L107.3 88.0 L136.4 92.0 L165.5 80.0 L194.5 82.0 L223.6 68.0 L252.7 56.0 L281.8 50.0 L310.9 42.0 L340.0 28.0" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
