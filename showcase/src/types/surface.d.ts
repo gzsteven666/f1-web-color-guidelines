@@ -82,7 +82,8 @@ export interface SurfacePageInstance {
   line: any;
   lenis: any;
   measure: () => void;
-  setPreset: (preset: TeamPreset) => void;
+  /** 切换车队预设；默认带扫掠过渡，传 { transition: false } 直接切换 */
+  setPreset: (preset: TeamPreset, options?: { transition?: boolean }) => void;
   destroy: () => void;
 }
 

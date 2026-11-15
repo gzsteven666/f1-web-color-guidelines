@@ -153,10 +153,11 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
     /**
      * 运行时动态切换车队预设
      * @param {object} newPreset 新的车队预设
+     * @param {object} [options] 透传给车漆层，例如 { transition: false } 关闭扫掠过渡
      */
-    setPreset(newPreset) {
+    setPreset(newPreset, options) {
       preset = newPreset;
-      surface?.setPreset(newPreset);
+      surface?.setPreset(newPreset, options);
       line?.updateOptions(newPreset.line);
       if (newPreset.fallback) {
         document.documentElement.style.setProperty('--surface-fallback', newPreset.fallback);

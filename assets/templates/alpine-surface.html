@@ -1604,6 +1604,9 @@ const MAX_SEAMS = 3;
 const MAX_STRIPES = 2;
 // 进场扫光：页面打开时灯光从偏转位置回到静止位置所用的时间（秒）
 const INTRO_SWEEP_SECONDS = 2.4;
+// 切换车队：旧画面被一道斜向的柔边扫掉所用的时间（秒），以及柔边宽度（占画面对角方向的百分比）
+const PRESET_WIPE_SECONDS = 0.9;
+const PRESET_WIPE_SOFTNESS = 26;
 
 // 着色器里正弦波 uniform 数组的长度（预设里最多写这么多组）
 const MAX_WAVES = 6;
@@ -1948,6 +1951,7 @@ export class PaintSurface {
     this._raf = 0;
     this._seams = [];        // 分色线位置（文档 px），由 setSeams 写入
     this._sweepStart = null; // 进场扫光的起始时间戳
+    this._presetWipe = null; // 切换车队的过渡状态：{ snapshot, start, raf }
 
     this._initRenderer();
     this._initStudio();
@@ -2024,8 +2028,12 @@ export class PaintSurface {
   /**
    * 运行时动态切换车队预设（无需重新创建 WebGL 上下文与 Canvas）
    * @param {object} newPreset 新的车队预设对象（来自 teams.js）
+   * @param {object} [options]
+   * @param {boolean} [options.transition] 是否用扫掠过渡，默认 true；用户开启"减少动态效果"时始终直接切换
    */
-  setPreset(newPreset) {
+  setPreset(newPreset, { transition = true } = {}) {
+    // 必须在改任何状态之前拍下旧画面
+    if (transition && !this.options.reducedMotion) this._beginPresetWipe();
     this.preset = newPreset;
     const render = newPreset.render ?? {};
     this.renderer.toneMapping = TONE_MAPPINGS[render.toneMapping ?? 'neutral'] ?? THREE.NeutralToneMapping;
@@ -2059,6 +2067,7 @@ export class PaintSurface {
 
   dispose() {
     this.stop();
+    this._endPresetWipe();
     window.removeEventListener('resize', this._onResize);
     this.canvas.removeEventListener('webglcontextlost', this._onContextLost);
     this.mesh.geometry?.dispose();
@@ -2067,6 +2076,73 @@ export class PaintSurface {
     this.renderer?.dispose();
     // 提示：切勿调用 this.renderer.forceContextLoss()，否则在 React StrictMode 两次挂载或组件热重载时，
     // DOM 中的同一 canvas 元素的 WebGL 上下文会被永久置为失效，导致二次初始化崩溃。
+  }
+
+  /* ---------------- 切换车队的过渡 ---------------- */
+
+  /**
+   * 切换车队时，把旧车队的最后一帧留在新画面上面，再用一道斜向柔边把它扫掉。
+   *
+   * 为什么用"截图 + 遮罩"而不是逐项插值参数：两支车队之间变的不只是颜色，还有整张影棚环境贴图、
+   * 色调映射、曲面和分色线形状。环境贴图要重新烘焙，没法和旧的那张逐帧混合；只插值颜色的话，
+   * 反射和曝光仍会在切换瞬间跳变。在屏幕空间盖一张旧画面则对所有参数一视同仁，
+   * 代价只是一张临时的 2D canvas，过渡结束就移除。
+   * 扫掠方向与进场扫光一致（setPreset 会同时重放扫光），看起来像一道光把新涂装刷了出来。
+   */
+  _beginPresetWipe() {
+    this._endPresetWipe(); // 连续快速切换：丢掉上一次没放完的过渡，从当前画面重新开始
+    const source = this.canvas;
+    if (!source.isConnected || source.width === 0 || source.height === 0) return;
+
+    const snapshot = document.createElement('canvas');
+    snapshot.width = source.width;
+    snapshot.height = source.height;
+    const context = snapshot.getContext('2d');
+    if (!context) return;
+    // WebGL 的绘图缓冲在一帧提交后就会被清空（没开 preserveDrawingBuffer），
+    // 所以先同步重画一帧，再在同一个任务里立刻拷贝，才能读到内容
+    this.renderer.render(this.scene, this.camera);
+    context.drawImage(source, 0, 0);
+
+    // 截图严丝合缝地盖在车漆 canvas 上：同样的定位方式和层级，紧跟在它后面，所以仍在页面内容之下
+    const rect = source.getBoundingClientRect();
+    const computed = getComputedStyle(source);
+    Object.assign(snapshot.style, {
+      position: computed.position === 'fixed' ? 'fixed' : 'absolute',
+      left: `${rect.left}px`,
+      top: `${rect.top}px`,
+      width: `${rect.width}px`,
+      height: `${rect.height}px`,
+      zIndex: computed.zIndex,
+      pointerEvents: 'none',
+    });
+    snapshot.setAttribute('aria-hidden', 'true');
+    source.after(snapshot);
+
+    const wipe = { snapshot, start: 0, raf: 0 };
+    const step = (now) => {
+      if (!wipe.start) wipe.start = now;
+      const k = clampRange((now - wipe.start) / (PRESET_WIPE_SECONDS * 1000), 0, 1);
+      const eased = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; // easeInOutCubic
+      // 柔边从画面外的左侧扫到画面外的右侧：柔边左边透明（露出新画面），右边不透明（还是旧画面）
+      const edge = eased * (100 + PRESET_WIPE_SOFTNESS);
+      const mask = `linear-gradient(100deg, transparent ${edge - PRESET_WIPE_SOFTNESS}%, #000 ${edge}%)`;
+      snapshot.style.maskImage = mask;
+      snapshot.style.webkitMaskImage = mask; // Safari 15.4 之前只认带前缀的写法
+      if (k < 1) wipe.raf = requestAnimationFrame(step);
+      else this._endPresetWipe();
+    };
+    this._presetWipe = wipe;
+    step(performance.now()); // 先同步设一次遮罩，避免第一帧闪出完整的旧画面之外的状态
+  }
+
+  /** 结束（或中止）切换过渡，移除临时截图 */
+  _endPresetWipe() {
+    const wipe = this._presetWipe;
+    if (!wipe) return;
+    cancelAnimationFrame(wipe.raf);
+    wipe.snapshot.remove();
+    this._presetWipe = null;
   }
 
   /* ---------------- 初始化 ---------------- */
@@ -2785,10 +2861,11 @@ export function mountSurfacePage({ canvas, svg, preset, seams = [], smooth = tru
     /**
      * 运行时动态切换车队预设
      * @param {object} newPreset 新的车队预设
+     * @param {object} [options] 透传给车漆层，例如 { transition: false } 关闭扫掠过渡
      */
-    setPreset(newPreset) {
+    setPreset(newPreset, options) {
       preset = newPreset;
-      surface?.setPreset(newPreset);
+      surface?.setPreset(newPreset, options);
       line?.updateOptions(newPreset.line);
       if (newPreset.fallback) {
         document.documentElement.style.setProperty('--surface-fallback', newPreset.fallback);
