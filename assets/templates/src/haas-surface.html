@@ -295,6 +295,11 @@
      7. 过渡区（seam）—— 前段车身交接给后段
      ========================================================== */
   .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  /* 手机上 140vh 的过渡区有一屏多只有车漆、没有内容。缩到 112vh，并把文字靠上放：
+     分色线钉在过渡区高度的 84% 处（surface-page.js 的 SPLIT_ANCHOR），文字靠上才不会被它切到。
+     区块变矮后，分色线到下一区块的距离也跟着变短，斜切的分色线低的那一端会压到下一区块的标题，
+     所以在下面补 8vh 外边距，把这段距离补回和桌面差不多 */
+  @media (max-width: 640px) { .seam { min-height: 112vh; align-items: flex-start; padding-top: 16vh; margin-bottom: 8vh; } }
   .seam .eyebrow { margin-bottom: 28px; }
   .seam-title {
     font-family: var(--font-display);
@@ -399,6 +404,10 @@
     --text-1:        color-mix(in srgb, #101114 calc((1 - var(--surface-tone)) * 100%), #F4F5F7);
     --text-2:        color-mix(in srgb, #30343D calc((1 - var(--surface-tone)) * 100%), #B4BAC4);
     --text-3:        color-mix(in srgb, #4A505B calc((1 - var(--surface-tone)) * 100%), #858C98);
+    /* 标题等没有单独写 color 的元素是从 body 继承颜色的，继承到的是 body 上已经算好的色值，
+       不会跟着本区块的 --text-1 变。在区块上重新声明一次 color，后段区块的标题才会在分色线
+       滑过导航之前就是浅色，而不是深字压深色车身 */
+    color: var(--text-1);
   }
   /* 页脚落在影棚地面上。本队的幕墙和地面是浅灰（白车配亮影棚），而页面后段车身是深色，
      根上的文字配色此时已翻成浅色，直接用会变成浅字压浅底。所以页脚固定用前段（浅底）的那套配色 */

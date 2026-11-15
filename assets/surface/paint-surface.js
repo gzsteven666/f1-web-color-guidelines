@@ -114,6 +114,8 @@ uniform int uStopCount;
 uniform vec3 uStopColor[ ${MAX_STOPS} ];       // 各阶段底色（线性色）
 uniform vec4 uStopMat[ ${MAX_STOPS} ];         // (金属度, 粗糙度, 清漆强度, 清漆粗糙度)
 uniform float uStopWeave[ ${MAX_STOPS} ];      // 碳纤维编织纹强度（0 = 普通漆面）
+uniform float uStopFlake[ ${MAX_STOPS} ];      // 金属漆闪点强度（0 = 实色漆，没有闪点）
+uniform float uFlake;                          // 没启用分色时整屏统一的闪点强度（随涂装阶段插值）
 uniform int uSeamCount;
 uniform float uSeamY[ ${MAX_SEAMS} ];          // 分色线在页面坐标里的高度（世界单位）
 uniform vec3 uSeamShape;                       // (斜切 rake, 弧度 bend, V 形 chevron)：画面边缘处的纵向偏移，世界单位
@@ -125,6 +127,24 @@ uniform vec3 uStripeColor[ ${MAX_STRIPES} ];
 vec3 lvColor;
 vec4 lvMat;
 float lvWeave;
+float lvFlake;
+
+// —— 金属漆闪点 ——
+// 真实金属漆的色漆层里悬浮着细小的铝片，每片朝向略有不同：正对光源的那几片会亮成一个小点。
+// 这里把车身切成约 1.7 个像素的小格，每格给法线一个随机的小偏转，只作用在清漆下面的色漆层
+// （清漆层仍用光滑法线）。偏转后反射方向略变，于是只有在环境光变化剧烈的地方 —— 也就是
+// 柔光箱高光的边缘 —— 才看得出明暗差异，暗部和大片均匀反射里几乎不可见，和真车一样。
+// 格子钉在页面坐标上，随内容一起滚动，不会在车身上"游走"。
+const float FLAKE_CELL = 0.012;   // 一格的世界尺寸
+const float FLAKE_TILT = 0.07;    // 满强度时法线坡度的最大偏转
+vec2 flakeTilt( vec2 wp ) {
+  vec2 cell = floor( wp / FLAKE_CELL );
+  vec3 h = fract( sin( vec3( dot( cell, vec2( 127.1, 311.7 ) ), dot( cell, vec2( 269.5, 183.3 ) ), dot( cell, vec2( 419.2, 371.9 ) ) ) ) * 43758.5453 );
+  // 只有约三成的格子里有一片够大的铝片，其余保持平整，闪点才显得稀疏、有颗粒感
+  float present = step( 0.7, h.z );
+  // 格子小于一个像素时淡出，否则会变成整片噪点
+  return ( h.xy - 0.5 ) * present * smoothstep( 0.7, 1.4, FLAKE_CELL / uPx );
+}
 
 // 2×2 斜纹碳布：返回 (明暗, 纱束走向)。纱束宽度只有几个像素，太小时由调用方淡出，避免摩尔纹
 vec2 carbonTwill( vec2 p ) {
@@ -163,14 +183,16 @@ void bodyLivery( vec2 q ) {
   vec3 c0 = vec3( 0.0 ); vec3 c1 = vec3( 0.0 );
   vec4 m0 = vec4( 0.0 ); vec4 m1 = vec4( 0.0 );
   float w0 = 0.0; float w1 = 0.0;
+  float k0 = 0.0; float k1 = 0.0;
   // 用循环 + 比较代替变量下标：部分移动端驱动对变量下标取 uniform 数组支持不好
   for ( int j = 0; j < ${MAX_STOPS}; j ++ ) {
-    if ( j == i0 ) { c0 = uStopColor[ j ]; m0 = uStopMat[ j ]; w0 = uStopWeave[ j ]; }
-    if ( j == i0 + 1 ) { c1 = uStopColor[ j ]; m1 = uStopMat[ j ]; w1 = uStopWeave[ j ]; }
+    if ( j == i0 ) { c0 = uStopColor[ j ]; m0 = uStopMat[ j ]; w0 = uStopWeave[ j ]; k0 = uStopFlake[ j ]; }
+    if ( j == i0 + 1 ) { c1 = uStopColor[ j ]; m1 = uStopMat[ j ]; w1 = uStopWeave[ j ]; k1 = uStopFlake[ j ]; }
   }
   lvColor = mix( c0, c1, t );
   lvMat = mix( m0, m1, t );
   lvWeave = mix( w0, w1, t );
+  lvFlake = mix( k0, k1, t ) * ( 1.0 - stripe ); // 饰条是实色漆，没有闪点
   // 饰条：实色高光漆，盖在分色线旁边
   lvColor = mix( lvColor, stripeColor, stripe );
   lvMat = mix( lvMat, vec4( 0.0, 0.3, 1.0, 0.05 ), stripe );
@@ -194,8 +216,9 @@ float bodySech2( float x ) {
   return 1.0 - t * t;
 }
 
-// 车身高度场 h(x, y) 的梯度 → 世界空间法线 (-∂h/∂x, -∂h/∂y, 1)
-vec3 bodyNormal( vec2 p ) {
+// 车身高度场 h(x, y) 的梯度 (∂h/∂x, ∂h/∂y)；世界空间法线是 normalize( -∂h/∂x, -∂h/∂y, 1 )。
+// 返回梯度而不是法线：调用方要在同一个梯度上分别算出清漆层（光滑）和色漆层（带闪点）两条法线
+vec2 bodyGrad( vec2 p ) {
   p.y += uScrollY;
   vec2 grad = vec2( 0.0 );
   for ( int i = 0; i < ${MAX_WAVES}; i ++ ) {
@@ -225,13 +248,14 @@ vec3 bodyNormal( vec2 p ) {
     float warp = carbonTwill( wp ).y;
     grad += lvWeave * 0.9 * mix( vec2( 0.0, f.y ), vec2( f.x, 0.0 ), warp );
   }
-  return normalize( vec3( - grad, 1.0 ) );
+  return grad;
 }
 `;
 
 // 涂装分色的四处注入：底色 → 粗糙度 → 金属度 → 清漆。分别插在 three.js 对应代码块之后，
 // 这样后面的光照计算（lights_physical_fragment）拿到的就是逐像素的漆面参数
 const LIVERY_COLOR_FRAGMENT = /* glsl */ `
+lvFlake = uFlake; // 没启用分色时用整屏统一的值；启用后由 bodyLivery 按像素覆盖
 if ( uSplit > 0.5 ) {
   bodyLivery( vBodyPos );
   // 碳布：按纱束明暗调制底色。碳本身很黑，稍微提亮才看得出编织
@@ -256,8 +280,12 @@ if ( uSplit > 0.5 ) {
 
 // 插在 three.js 的 normal_fragment_begin 之后：用车身曲面法线替换平面自身的法线
 const BODY_NORMAL_FRAGMENT = /* glsl */ `
-normal = normalize( ( viewMatrix * vec4( bodyNormal( vBodyPos ), 0.0 ) ).xyz ); // 世界空间 → 视图空间
-nonPerturbedNormal = normal;
+vec2 bodyG = bodyGrad( vBodyPos );
+// 清漆层：光滑的车身曲面。three.js 的清漆法线取自 nonPerturbedNormal
+nonPerturbedNormal = normalize( ( viewMatrix * vec4( normalize( vec3( - bodyG, 1.0 ) ), 0.0 ) ).xyz ); // 世界空间 → 视图空间
+// 色漆层：在同一曲面上叠加金属片的随机朝向
+vec2 flakeG = bodyG + lvFlake * FLAKE_TILT * flakeTilt( vec2( vBodyPos.x, vBodyPos.y - uPageY ) );
+normal = normalize( ( viewMatrix * vec4( normalize( vec3( - flakeG, 1.0 ) ), 0.0 ) ).xyz );
 `;
 
 // 影棚空间：在 three.js 算完车漆光照之后、色调映射之前，按轮廓把画面分成幕墙 / 车身 / 地面
@@ -720,6 +748,8 @@ export class PaintSurface {
       uStopColor: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Color()) },
       uStopMat: { value: Array.from({ length: MAX_STOPS }, () => new THREE.Vector4()) },
       uStopWeave: { value: new Array(MAX_STOPS).fill(0) },
+      uStopFlake: { value: new Array(MAX_STOPS).fill(0) },
+      uFlake: { value: 0 },
       uSeamCount: { value: 0 },
       uSeamY: { value: new Array(MAX_SEAMS).fill(0) },
       uSeamShape: { value: new THREE.Vector3() },
@@ -787,6 +817,7 @@ export class PaintSurface {
       u.uStopColor.value[i].copy(stop.color);
       u.uStopMat.value[i].set(stop.metalness, stop.roughness, stop.clearcoat, stop.clearcoatRoughness);
       u.uStopWeave.value[i] = stop.weave ?? 0;
+      u.uStopFlake.value[i] = stop.flake ?? 0;
     });
     u.uSeamShape.value.set(split?.rake ?? 0, split?.bend ?? 0, split?.chevron ?? 0);
     const stripes = (split?.stripes ?? []).slice(0, MAX_STRIPES);
@@ -862,6 +893,7 @@ export class PaintSurface {
     m.clearcoat = Math.max(0.01, lerpNumber(a.clearcoat, b.clearcoat, f)); // 保持 > 0，避免切换着色器变体
     m.clearcoatRoughness = lerpNumber(a.clearcoatRoughness, b.clearcoatRoughness, f);
     m.envMapIntensity = lerpNumber(a.envIntensity, b.envIntensity, f);
+    this.uniforms.uFlake.value = lerpNumber(a.flake ?? 0, b.flake ?? 0, f);
   }
 
   _onResize() {

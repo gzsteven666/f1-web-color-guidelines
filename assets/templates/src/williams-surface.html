@@ -314,6 +314,11 @@
      7. 过渡区（Seam）：鲜蓝交接给流动碳黑，双轨冠军描边
      ========================================================== */
   .seam { min-height: 140vh; display: flex; align-items: center; padding: 0; }
+  /* 手机上 140vh 的过渡区有一屏多只有车漆、没有内容。缩到 112vh，并把文字靠上放：
+     分色线钉在过渡区高度的 84% 处（surface-page.js 的 SPLIT_ANCHOR），文字靠上才不会被它切到。
+     区块变矮后，分色线到下一区块的距离也跟着变短，斜切的分色线低的那一端会压到下一区块的标题，
+     所以在下面补 8vh 外边距，把这段距离补回和桌面差不多 */
+  @media (max-width: 640px) { .seam { min-height: 112vh; align-items: flex-start; padding-top: 16vh; margin-bottom: 8vh; } }
   .seam .eyebrow { margin-bottom: 28px; }
   .seam-title {
     font-family: var(--font-display);

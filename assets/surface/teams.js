@@ -38,6 +38,7 @@ export const MERCEDES = {
       // 阶段 0：冷银金属漆（Silver #C8CCCE）
       color: '#C8CCCE',
       metalness: 1.0,          // 纯金属底漆：反射带着银色本身的冷色调
+      flake: 0.45,         // 金属漆闪点强度（0 ~ 1）：冷银金属漆。纯金属底漆对法线偏转最敏感，数值不必高
       roughness: 0.26,         // 底漆光滑细腻 → 大面积柔润的冷银流动高光
       clearcoat: 1.0,          // 清漆层满强度
       clearcoatRoughness: 0.08,// 清漆光滑 → 柔光箱留下清晰亮带
@@ -61,8 +62,8 @@ export const MERCEDES = {
     horizon: '#141516',
     ground: '#050506',         // 黑色地面：板件下半部反射它，形成上亮下暗
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },               // 预滤波很轻，清漆上能看清柔光箱轮廓
+    // 影棚空间 —— 中性深灰影棚
+    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
     strips: [
       // 顶部大面积光天幕：板件上半部的大片柔和银色渐变
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
@@ -83,7 +84,7 @@ export const MERCEDES = {
     ],
     crease: { dir: [0.32, 1.0], period: 8.5, sharpness: 4.2, height: 0 },
     panel: { dir: [0.16, 1.0], period: 5.6, tilt: 0.5, fillet: 0.12 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
+    // 车身轮廓 —— 基准形：右上扬的车身线加一个平缓的侧箱隆起
     silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
     // 涂装分色：银黑斜切，银漆一侧压一道 PETRONAS 青绿细线
     split: { rake: 1.1, bend: 0.0, chevron: 0.0, stripes: [{ color: '#00A19B', offset: 0.1, width: 0.05 }] },
@@ -125,6 +126,7 @@ export const FERRARI = {
       // 阶段 0：Rosso Scuderia Base 极高光泽烤漆（#D3141C）
       color: '#D3141C',
       metalness: 0.08,         // 非金属纯色烤漆：底色极其饱满热烈
+      flake: 0.25,         // 金属漆闪点强度（0 ~ 1）：实色红漆里只掺极少量金属片，高光边缘略带颗粒
       roughness: 0.18,         // 意式镜面清漆：反射极为透亮
       clearcoat: 1.0,          // 顶级 Gloss Paint 清漆层
       clearcoatRoughness: 0.03,// 极低粗糙度，反射边缘锋利
@@ -147,8 +149,8 @@ export const FERRARI = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 幕墙带一点暖调，衬红漆
+    backdrop: { top: '#080606', bottom: '#33292A', floor: '#0E0A0A', rim: '#FFF1E8', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -165,8 +167,8 @@ export const FERRARI = {
     ],
     crease: { dir: [0.28, 1.0], period: 7.8, sharpness: 5.2, height: 0 },
     panel: { dir: [0.14, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 长而饱满的引擎盖弧线，隆起宽、位置居中偏右
+    silhouette: { top: 1.02, slope: 0.1, bump: 0.52, bumpX: 0.3, bumpW: 0.62, bottom: -1.25 },
     // 涂装分色：红与深红之间一道白色结构线，略带弧度
     split: { rake: 0.8, bend: -0.5, chevron: 0.0, stripes: [{ color: '#F4F2EE', offset: -0.045, width: 0.09 }] },
     parallax: 0.45,
@@ -207,6 +209,7 @@ export const MCLAREN = {
       // 阶段 0：Iconic Papaya 标志性高能见度橙（#FF8700）
       color: '#FF8700',
       metalness: 0.05,         // 纯正赛车亮橙，低金属度确保饱和度
+      flake: 0.2,          // 金属漆闪点强度（0 ~ 1）：木瓜橙是实色漆，只留一点点颗粒
       roughness: 0.20,         // 高平滑度
       clearcoat: 1.0,
       clearcoatRoughness: 0.05,
@@ -229,8 +232,8 @@ export const MCLAREN = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 暖灰影棚
+    backdrop: { top: '#070605', bottom: '#302C28', floor: '#0D0B09', rim: '#FFE9D2', rimIntensity: 2.3 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -247,8 +250,8 @@ export const MCLAREN = {
     ],
     crease: { dir: [0.35, 1.0], period: 8.2, sharpness: 4.6, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 楔形：整条线明显右上扬，隆起小而靠后，像低鼻高尾
+    silhouette: { top: 1.08, slope: 0.36, bump: 0.2, bumpX: 0.72, bumpW: 0.3, bottom: -1.25 },
     // 涂装分色：papaya 对 anthracite 的陡斜切，青色发丝线
     split: { rake: -0.9, bend: 0.3, chevron: 0.0, stripes: [{ color: '#4FD5D6', offset: 0.08, width: 0.03 }] },
     parallax: 0.45,
@@ -290,6 +293,7 @@ export const ASTON_MARTIN = {
       // 阶段 0：Aston Martin Racing Green 奢华深邃金属车漆（#002824）
       color: '#002824',
       metalness: 0.90,         // 高度金属漆：反射带有通透深绿
+      flake: 0.75,         // 金属漆闪点强度（0 ~ 1）：深绿金属漆：高光里透出细碎的绿色闪点
       roughness: 0.24,         // 奢华细腻，倒影修长
       clearcoat: 1.0,
       clearcoatRoughness: 0.05,
@@ -312,8 +316,8 @@ export const ASTON_MARTIN = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 幕墙压暗并略带墨绿
+    backdrop: { top: '#040706', bottom: '#1E2623', floor: '#080C0B', rim: '#F2FFF8', rimIntensity: 1.9 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -330,8 +334,8 @@ export const ASTON_MARTIN = {
     ],
     crease: { dir: [0.30, 1.0], period: 9.0, sharpness: 4.0, height: 0 },
     panel: { dir: [0.15, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 低而长，几乎水平，隆起很宽很缓，克制
+    silhouette: { top: 1.0, slope: 0.07, bump: 0.28, bumpX: 0.15, bumpW: 0.75, bottom: -1.25 },
     // 涂装分色：平缓弧线，lime 发丝线
     split: { rake: 0.6, bend: 0.9, chevron: 0.0, stripes: [{ color: '#A9D23E', offset: 0.06, width: 0.025 }] },
     parallax: 0.42,
@@ -395,8 +399,8 @@ export const CADILLAC = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 纯中性影棚、幕墙更亮、边缘光更强
+    backdrop: { top: '#070707', bottom: '#3A3A3C', floor: '#0C0C0D', rim: '#FFFFFF', rimIntensity: 2.8 },
     strips: [
       // 页面用白字：白车在暗棚里只给较弱的顶光，车身保持深灰，白字才压得住
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.0, edge: 4, falloff: 0.35 },
@@ -415,8 +419,8 @@ export const CADILLAC = {
     // 锐利的 Chevron 几何棱线
     crease: { dir: [0.50, 0.866], period: 7.2, sharpness: 5.8, height: 0 },
     panel: { dir: [0.25, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 平直的整块体量，只在左侧有一个很宽的缓坡
+    silhouette: { top: 1.22, slope: 0.0, bump: 0.2, bumpX: -0.35, bumpW: 0.9, bottom: -1.25 },
     // 涂装分色：chevron V 形黑白对切，后段裸碳
     split: { rake: 0.0, bend: 0.0, chevron: 1.2, stripes: [{ color: '#E4E7EA', offset: -0.14, width: 0.03 }] },
     parallax: 0.45,
@@ -462,6 +466,7 @@ export const WILLIAMS = {
       // 阶段 0：FW48 高光泽鲜蓝主漆（Vibrant Gloss Blue #0858C9）
       color: '#0858C9',
       metalness: 0.12,          // 低金属度高饱和底漆，呈现纯正深邃的英国赛车蓝
+      flake: 0.5,          // 金属漆闪点强度（0 ~ 1）：蓝色金属漆
       roughness: 0.18,          // 底漆平整细腻
       clearcoat: 1.0,           // 满级双层高透明度镜面清漆（Gloss Paint 传承）
       clearcoatRoughness: 0.03, // 极平整的清漆表面，在摄影棚柔光条下反射出锐利高光
@@ -485,8 +490,8 @@ export const WILLIAMS = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 幕墙带冷蓝
+    backdrop: { top: '#04060B', bottom: '#232B3A', floor: '#090C12', rim: '#EAF2FF', rimIntensity: 2.4 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -508,8 +513,8 @@ export const WILLIAMS = {
       height: 0,
     },
     panel: { dir: [0.19, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 左高右低，隆起在左侧，和其他队方向相反
+    silhouette: { top: 1.18, slope: -0.14, bump: 0.4, bumpX: -0.45, bumpW: 0.4, bottom: -1.25 },
     // 涂装分色：蓝黑流线，白线 + 红色细线，后段碳纤维
     split: { rake: 1.0, bend: -0.7, chevron: 0.0, stripes: [{ color: '#F4F7FA', offset: 0.0, width: 0.06 }, { color: '#D6293E', offset: 0.1, width: 0.03 }] },
     parallax: 0.45,
@@ -551,6 +556,7 @@ export const RED_BULL = {
       // 阶段 0：Bull Blue 高光泽车身蓝（#0B2B7E）
       color: '#0B2B7E',
       metalness: 0.45,
+      flake: 0.45,         // 金属漆闪点强度（0 ~ 1）：深蓝金属漆
       roughness: 0.20,
       clearcoat: 1.0,
       clearcoatRoughness: 0.04, // 回到光泽饰面：清漆光滑，保留清晰亮带
@@ -573,8 +579,8 @@ export const RED_BULL = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 深海军蓝影棚
+    backdrop: { top: '#03040A', bottom: '#1E2233', floor: '#07080F', rim: '#FFFFFF', rimIntensity: 2.6 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.2, edge: 4, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 12, edge: 0.3, falloff: 0.45 },
@@ -591,8 +597,8 @@ export const RED_BULL = {
     ],
     crease: { dir: [0.35, 0.95], period: 8.0, sharpness: 5.2, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 攻击性最强：上扬明显，隆起高而窄，像收紧的侧箱
+    silhouette: { top: 1.02, slope: 0.28, bump: 0.48, bumpX: 0.42, bumpW: 0.26, bottom: -1.25 },
     // 涂装分色：反向陡斜切，红色粗线 + 黄色细线
     split: { rake: -1.2, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E4002B', offset: 0.0, width: 0.08 }, { color: '#FFC20E', offset: 0.12, width: 0.03 }] },
     parallax: 0.44,
@@ -633,6 +639,7 @@ export const AUDI = {
       // 阶段 0：Titanium Ice Silver 冰钛冷银金属车漆（#D2D7DF）
       color: '#D2D7DF',
       metalness: 0.96,          // 纯粹航天钛金属底漆
+      flake: 0.5,          // 金属漆闪点强度（0 ~ 1）：钛银。纯金属底漆对法线偏转最敏感，数值不必高
       roughness: 0.18,          // 极其平整细腻，反光锐利清澈
       clearcoat: 1.0,           // 满级镜面清漆
       clearcoatRoughness: 0.04,
@@ -656,8 +663,8 @@ export const AUDI = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 冷灰影棚、幕墙偏亮
+    backdrop: { top: '#07080A', bottom: '#363A40', floor: '#0B0D10', rim: '#F4F8FF', rimIntensity: 2.5 },
     strips: [
       // 钛金属反射很强：顶光和主光调弱一档，避免 hero 标题落在过曝的光带上
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.6, edge: 4, falloff: 0.35 },
@@ -675,8 +682,8 @@ export const AUDI = {
     ],
     crease: { dir: [0.32, 0.98], period: 8.8, sharpness: 4.6, height: 0 },
     panel: { dir: [0.16, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 技术感：近乎水平，靠右一个又窄又利落的凸起，像进气口
+    silhouette: { top: 1.12, slope: 0.05, bump: 0.32, bumpX: 0.76, bumpW: 0.2, bottom: -1.25 },
     // 涂装分色：近乎水平的直线切分，一道红线，后段裸碳
     split: { rake: 0.35, bend: 0.0, chevron: 0.0, stripes: [{ color: '#F50537', offset: 0.0, width: 0.06 }] },
     parallax: 0.45,
@@ -717,6 +724,7 @@ export const ALPINE = {
       // 阶段 0：Alpine Metallic Blue 阿尔派高光金属蓝（#0078C1）
       color: '#0078C1',
       metalness: 0.85,          // 饱满金属漆
+      flake: 0.7,          // 金属漆闪点强度（0 ~ 1）：Alpine 蓝金属漆
       roughness: 0.20,          // 细腻光润
       clearcoat: 1.0,           // 满级清漆，反射通透
       clearcoatRoughness: 0.05,
@@ -740,8 +748,8 @@ export const ALPINE = {
     horizon: '#141516',
     ground: '#050506',
     blur: 0.012,
-    // 影棚空间：深灰无缝幕墙，靠近车身处最亮；深色地面；车身上沿一道白色边缘光
-    backdrop: { top: '#060708', bottom: '#2C2E32', floor: '#0B0C0E', rim: '#FFFFFF', rimIntensity: 2.4 },
+    // 影棚空间 —— 冷蓝影棚
+    backdrop: { top: '#03060A', bottom: '#1C2A38', floor: '#070B10', rim: '#E6F4FF', rimIntensity: 2.4 },
     strips: [
       // 蓝色金属漆受光后很亮：调弱一档，粉色小字和标签才看得清
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 1.4, edge: 4, falloff: 0.35 },
@@ -759,8 +767,8 @@ export const ALPINE = {
     ],
     crease: { dir: [0.34, 0.96], period: 8.4, sharpness: 4.4, height: 0 },
     panel: { dir: [0.17, 1.0], period: 5.7, tilt: 0.5, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 流畅的居中大弧，略向左高
+    silhouette: { top: 1.06, slope: -0.06, bump: 0.44, bumpX: 0.0, bumpW: 0.55, bottom: -1.25 },
     // 涂装分色：蓝与碳黑之间一道 BWT 粉色弧线
     split: { rake: 0.9, bend: 0.8, chevron: 0.0, stripes: [{ color: '#FD4BC7', offset: 0.0, width: 0.08 }] },
     parallax: 0.46,
@@ -823,8 +831,8 @@ export const RACING_BULLS = {
     horizon: '#7A7C7F',
     ground: '#18191A',
     blur: 0.012,
-    // 影棚空间：中灰无缝幕墙 + 浅灰地面。幕墙比白车暗一档，车身轮廓才分得出来；深色文字在上面仍可读
-    backdrop: { top: '#8C8E92', bottom: '#C4C6C9', floor: '#B3B5B8', rim: '#FFFFFF', rimIntensity: 1.6 },
+    // 影棚空间 —— 亮影棚带一点冷蓝白
+    backdrop: { top: '#888C95', bottom: '#C6C9D0', floor: '#B4B7BF', rim: '#FFFFFF', rimIntensity: 1.6 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
@@ -841,8 +849,8 @@ export const RACING_BULLS = {
     ],
     crease: { dir: [0.36, 0.94], period: 8.2, sharpness: 4.8, height: 0 },
     panel: { dir: [0.18, 1.0], period: 5.7, tilt: 0.45, fillet: 0.13 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 轻快上扬，隆起靠右
+    silhouette: { top: 1.12, slope: 0.22, bump: 0.3, bumpX: 0.6, bumpW: 0.5, bottom: -1.25 },
     // 涂装分色：白与海军蓝反向斜切，蓝色粗线 + 红色细线
     split: { rake: -1.0, bend: 0.0, chevron: 0.0, stripes: [{ color: '#1E4FD8', offset: 0.0, width: 0.1 }, { color: '#E51937', offset: 0.14, width: 0.03 }] },
     parallax: 0.45,
@@ -908,8 +916,8 @@ export const HAAS = {
     horizon: '#7A7C7F',
     ground: '#18191A',          // 深灰地面：板件下缘自然变暗，但不发黑发脏
     blur: 0.012,
-    // 影棚空间：中灰无缝幕墙 + 浅灰地面。幕墙比白车暗一档，车身轮廓才分得出来；深色文字在上面仍可读
-    backdrop: { top: '#8C8E92', bottom: '#C4C6C9', floor: '#B3B5B8', rim: '#FFFFFF', rimIntensity: 1.6 },
+    // 影棚空间 —— 亮影棚保持中性偏暖
+    backdrop: { top: '#8E8D8C', bottom: '#C8C6C4', floor: '#B6B4B2', rim: '#FFFFFF', rimIntensity: 1.6 },
     strips: [
       { azimuth: 0, elevation: 52, w: 30, h: 10, color: '#FFFFFF', intensity: 2.6, edge: 3.5, falloff: 0.35 },
       { azimuth: 0, elevation: 24, w: 28, h: 0.9, color: '#FFFFFF', intensity: 9, edge: 0.3, falloff: 0.45 },
@@ -926,8 +934,8 @@ export const HAAS = {
     ],
     crease: { dir: [0.30, 1.0], period: 8.6, sharpness: 5.0, height: 0 },
     panel: { dir: [0.14, 1.0], period: 5.8, tilt: 0.45, fillet: 0.14 },
-    // 车身轮廓：上沿略向右上扬并带一个平缓隆起（像引擎盖 / 侧箱），下沿在页底落到地面上
-    silhouette: { top: 1.15, slope: 0.18, bump: 0.35, bumpX: 0.55, bumpW: 0.45, bottom: -1.25 },
+    // 车身轮廓 —— 直接、朴素：缓缓上扬，隆起在中间偏左
+    silhouette: { top: 1.14, slope: 0.12, bump: 0.36, bumpX: -0.2, bumpW: 0.5, bottom: -1.25 },
     // 涂装分色：白与碳黑之间一道红色粗线 + 墨色细线
     split: { rake: 0.7, bend: 0.0, chevron: 0.0, stripes: [{ color: '#E0201B', offset: 0.0, width: 0.12 }, { color: '#101114', offset: 0.16, width: 0.03 }] },
     parallax: 0.42,
