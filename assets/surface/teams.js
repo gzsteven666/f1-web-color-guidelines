@@ -38,7 +38,7 @@ export const MERCEDES = {
       // 阶段 0：冷银金属漆（Silver #C8CCCE）
       color: '#C8CCCE',
       metalness: 1.0,          // 纯金属底漆：反射带着银色本身的冷色调
-      flake: 0.45,         // 金属漆闪点强度（0 ~ 1）：冷银金属漆。纯金属底漆对法线偏转最敏感，数值不必高
+      flake: 0.45,         // 金属漆闪点强度（0 ~ 1）：冷银金属漆。银色底本身就亮，闪点不必强
       roughness: 0.26,         // 底漆光滑细腻 → 大面积柔润的冷银流动高光
       clearcoat: 1.0,          // 清漆层满强度
       clearcoatRoughness: 0.08,// 清漆光滑 → 柔光箱留下清晰亮带
@@ -290,10 +290,13 @@ export const ASTON_MARTIN = {
   // 表面致密深邃，高金属度，受光处呈现通透的车漆高光绿，暗部厚重，点缀 Lime 荧光黄绿。
   livery: [
     {
-      // 阶段 0：Aston Martin Racing Green 奢华深邃金属车漆（#002824）
-      color: '#002824',
-      metalness: 0.90,         // 高度金属漆：反射带有通透深绿
-      flake: 0.75,         // 金属漆闪点强度（0 ~ 1）：深绿金属漆：高光里透出细碎的绿色闪点
+      // 阶段 0：Aston Martin Racing Green 金属漆。
+      // 金属漆的 color 是它"受光时反射出来的颜色"，所以这里用受光高光绿（#037A68），
+      // 而不是暗面的 Racing Green Base（#002824）：之前直接用暗面色，反射率只有 2% 左右，
+      // 整辆车几乎是黑的，只有最亮的光带边缘露一点绿。暗面的深绿改由影棚地面色提供（见 studio.ground）
+      color: '#037A68',
+      metalness: 0.85,         // 高度金属漆：反射带有通透的绿
+      flake: 0.55,         // 金属漆闪点强度（0 ~ 1）：深绿金属漆：高光里透出细碎的绿色闪点
       roughness: 0.24,         // 奢华细腻，倒影修长
       clearcoat: 1.0,
       clearcoatRoughness: 0.05,
@@ -314,7 +317,7 @@ export const ASTON_MARTIN = {
   studio: {
     sky: '#2A2C2E',
     horizon: '#141516',
-    ground: '#050506',
+    ground: '#002824',         // Racing Green Base：板件下半部反射地面，暗部因此是深邃的墨绿而不是死黑
     blur: 0.012,
     // 影棚空间 —— 幕墙压暗并略带墨绿
     backdrop: { top: '#040706', bottom: '#1E2623', floor: '#080C0B', rim: '#F2FFF8', rimIntensity: 1.9 },
@@ -639,7 +642,7 @@ export const AUDI = {
       // 阶段 0：Titanium Ice Silver 冰钛冷银金属车漆（#D2D7DF）
       color: '#D2D7DF',
       metalness: 0.96,          // 纯粹航天钛金属底漆
-      flake: 0.5,          // 金属漆闪点强度（0 ~ 1）：钛银。纯金属底漆对法线偏转最敏感，数值不必高
+      flake: 0.5,          // 金属漆闪点强度（0 ~ 1）：钛银。银色底本身就亮，闪点不必强
       roughness: 0.18,          // 极其平整细腻，反光锐利清澈
       clearcoat: 1.0,           // 满级镜面清漆
       clearcoatRoughness: 0.04,
@@ -724,7 +727,7 @@ export const ALPINE = {
       // 阶段 0：Alpine Metallic Blue 阿尔派高光金属蓝（#0078C1）
       color: '#0078C1',
       metalness: 0.85,          // 饱满金属漆
-      flake: 0.7,          // 金属漆闪点强度（0 ~ 1）：Alpine 蓝金属漆
+      flake: 0.55,         // 金属漆闪点强度（0 ~ 1）：Alpine 蓝金属漆
       roughness: 0.20,          // 细腻光润
       clearcoat: 1.0,           // 满级清漆，反射通透
       clearcoatRoughness: 0.05,

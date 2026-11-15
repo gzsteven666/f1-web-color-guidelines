@@ -130,20 +130,24 @@ float lvWeave;
 float lvFlake;
 
 // —— 金属漆闪点 ——
-// 真实金属漆的色漆层里悬浮着细小的铝片，每片朝向略有不同：正对光源的那几片会亮成一个小点。
-// 这里把车身切成约 1.7 个像素的小格，每格给法线一个随机的小偏转，只作用在清漆下面的色漆层
-// （清漆层仍用光滑法线）。偏转后反射方向略变，于是只有在环境光变化剧烈的地方 —— 也就是
-// 柔光箱高光的边缘 —— 才看得出明暗差异，暗部和大片均匀反射里几乎不可见，和真车一样。
+// 真实金属漆的色漆层里悬浮着细小的铝片，每片朝向略有不同：恰好把光源反射进眼睛的那几片会亮成一个小点。
+// 做法：把车身切成约 1.7 个像素的小格，约三成的格子里放一片朝向随机偏转的金属片；
+// 光照算完之后，对这片金属片单独取一次环境反射，只把"比光滑漆面更亮的那部分"加回去（见 FLAKE_FRAGMENT）。
+// 为什么只增亮：之前试过直接偏转色漆层法线，亮处会同时出现变暗的格子，近看像噪点而不是金属片。
+// 只增亮时光滑漆面完全不变，闪点只出现在环境光变化剧烈的地方 —— 柔光箱高光的边缘和渐变里。
 // 格子钉在页面坐标上，随内容一起滚动，不会在车身上"游走"。
 const float FLAKE_CELL = 0.012;   // 一格的世界尺寸
-const float FLAKE_TILT = 0.07;    // 满强度时法线坡度的最大偏转
-vec2 flakeTilt( vec2 wp ) {
+const float FLAKE_TILT = 0.13;    // 金属片相对漆面的最大坡度偏转。偏转小，闪点才只聚在高光附近，不会撒满暗部
+const float FLAKE_GAIN = 0.55;    // 满强度时闪点的亮度倍数
+// 返回 (坡度偏转 xy, 这一格金属片的亮度 0 ~ 1；0 = 这格没有金属片)
+vec3 flakeFacet( vec2 wp ) {
   vec2 cell = floor( wp / FLAKE_CELL );
   vec3 h = fract( sin( vec3( dot( cell, vec2( 127.1, 311.7 ) ), dot( cell, vec2( 269.5, 183.3 ) ), dot( cell, vec2( 419.2, 371.9 ) ) ) ) * 43758.5453 );
-  // 只有约三成的格子里有一片够大的铝片，其余保持平整，闪点才显得稀疏、有颗粒感
-  float present = step( 0.7, h.z );
+  // 约三成的格子里有金属片，大小不一（亮度 0.2 ~ 1，大片少、小片多），看起来是一层细密的微光而不是零星的亮点
+  float size = ( h.z - 0.7 ) / 0.3;
+  float present = step( 0.7, h.z ) * ( 0.2 + 0.8 * size * size );
   // 格子小于一个像素时淡出，否则会变成整片噪点
-  return ( h.xy - 0.5 ) * present * smoothstep( 0.7, 1.4, FLAKE_CELL / uPx );
+  return vec3( h.xy - 0.5, present * smoothstep( 0.7, 1.4, FLAKE_CELL / uPx ) );
 }
 
 // 2×2 斜纹碳布：返回 (明暗, 纱束走向)。纱束宽度只有几个像素，太小时由调用方淡出，避免摩尔纹
@@ -283,9 +287,25 @@ const BODY_NORMAL_FRAGMENT = /* glsl */ `
 vec2 bodyG = bodyGrad( vBodyPos );
 // 清漆层：光滑的车身曲面。three.js 的清漆法线取自 nonPerturbedNormal
 nonPerturbedNormal = normalize( ( viewMatrix * vec4( normalize( vec3( - bodyG, 1.0 ) ), 0.0 ) ).xyz ); // 世界空间 → 视图空间
-// 色漆层：在同一曲面上叠加金属片的随机朝向
-vec2 flakeG = bodyG + lvFlake * FLAKE_TILT * flakeTilt( vec2( vBodyPos.x, vBodyPos.y - uPageY ) );
-normal = normalize( ( viewMatrix * vec4( normalize( vec3( - flakeG, 1.0 ) ), 0.0 ) ).xyz );
+normal = nonPerturbedNormal; // 色漆层同样用光滑曲面；金属片的反光在光照之后单独叠加（FLAKE_FRAGMENT）
+`;
+
+// 金属漆闪点：插在 three.js 的 opaque_fragment 之后（光照已算完、还没做色调映射），在影棚空间之前。
+// getIBLRadiance 是 three.js 取环境反射的内置函数，已包含环境贴图的旋转和强度，所以闪点会跟着扫光一起动
+const FLAKE_FRAGMENT = /* glsl */ `
+#if defined( USE_ENVMAP ) && defined( ENVMAP_TYPE_CUBE_UV )
+if ( lvFlake > 0.0 ) {
+  vec3 facet = flakeFacet( vec2( vBodyPos.x, vBodyPos.y - uPageY ) );
+  if ( facet.z > 0.0 ) {
+    vec3 facetNormal = normalize( ( viewMatrix * vec4( normalize( vec3( - ( bodyG + FLAKE_TILT * facet.xy ) , 1.0 ) ), 0.0 ) ).xyz );
+    // 金属片很小很平，用低粗糙度取反射；同样粗糙度下再取一次光滑漆面的反射作基准，只留更亮的部分
+    vec3 gain = max( getIBLRadiance( geometryViewDir, facetNormal, 0.14 ) - getIBLRadiance( geometryViewDir, normal, 0.14 ), vec3( 0.0 ) );
+    // 铝片透过有色漆层看过去带着漆色：七成漆色、三成本色
+    vec3 tint = mix( diffuseColor.rgb, vec3( 1.0 ), 0.3 );
+    gl_FragColor.rgb += lvFlake * facet.z * FLAKE_GAIN * tint * gain;
+  }
+}
+#endif
 `;
 
 // 影棚空间：在 three.js 算完车漆光照之后、色调映射之前，按轮廓把画面分成幕墙 / 车身 / 地面
@@ -771,7 +791,7 @@ export class PaintSurface {
         .replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>\n${LIVERY_METALNESS_FRAGMENT}`)
         .replace('#include <lights_physical_fragment>', `#include <lights_physical_fragment>\n${LIVERY_CLEARCOAT_FRAGMENT}`)
         .replace('#include <normal_fragment_begin>', `#include <normal_fragment_begin>\n${BODY_NORMAL_FRAGMENT}`)
-        .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${STAGE_FRAGMENT}`);
+        .replace('#include <opaque_fragment>', `#include <opaque_fragment>\n${FLAKE_FRAGMENT}\n${STAGE_FRAGMENT}`);
     };
 
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), this.material);
