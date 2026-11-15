@@ -271,7 +271,20 @@
 
   @media (max-width: 860px) {
     .hero-grid, .card-grid, .paint-strip .wrap { grid-template-columns: 1fr; }
-    .hero::before { width: 100%; height: 35%; }
+    /* 蓝色色块是绝对定位贴在首屏底部的：窄屏上给它固定高度，并在首屏底部留出同样多的空位，
+       否则色块会盖住正文和链接 */
+    .hero { padding-bottom: 300px; }
+    .hero::before, .hero-glow { width: 100%; height: 240px; border-top-left-radius: 96px; }
+    /* 大标题在桌面端不折行、第二行缩进；窄屏放不下一整行，改为允许折行并取消缩进 */
+    .hero-display { white-space: normal; font-size: clamp(44px, 13vw, 72px); margin-bottom: 28px; }
+    .hero-display .l2 { padding-left: 0; }
+    .hero p { font-size: 17px; }
+    /* 窄屏放不下导航链接：不收起会被挤成一字一行 */
+    .nav-links, .nav-badge { display: none; }
+  }
+  @media (max-width: 520px) {
+    nav .wrap { gap: 12px; }
+    .nav-cta .pill-ghost { display: none; }
   }
   /* IDENTITY: 队伍专属字体与版式元素 */
   .section-title::before { content: ""; display: block; margin-bottom: 18px; width: 88px; height: 7px; background: linear-gradient(#0858C9, #0858C9) 0 0 / 100% 3px no-repeat, linear-gradient(#D6293E, #D6293E) 0 6px / 100% 1px no-repeat; }
@@ -317,7 +330,10 @@
     .quote-section { padding: 96px 0; }
     .quote-section .wrap { max-width: 760px; }
     .chart-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
-    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; justify-content: center; }
+    /* 主图卡片跨两行，比图表本身高：说明文字贴顶、图例贴底，图表在中间垂直居中，
+       这样多出来的高度变成图表上下的呼吸空间，而不是整块内容悬在卡片中间 */
+    .chart-card:first-child { grid-row: span 2; display: flex; flex-direction: column; }
+    .chart-card:first-child svg { margin: auto 0; }
   }
   /* /LAYOUT */
 </style>

@@ -482,6 +482,8 @@
   }
   @media (max-width: 820px) { .paint-band { margin: 0 16px; border-radius: var(--layout-band-r, 8px); } }
   /* /LAYOUT */
+  /* 手机上首屏三个操作挤在一行，按钮文字会被折成两行：按钮内不折行，一行放不下就整体换到下一行 */
+  @media (max-width: 520px) { .hero-actions { flex-wrap: wrap; } .hero-actions > * { white-space: nowrap; } }
 </style>
 </head>
 <body>

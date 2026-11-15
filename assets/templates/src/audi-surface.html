@@ -382,6 +382,12 @@
   .hero-title .line > span:not(.metal-text), .section-title, .seam-title, .quote blockquote {
     text-shadow: 0 0 28px color-mix(in srgb, var(--veil) 75%, transparent);
   }
+  /* 索引区正好落在车身最亮的主光带上，手机上光带横贯整屏：灰色小字配上面的两层光晕仍会被冲淡到读不出。
+     这里把正文提亮一档，并把光晕叠成四层（由紧到松），在字周围压出一圈足够暗的底 */
+  .index-row h3, .index-row p, .index-row .no {
+    text-shadow: 0 0 3px var(--veil), 0 0 8px var(--veil), 0 0 16px var(--veil), 0 0 30px var(--veil);
+  }
+  .index-row p { color: color-mix(in srgb, var(--text-1) 70%, var(--text-2)); }
   @media (max-width: 640px) {
     .nav-links { display: none; }
     .nav-cta .btn-ghost { display: none; }

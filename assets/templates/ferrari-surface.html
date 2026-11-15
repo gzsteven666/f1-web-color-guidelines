@@ -353,6 +353,8 @@
   footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
 
   @media (max-width: 900px) {
+    /* 窄屏放不下导航链接：不收起的话链接会被挤成一字一行（与其他车队页一致） */
+    .nav-links { display: none; }
     .wrap { padding: 0 24px; }
     .hero-foot { grid-template-columns: 1fr; gap: 40px; }
     .telemetry { grid-template-columns: 1fr; border-top: none; }
@@ -1822,7 +1824,9 @@ if ( uStage > 0.5 ) {
   float onFloor = smoothstep( - uPx, uPx, dBot );
   // 地面：车身的模糊倒影随距离衰减，紧贴车底有一道接触阴影
   float contact = smoothstep( 0.0, 0.05, dBot );
-  vec3 floorCol = uFloor * ( 0.55 + 0.45 * contact ) + body * 0.45 * exp( - dBot / 0.45 ) * contact;
+  // dBot 必须先截到 >= 0 再取指数：页面很长时（手机上常见，超过约 6 屏），页顶的 dBot 是很大的负数，
+  // exp( -dBot / 0.45 ) 会溢出成 inf，再乘上 contact = 0 得到 NaN，整块画面被算成黑色。
+  vec3 floorCol = uFloor * ( 0.55 + 0.45 * contact ) + body * 0.45 * exp( - max( dBot, 0.0 ) / 0.45 ) * contact;
 
   vec3 col = mix( back, body, inBody );
   col = mix( col, floorCol, onFloor );

@@ -10,6 +10,16 @@ import { useTeam } from '@/context/TeamContext';
  * ==================================================================
  */
 
+/**
+ * 首屏文字的暗晕。
+ * 文字压在车漆渲染上，背后可能是暗的影棚背景，也可能是银、白、橙车身上最亮的高光带，
+ * 而且随车队和滚动位置变化。按车队切换深浅文字色不可靠（同一队首屏里明暗都有），
+ * 所以首屏文字固定用浅色，再用三层文字阴影在字的四周铺一圈暗晕：
+ * 紧贴笔画的一层保证笔画边缘清晰，外面两层把高光压暗，任何底色上都能读。
+ * 标题的渐变字不用它：text-shadow 会透过透明字形把渐变染暗，标题另有 drop-shadow。
+ */
+const HERO_TEXT_HALO = '0 0 2px rgba(0,0,0,0.95), 0 1px 10px rgba(0,0,0,0.9), 0 2px 28px rgba(0,0,0,0.8)';
+
 export const HeroSection: React.FC = () => {
   const { currentTeam } = useTeam();
 
@@ -20,7 +30,7 @@ export const HeroSection: React.FC = () => {
       className="relative min-h-[92vh] flex flex-col justify-center px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pt-16 pb-24"
     >
       {/* 顶部技术标识 */}
-      <div className="flex flex-wrap items-center gap-2 mb-6">
+      <div className="flex flex-wrap items-center gap-2 mb-6" style={{ textShadow: HERO_TEXT_HALO }}>
         <span
           className="px-2.5 py-0.5 rounded-sm text-[11px] font-mono tracking-widest uppercase transition-colors duration-500"
           style={{
@@ -31,8 +41,8 @@ export const HeroSection: React.FC = () => {
         >
           {currentTeam.regulations}
         </span>
-        <span className="text-white/40 text-xs font-mono">//</span>
-        <span className="text-white/60 text-xs font-mono tracking-wider">
+        <span className="text-white/60 text-xs font-mono">//</span>
+        <span className="text-white/85 text-xs font-mono tracking-wider">
           <DecryptedText
             key={currentTeam.chassis}
             text={currentTeam.chassis}
@@ -63,18 +73,9 @@ export const HeroSection: React.FC = () => {
           </span>
         </h1>
 
-        {/*
-          副标题压在车漆渲染上，背后可能是暗的影棚背景，也可能是银、白、橙车身上最亮的高光带，
-          而且随车队和滚动位置变化。按车队切换深浅文字色不可靠（同一队首屏里明暗都有），
-          所以固定用浅色字，再用三层文字阴影在字的四周铺一圈暗晕：
-          紧贴笔画的一层保证笔画边缘清晰，外面两层把高光压暗，任何底色上都能读。
-        */}
         <div
           className="text-lg sm:text-xl text-[#F4F6F7] font-medium max-w-2xl mt-4 leading-relaxed"
-          style={{
-            textShadow:
-              '0 0 2px rgba(0,0,0,0.95), 0 1px 10px rgba(0,0,0,0.9), 0 2px 28px rgba(0,0,0,0.8)',
-          }}
+          style={{ textShadow: HERO_TEXT_HALO }}
         >
           {currentTeam.heroDescription}
         </div>
@@ -97,7 +98,7 @@ export const HeroSection: React.FC = () => {
 
         <a
           href="#telemetry"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-sm bg-white/5 hover:bg-white/10 text-white border border-white/10 hover:border-white/20 font-mono text-sm tracking-wider transition-all text-center"
+          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:py-3 rounded-sm bg-black/45 hover:bg-black/60 text-white border border-white/25 hover:border-white/40 font-mono text-sm tracking-wider transition-all text-center"
         >
           <Sliders
             className="w-4 h-4 transition-colors duration-500"
@@ -108,15 +109,18 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* 底部参数小字 */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-16 pt-8 border-t border-white/5 text-xs font-mono text-white/50">
+      <div
+        className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-16 pt-8 border-t border-white/5 text-xs font-mono text-white/50"
+        style={{ textShadow: HERO_TEXT_HALO }}
+      >
         <div>
-          <div className="text-white/30 uppercase tracking-widest text-[10px]">BASECOAT MATERIAL</div>
-          <div className="text-[#C8CCCE] font-semibold mt-0.5">
+          <div className="text-white/70 uppercase tracking-widest text-[10px]">BASECOAT MATERIAL</div>
+          <div className="text-[#E6E9EB] font-semibold mt-0.5">
             {currentTeam.tokens[0]?.name.toUpperCase() || 'METALLIC PBR'}
           </div>
         </div>
         <div>
-          <div className="text-white/30 uppercase tracking-widest text-[10px]">CLEARCOAT LAYER</div>
+          <div className="text-white/70 uppercase tracking-widest text-[10px]">CLEARCOAT LAYER</div>
           <div
             className="font-semibold mt-0.5 transition-colors duration-500"
             style={{ color: currentTeam.brandBright }}
@@ -125,13 +129,13 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
         <div>
-          <div className="text-white/30 uppercase tracking-widest text-[10px]">LIGHTING RIG</div>
-          <div className="text-[#C8CCCE] font-semibold mt-0.5">
+          <div className="text-white/70 uppercase tracking-widest text-[10px]">LIGHTING RIG</div>
+          <div className="text-[#E6E9EB] font-semibold mt-0.5">
             {currentTeam.preset.studio.strips.length}x HDR STUDIO SOFTBOXES
           </div>
         </div>
         <div>
-          <div className="text-white/30 uppercase tracking-widest text-[10px]">ALIASING ARTIFACTS</div>
+          <div className="text-white/70 uppercase tracking-widest text-[10px]">ALIASING ARTIFACTS</div>
           <div
             className="font-semibold mt-0.5 transition-colors duration-500"
             style={{ color: currentTeam.brandAccent }}

@@ -400,6 +400,16 @@
     --text-2:        color-mix(in srgb, #2B3350 calc((1 - var(--surface-tone)) * 100%), #B4C1E2);
     --text-3:        color-mix(in srgb, #46506E calc((1 - var(--surface-tone)) * 100%), #8C9BC3);
   }
+  /* 页脚落在影棚地面上。本队的幕墙和地面是浅灰（白车配亮影棚），而页面后段车身是深色，
+     根上的文字配色此时已翻成浅色，直接用会变成浅字压浅底。所以页脚固定用前段（浅底）的那套配色 */
+  footer {
+    --veil: #F3F5F9;
+    --accent-text: #1E4FD8;
+    --signal-text: #1E4FD8;
+    --text-1: #0A0E1A;
+    --text-2: #2B3350;
+    --text-3: #46506E;
+  }
 </style>
 </head>
 <body>

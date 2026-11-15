@@ -1835,7 +1835,9 @@ if ( uStage > 0.5 ) {
   float onFloor = smoothstep( - uPx, uPx, dBot );
   // 地面：车身的模糊倒影随距离衰减，紧贴车底有一道接触阴影
   float contact = smoothstep( 0.0, 0.05, dBot );
-  vec3 floorCol = uFloor * ( 0.55 + 0.45 * contact ) + body * 0.45 * exp( - dBot / 0.45 ) * contact;
+  // dBot 必须先截到 >= 0 再取指数：页面很长时（手机上常见，超过约 6 屏），页顶的 dBot 是很大的负数，
+  // exp( -dBot / 0.45 ) 会溢出成 inf，再乘上 contact = 0 得到 NaN，整块画面被算成黑色。
+  vec3 floorCol = uFloor * ( 0.55 + 0.45 * contact ) + body * 0.45 * exp( - max( dBot, 0.0 ) / 0.45 ) * contact;
 
   vec3 col = mix( back, body, inBody );
   col = mix( col, floorCol, onFloor );

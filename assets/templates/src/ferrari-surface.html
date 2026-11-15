@@ -353,6 +353,8 @@
   footer .note { font-size: 13px; color: var(--text-3); max-width: 480px; text-align: right; }
 
   @media (max-width: 900px) {
+    /* 窄屏放不下导航链接：不收起的话链接会被挤成一字一行（与其他车队页一致） */
+    .nav-links { display: none; }
     .wrap { padding: 0 24px; }
     .hero-foot { grid-template-columns: 1fr; gap: 40px; }
     .telemetry { grid-template-columns: 1fr; border-top: none; }
