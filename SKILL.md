@@ -62,9 +62,16 @@ description: F1 2026 team web color and styling guide (all 11 teams) for designi
 遇到以下场景时，再读取 `assets/templates/` 下对应车队的基准模板（单文件 HTML，可直接双击打开）：
 
 - 用户要完整页面实现或视觉基准对照
-- 每队有 `<team>-editorial.html`（浅色杂志模式，默认主参考）；Aston Martin 另有 `aston-martin.html`（深色 Mission Control，dashboard 场景用）
+- 每队有 `<team>-editorial.html`（浅色杂志模式，默认主参考）和 `<team>-surface.html`（连续车身表面模式，见下）；Aston Martin 另有 `aston-martin.html`（深色 Mission Control，dashboard 场景用）
 - 模板是参考不是固定骨架：参考其 token 与手法，不要整页照抄
 - 各队 editorial 的版式节奏不同（模板末尾 `/* LAYOUT: 车队版式节奏 */` 注明组合），例如 Mercedes 三栏规格表、Aston Martin 居中大留白、Audi 左栏标题、Haas 硬边卡片；为用户做页面时也按车队气质选构图，不要只换颜色
+
+遇到以下场景时，再额外读取 `references/continuous-surface.md`（连续车身表面模式：WebGL 实时车漆背景的接入、调参与回退）：
+
+- 用户要车身质感、车漆、金属漆闪点、粒子感、影棚高光，或"像演示页那样的背景"
+- 用户要首屏有冲击力的落地页 / 发布页，且能接受加载 three.js
+- 参考实现是 `assets/templates/<team>-surface.html`（每队一个，单文件），渲染核心在 `assets/surface/`
+- 这是可选的背景层：dashboard、后台、长文档不要用；拿不准先问用户。交付时要保留无 WebGL 的回退，并说明只在桌面 Chrome 下验证过
 
 遇到以下场景时，再额外读取 `references/cross-team-methodology.md`：
 
